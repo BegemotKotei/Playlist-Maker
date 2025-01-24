@@ -9,9 +9,8 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/o_0dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
-        android:layout_weight="1"
         android:background="@color/white">
 
         <ImageView
@@ -28,32 +27,39 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/o_12dp"
+            android:layout_marginTop="@dimen/o_10dp"
+            android:layout_marginBottom="@dimen/o_12dp"
             android:gravity="center"
             android:text="@string/settings"
             android:textColor="@color/black"
             android:textSize="@dimen/o_22sp"
             android:textStyle="bold" />
+
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/o_0dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:layout_weight="1"
         android:backgroundTint="@color/white">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_width="@dimen/o_0dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/o_16dp"
+            android:layout_marginTop="@dimen/o_21dp"
+            android:layout_marginBottom="@dimen/o_21dp"
+            android:layout_weight="1"
             android:gravity="center_vertical"
             android:text="@string/dark_mode"
             android:textColor="@color/black"
             android:textSize="@dimen/o_16sp" />
 
         <Switch
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:layout_marginEnd="6dp"
             tools:ignore="UseSwitchCompatOrMaterialXml" />
 
@@ -61,21 +67,22 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/o_0dp"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
         android:backgroundTint="@android:color/white"
         tools:ignore="UseCompoundDrawables">
 
 
         <TextView
             android:layout_width="@dimen/o_0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/o_16dp"
+            android:layout_marginTop="@dimen/o_21dp"
+            android:layout_marginBottom="@dimen/o_21dp"
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:text="@string/share_app"
             android:textColor="@color/black"
-            android:textSize="@dimen/o_18sp"
+            android:textSize="@dimen/o_16sp"
             tools:ignore="InefficientWeight,NestedWeights" />
 
         <ImageView
@@ -90,16 +97,17 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/o_0dp"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
         android:backgroundTint="@android:color/white"
         tools:ignore="UseCompoundDrawables">
 
 
         <TextView
             android:layout_width="@dimen/o_0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/o_16dp"
+            android:layout_marginTop="@dimen/o_21dp"
+            android:layout_marginBottom="@dimen/o_21dp"
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:text="@string/write_support"
@@ -120,16 +128,17 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/o_0dp"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
         android:backgroundTint="@android:color/white"
         tools:ignore="UseCompoundDrawables">
 
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_width="@dimen/o_0dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/o_16dp"
+            android:layout_marginTop="@dimen/o_21dp"
+            android:layout_marginBottom="@dimen/o_21dp"
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:text="@string/user_agreement"
@@ -146,11 +155,5 @@
             tools:ignore="ContentDescription" />
 
     </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/o_0dp"
-        android:layout_weight="9"
-        tools:ignore="UselessLeaf" />
 
 </LinearLayout>

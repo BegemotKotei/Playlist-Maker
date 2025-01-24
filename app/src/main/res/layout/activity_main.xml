@@ -17,7 +17,7 @@
         android:textAppearance="@style/title" />
 
     <Button
-        android:id="@+id/buttonPanel1"
+        android:id="@+id/buttonPanelSearch"
         android:layout_width="match_parent"
         android:layout_height="@dimen/o_0dp"
         android:layout_marginStart="@dimen/o_16dp"
@@ -36,7 +36,7 @@
 
 
     <Button
-        android:id="@+id/buttonPanel2"
+        android:id="@+id/buttonPanelMediaLibrary"
         android:layout_width="match_parent"
         android:layout_height="@dimen/o_0dp"
         android:layout_marginStart="@dimen/o_16dp"
@@ -54,7 +54,7 @@
         tools:ignore="DuplicateIds" />
 
     <Button
-        android:id="@+id/buttonPanel3"
+        android:id="@+id/buttonPanelSettings"
         android:layout_width="match_parent"
         android:layout_height="@dimen/o_0dp"
         android:layout_marginStart="@dimen/o_16dp"
