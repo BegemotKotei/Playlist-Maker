@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
+        android:layout_marginTop="@dimen/o_48dp"
         android:background="@color/white">
 
         <ImageView
@@ -28,12 +29,12 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginStart="@dimen/o_12dp"
-            android:layout_marginTop="@dimen/o_10dp"
+            android:layout_marginTop="@dimen/o_12dp"
             android:layout_marginBottom="@dimen/o_12dp"
             android:gravity="center"
             android:text="@string/search"
             android:textColor="@color/black"
-            android:textSize="@dimen/o_22sp"
+            android:textSize="@dimen/o_24sp"
             android:textStyle="bold" />
 
     </LinearLayout>

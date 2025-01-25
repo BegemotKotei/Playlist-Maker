@@ -28,132 +28,190 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginStart="@dimen/o_12dp"
-            android:layout_marginTop="@dimen/o_10dp"
+            android:layout_marginTop="@dimen/o_12dp"
             android:layout_marginBottom="@dimen/o_12dp"
             android:gravity="center"
             android:text="@string/settings"
             android:textColor="@color/black"
-            android:textSize="@dimen/o_22sp"
+            android:textSize="@dimen/o_24sp"
             android:textStyle="bold" />
 
     </LinearLayout>
 
-    <LinearLayout
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="24dp"-->
+<!--        android:backgroundTint="@color/white">-->
+
+<!--        <TextView-->
+<!--            android:layout_width="@dimen/o_0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="@dimen/o_16dp"-->
+<!--            android:layout_marginTop="@dimen/o_20dp"-->
+<!--            android:layout_marginBottom="@dimen/o_20dp"-->
+<!--            android:layout_weight="1"-->
+<!--            android:gravity="center_vertical"-->
+<!--            android:text="@string/dark_mode"-->
+<!--            android:textColor="@color/black"-->
+<!--            android:textSize="@dimen/o_16sp" />-->
+
+<!--        <Switch-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_gravity="center_vertical"-->
+<!--            android:layout_marginEnd="6dp"-->
+<!--            tools:ignore="UseSwitchCompatOrMaterialXml" />-->
+
+<!--    </LinearLayout>-->
+
+    <androidx.appcompat.widget.SwitchCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:backgroundTint="@color/white">
+        android:text="@string/dark_mode"
+        android:layout_marginStart="@dimen/o_16dp"
+        android:layout_marginEnd="6dp"
+        android:textSize="@dimen/o_16sp"
 
-        <TextView
-            android:layout_width="@dimen/o_0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/o_16dp"
-            android:layout_marginTop="@dimen/o_21dp"
-            android:layout_marginBottom="@dimen/o_21dp"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:text="@string/dark_mode"
-            android:textColor="@color/black"
-            android:textSize="@dimen/o_16sp" />
+        >
 
-        <Switch
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginEnd="6dp"
-            tools:ignore="UseSwitchCompatOrMaterialXml" />
+    </androidx.appcompat.widget.SwitchCompat>
 
-    </LinearLayout>
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:backgroundTint="@android:color/white"-->
+<!--        tools:ignore="UseCompoundDrawables">-->
 
-    <LinearLayout
+
+<!--        <TextView-->
+<!--            android:layout_width="@dimen/o_0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="@dimen/o_16dp"-->
+<!--            android:layout_marginTop="@dimen/o_20dp"-->
+<!--            android:layout_marginBottom="@dimen/o_20dp"-->
+<!--            android:layout_weight="1"-->
+<!--            android:gravity="center_vertical"-->
+<!--            android:text="@string/share_app"-->
+<!--            android:textColor="@color/black"-->
+<!--            android:textSize="@dimen/o_16sp"-->
+<!--            tools:ignore="InefficientWeight,NestedWeights" />-->
+
+<!--        <ImageView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_gravity="center_vertical"-->
+<!--            android:layout_marginEnd="@dimen/o_12dp"-->
+<!--            android:src="@drawable/share"-->
+<!--            tools:ignore="ContentDescription" />-->
+
+<!--    </LinearLayout>-->
+
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:backgroundTint="@android:color/white"
-        tools:ignore="UseCompoundDrawables">
+        android:layout_marginStart="@dimen/o_16dp"
+        android:layout_marginTop="@dimen/o_20dp"
+        android:layout_marginBottom="@dimen/o_20dp"
+        android:layout_marginEnd="@dimen/o_12dp"
+        android:gravity="center_vertical"
+        android:text="@string/share_app"
+        android:textColor="@color/black"
+        android:textSize="@dimen/o_16sp"
+        app:drawableEndCompat="@drawable/share"
+        >
+    </TextView>
 
 
-        <TextView
-            android:layout_width="@dimen/o_0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/o_16dp"
-            android:layout_marginTop="@dimen/o_21dp"
-            android:layout_marginBottom="@dimen/o_21dp"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:text="@string/share_app"
-            android:textColor="@color/black"
-            android:textSize="@dimen/o_16sp"
-            tools:ignore="InefficientWeight,NestedWeights" />
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:backgroundTint="@android:color/white"-->
+<!--        tools:ignore="UseCompoundDrawables">-->
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginEnd="@dimen/o_12dp"
-            android:src="@drawable/share"
-            tools:ignore="ContentDescription" />
 
-    </LinearLayout>
+<!--        <TextView-->
+<!--            android:layout_width="@dimen/o_0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="@dimen/o_16dp"-->
+<!--            android:layout_marginTop="@dimen/o_20dp"-->
+<!--            android:layout_marginBottom="@dimen/o_20dp"-->
+<!--            android:layout_weight="1"-->
+<!--            android:gravity="center_vertical"-->
+<!--            android:text="@string/write_support"-->
+<!--            android:textColor="@color/black"-->
+<!--            android:textSize="@dimen/o_16sp"-->
+<!--            tools:ignore="InefficientWeight,NestedWeights" />-->
 
-    <LinearLayout
+<!--        <ImageView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_gravity="center_vertical"-->
+<!--            android:layout_marginEnd="@dimen/o_12dp"-->
+<!--            android:src="@drawable/support"-->
+<!--            tools:ignore="ContentDescription" />-->
+
+
+<!--    </LinearLayout>-->
+
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:backgroundTint="@android:color/white"
-        tools:ignore="UseCompoundDrawables">
+        android:layout_marginStart="@dimen/o_16dp"
+        android:layout_marginTop="@dimen/o_20dp"
+        android:layout_marginBottom="@dimen/o_20dp"
+        android:layout_marginEnd="@dimen/o_12dp"
+        android:gravity="center_vertical"
+        android:text="@string/write_support"
+        android:textColor="@color/black"
+        android:textSize="@dimen/o_16sp"
+        app:drawableEndCompat="@drawable/support"
+        >
+    </TextView>
+
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:backgroundTint="@android:color/white"-->
+<!--        tools:ignore="UseCompoundDrawables">-->
 
 
-        <TextView
-            android:layout_width="@dimen/o_0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/o_16dp"
-            android:layout_marginTop="@dimen/o_21dp"
-            android:layout_marginBottom="@dimen/o_21dp"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:text="@string/write_support"
-            android:textColor="@color/black"
-            android:textSize="@dimen/o_16sp"
-            tools:ignore="InefficientWeight,NestedWeights" />
+<!--        <TextView-->
+<!--            android:layout_width="@dimen/o_0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="@dimen/o_16dp"-->
+<!--            android:layout_marginTop="@dimen/o_20dp"-->
+<!--            android:layout_marginBottom="@dimen/o_20dp"-->
+<!--            android:layout_weight="1"-->
+<!--            android:gravity="center_vertical"-->
+<!--            android:text="@string/user_agreement"-->
+<!--            android:textColor="@color/black"-->
+<!--            android:textSize="@dimen/o_16sp"-->
+<!--            tools:ignore="NestedWeights" />-->
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginEnd="@dimen/o_12dp"
-            android:src="@drawable/support"
-            tools:ignore="ContentDescription" />
+<!--        <ImageView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_gravity="center_vertical"-->
+<!--            android:layout_marginEnd="@dimen/o_12dp"-->
+<!--            android:src="@drawable/arrow_forward"-->
+<!--            tools:ignore="ContentDescription" />-->
 
+<!--    </LinearLayout>-->
 
-    </LinearLayout>
-
-    <LinearLayout
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:backgroundTint="@android:color/white"
-        tools:ignore="UseCompoundDrawables">
-
-
-        <TextView
-            android:layout_width="@dimen/o_0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/o_16dp"
-            android:layout_marginTop="@dimen/o_21dp"
-            android:layout_marginBottom="@dimen/o_21dp"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:text="@string/user_agreement"
-            android:textColor="@color/black"
-            android:textSize="@dimen/o_16sp"
-            tools:ignore="NestedWeights" />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginEnd="@dimen/o_12dp"
-            android:src="@drawable/arrow_forward"
-            tools:ignore="ContentDescription" />
-
-    </LinearLayout>
+        android:layout_marginStart="@dimen/o_16dp"
+        android:layout_marginTop="@dimen/o_20dp"
+        android:layout_marginBottom="@dimen/o_20dp"
+        android:layout_marginEnd="@dimen/o_12dp"
+        android:gravity="center_vertical"
+        android:text="@string/user_agreement"
+        android:textColor="@color/black"
+        android:textSize="@dimen/o_16sp"
+        app:drawableEndCompat="@drawable/arrow_forward"
+        >
+    </TextView>
 
 </LinearLayout>

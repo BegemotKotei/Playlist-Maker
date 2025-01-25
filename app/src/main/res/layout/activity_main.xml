@@ -8,12 +8,12 @@
     android:orientation="vertical">
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/o_0dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/o_16dp"
-        android:layout_marginTop="14dp"
-        android:layout_weight="1"
+        android:layout_marginTop="@dimen/o_48dp"
         android:text="@string/app_name"
+        android:textSize="22sp"
         android:textAppearance="@style/title" />
 
     <Button
@@ -27,7 +27,7 @@
         android:backgroundTint="@android:color/white"
         android:text="@string/search"
         android:textColor="@android:color/black"
-        app:cornerRadius="@dimen/o_10dp"
+        app:cornerRadius="@dimen/o_12dp"
         app:icon="@drawable/search"
         app:iconGravity="textStart"
         app:iconPadding="@dimen/o_8dp"
@@ -46,7 +46,7 @@
         android:backgroundTint="@android:color/white"
         android:text="@string/media_library"
         android:textColor="@android:color/black"
-        app:cornerRadius="@dimen/o_10dp"
+        app:cornerRadius="@dimen/o_12dp"
         app:icon="@drawable/media_library"
         app:iconGravity="textStart"
         app:iconPadding="@dimen/o_8dp"
@@ -65,7 +65,7 @@
         android:backgroundTint="@android:color/white"
         android:text="@string/settings"
         android:textColor="@android:color/black"
-        app:cornerRadius="@dimen/o_10dp"
+        app:cornerRadius="@dimen/o_12dp"
         app:icon="@drawable/settings"
         app:iconGravity="textStart"
         app:iconPadding="@dimen/o_8dp"
