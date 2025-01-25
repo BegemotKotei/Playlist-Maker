@@ -8,12 +8,12 @@
     android:orientation="vertical">
 
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/app_name"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/o_16dp"
-        android:layout_marginTop="@dimen/o_48dp"
+        android:layout_marginTop="@dimen/o_12dp"
         android:text="@string/app_name"
-        android:textSize="22sp"
         android:textAppearance="@style/title" />
 
     <Button
@@ -21,9 +21,9 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/o_0dp"
         android:layout_marginStart="@dimen/o_16dp"
-        android:layout_marginTop="24dp"
         android:layout_marginEnd="@dimen/o_16dp"
-        android:layout_weight="4"
+        android:layout_marginTop="24dp"
+        android:layout_weight="3"
         android:backgroundTint="@android:color/white"
         android:text="@string/search"
         android:textColor="@android:color/black"
@@ -42,7 +42,7 @@
         android:layout_marginStart="@dimen/o_16dp"
         android:layout_marginTop="@dimen/o_16dp"
         android:layout_marginEnd="@dimen/o_16dp"
-        android:layout_weight="4"
+        android:layout_weight="3"
         android:backgroundTint="@android:color/white"
         android:text="@string/media_library"
         android:textColor="@android:color/black"
@@ -61,7 +61,7 @@
         android:layout_marginTop="@dimen/o_16dp"
         android:layout_marginEnd="@dimen/o_16dp"
         android:layout_marginBottom="28dp"
-        android:layout_weight="4"
+        android:layout_weight="3"
         android:backgroundTint="@android:color/white"
         android:text="@string/settings"
         android:textColor="@android:color/black"

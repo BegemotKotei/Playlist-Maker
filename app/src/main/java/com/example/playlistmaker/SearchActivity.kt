@@ -10,6 +10,7 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_serarch)
+
         val backButton = findViewById<ImageView>(R.id.toolBar)
 
         backButton.setOnClickListener {
