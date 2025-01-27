@@ -8,17 +8,16 @@
     tools:ignore="MissingDefaultResource">
 
     <LinearLayout
+        android:id="@+id/tool_bar_media_library"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="@dimen/o_12dp"
         android:background="@color/white">
 
         <ImageView
-            android:id="@+id/toolBar"
+            android:id="@+id/arrow_back_media_library"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginStart="@dimen/o_12dp"
+            android:layout_marginStart="@dimen/o_20dp"
             android:layout_marginTop="@dimen/o_12dp"
             android:layout_marginEnd="@dimen/o_12dp"
             android:layout_marginBottom="@dimen/o_12dp"
