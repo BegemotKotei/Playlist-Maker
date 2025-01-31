@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,35 +8,12 @@
     android:orientation="vertical"
     tools:ignore="MissingDefaultResource">
 
-    <LinearLayout
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/tool_bar_search"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white" >
-
-        <ImageView
-            android:id="@+id/arrow_back_search"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginStart="@dimen/o_20dp"
-            android:layout_marginTop="@dimen/o_12dp"
-            android:layout_marginEnd="@dimen/o_12dp"
-            android:layout_marginBottom="@dimen/o_12dp"
-            android:src="@drawable/arrow_back"
-            tools:ignore="ContentDescription,InvalidId" />
-
-        <TextView
-            android:id="@+id/search_bar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/o_12dp"
-            android:layout_marginTop="@dimen/o_12dp"
-            android:layout_marginBottom="@dimen/o_12dp"
-            android:text="@string/search"
-            android:textColor="@color/black"
-            android:textSize="@dimen/o_24sp"
-            android:textStyle="bold" />
-
-    </LinearLayout>
+        app:navigationIcon="@drawable/arrow_back"
+        app:title="@string/search"
+        app:titleTextColor="@color/black" />
 
 </LinearLayout>

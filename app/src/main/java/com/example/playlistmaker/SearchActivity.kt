@@ -1,21 +1,20 @@
 package com.example.playlistmaker
 
-import android.annotation.SuppressLint
 import android.os.Bundle
-import android.widget.ImageView
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
 class SearchActivity : AppCompatActivity() {
-    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_serarch)
 
-        val backButton = findViewById<ImageView>(R.id.arrow_back_search)
+        val toolbar = findViewById<Toolbar>(R.id.tool_bar_search)
+        setSupportActionBar(toolbar)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        supportActionBar!!.setDisplayShowTitleEnabled(true)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.tool_bar_search)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -23,8 +22,6 @@ class SearchActivity : AppCompatActivity() {
             insets
         }
 
-        backButton.setOnClickListener {
-            finish()
-        }
+        toolbar.setNavigationOnClickListener { finish() }
     }
 }

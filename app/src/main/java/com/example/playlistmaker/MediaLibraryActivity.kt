@@ -1,21 +1,20 @@
 package com.example.playlistmaker
 
-import android.annotation.SuppressLint
 import android.os.Bundle
-import android.widget.ImageView
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
 class MediaLibraryActivity : AppCompatActivity() {
-    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_media_library)
 
-        val backButton = findViewById<ImageView>(R.id.arrow_back_media_library)
+        val toolbar = findViewById<Toolbar>(R.id.tool_bar_media_library)
+        setSupportActionBar(toolbar)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        supportActionBar!!.setDisplayShowTitleEnabled(true)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.tool_bar_media_library)) { v, insets ->
             val systemBar = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -23,7 +22,7 @@ class MediaLibraryActivity : AppCompatActivity() {
             insets
         }
 
-        backButton.setOnClickListener {
+        toolbar.setNavigationOnClickListener {
             finish()
         }
     }
