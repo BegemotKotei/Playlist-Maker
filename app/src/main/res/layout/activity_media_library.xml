@@ -10,10 +10,8 @@
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/tool_bar_media_library"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        style="@style/Toolbar"
         app:navigationIcon="@drawable/arrow_back"
-        app:title="@string/media_library"
-        app:titleTextColor="@color/black" />
+        app:title="@string/media_library" />
 
 </LinearLayout>
