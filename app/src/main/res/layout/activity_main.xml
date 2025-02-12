@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorSecondaryVariant"
+    android:background="@color/blackorblue"
     android:orientation="vertical">
 
     <TextView
@@ -19,15 +19,25 @@
     <Button
         android:id="@+id/buttonPanelSearch"
         style="@style/MainButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_marginStart="@dimen/o_16dp"
+        android:layout_height="@dimen/o_0dp"
+        android:layout_marginEnd="@dimen/o_16dp"
+        android:layout_weight="3"
         android:layout_marginTop="24dp"
         android:text="@string/search"
         app:icon="@drawable/search"
-        tools:ignore="InvalidId" />
+        tools:ignore="DuplicateIds" />
 
 
     <Button
         android:id="@+id/buttonPanelMediaLibrary"
         style="@style/MainButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_marginStart="@dimen/o_16dp"
+        android:layout_height="@dimen/o_0dp"
+        android:layout_marginEnd="@dimen/o_16dp"
+        android:layout_weight="3"
         android:layout_marginTop="@dimen/o_16dp"
         android:text="@string/media_library"
         app:icon="@drawable/media_library"
@@ -36,6 +46,11 @@
     <Button
         android:id="@+id/buttonPanelSettings"
         style="@style/MainButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_marginStart="@dimen/o_16dp"
+        android:layout_height="@dimen/o_0dp"
+        android:layout_marginEnd="@dimen/o_16dp"
+        android:layout_weight="3"
         android:layout_marginTop="@dimen/o_16dp"
         android:layout_marginBottom="28dp"
         android:text="@string/settings"
