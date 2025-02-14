@@ -21,6 +21,11 @@ class SearchActivity : AppCompatActivity() {
         outState.putString(SEARCH, searchString)
     }
 
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        searchString = savedInstanceState.getString(SEARCH).toString()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
