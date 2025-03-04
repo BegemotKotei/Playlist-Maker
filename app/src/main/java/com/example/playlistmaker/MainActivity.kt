@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
-@Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity() {
 
     @SuppressLint("MissingInflatedId")
@@ -30,7 +29,7 @@ class MainActivity : AppCompatActivity() {
         val settingsButton =  findViewById<Button>(R.id.buttonPanelSettings)
 
         searchButton.setOnClickListener {
-            val displayIntent = Intent(this,SearchActivity::class.java)
+            val displayIntent = Intent(this, SearchActivity::class.java)
             startActivity(displayIntent)
         }
 

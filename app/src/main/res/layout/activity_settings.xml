@@ -3,60 +3,58 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/blackorwhite"
     android:orientation="vertical">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/tool_bar_settings"
+        style="@style/Toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:navigationIcon="@drawable/arrow_back"
-        app:title="@string/settings"
-        app:titleTextColor="@color/black" />
-
+        app:title="@string/settings" />
 
     <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switch_day_or_night"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/o_16dp"
-        android:layout_marginEnd="@dimen/o_16dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginTop="@dimen/o_24dp"
+        android:paddingStart="@dimen/o_16dp"
+        android:paddingTop="@dimen/o_24dp"
+        android:paddingBottom="@dimen/o_24dp"
+        android:paddingEnd="@dimen/o_6dp"
         android:text="@string/dark_mode"
-        android:textSize="@dimen/o_16sp" />
+        android:textColor="@color/whiteorblack"
+        android:textSize="@dimen/o_16sp"
+        app:thumbTint="@color/greyOrBlue"
+        app:trackTint="@color/greyOrBlue1"
+        android:backgroundTint="@android:color/white"
+        tools:ignore="UseSwitchCompatOrMaterialXml" />
 
     <Button
         android:id="@+id/button_share_app"
+        style="@style/SettingsButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/white"
-        android:gravity="center_vertical"
         android:text="@string/share_app"
-        android:textAllCaps="false"
-        android:textColor="@color/black"
-        android:textSize="@dimen/o_16sp"
         app:drawableEndCompat="@drawable/share" />
 
     <Button
         android:id="@+id/button_write_support"
+        style="@style/SettingsButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/white"
-        android:gravity="center_vertical"
         android:text="@string/write_support"
-        android:textAllCaps="false"
-        android:textColor="@color/black"
-        android:textSize="@dimen/o_16sp"
         app:drawableEndCompat="@drawable/support" />
 
     <Button
         android:id="@+id/button_user_agreement"
+        style="@style/SettingsButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/white"
-        android:gravity="center_vertical"
         android:text="@string/user_agreement"
-        android:textAllCaps="false"
-        android:textColor="@color/black"
-        android:textSize="@dimen/o_16sp"
         app:drawableEndCompat="@drawable/arrow_forward" />
 
 </LinearLayout>
