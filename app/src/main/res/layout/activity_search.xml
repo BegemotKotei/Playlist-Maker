@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/blackorwhite"
     android:orientation="vertical">
 
@@ -49,7 +50,16 @@
             android:src="@drawable/ic_menu_close_clear_cancel"
             android:visibility="gone" />
 
-
     </FrameLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:id="@+id/rwTrack"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:orientation="vertical"
+        tools:listitem="@layout/track_item"
+        android:layout_marginTop="@dimen/o_16dp"
+        android:layout_height="@dimen/o_0dp"
+        android:layout_weight="1"/>
 
 </LinearLayout>
