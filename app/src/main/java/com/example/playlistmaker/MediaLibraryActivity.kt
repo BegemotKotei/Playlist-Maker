@@ -2,17 +2,20 @@ package com.example.playlistmaker
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.playlistmaker.databinding.ActivityMediaLibraryBinding
 
 class MediaLibraryActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMediaLibraryBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_media_library)
+        binding = ActivityMediaLibraryBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        val toolbar = findViewById<Toolbar>(R.id.tool_bar_media_library)
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.toolBarMediaLibrary)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowTitleEnabled(true)
 
@@ -22,7 +25,7 @@ class MediaLibraryActivity : AppCompatActivity() {
             insets
         }
 
-        toolbar.setNavigationOnClickListener {
+        binding.toolBarMediaLibrary.setNavigationOnClickListener {
             finish()
         }
     }

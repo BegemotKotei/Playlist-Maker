@@ -3,20 +3,24 @@ package com.example.playlistmaker
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.playlistmaker.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMainBinding
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+
         enableEdgeToEdge()
 
-        setContentView(R.layout.activity_main)
+        setContentView(binding.root)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.tvApp_name)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -24,21 +28,17 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        val searchButton =  findViewById<Button>(R.id.buttonPanelSearch)
-        val mediaLibraryButton =  findViewById<Button>(R.id.buttonPanelMediaLibrary)
-        val settingsButton =  findViewById<Button>(R.id.buttonPanelSettings)
-
-        searchButton.setOnClickListener {
+        binding.buttonPanelSearch.setOnClickListener {
             val displayIntent = Intent(this, SearchActivity::class.java)
             startActivity(displayIntent)
         }
 
-        mediaLibraryButton.setOnClickListener {
+        binding.buttonPanelMediaLibrary.setOnClickListener {
             val displayIntent = Intent(this, MediaLibraryActivity::class.java)
             startActivity(displayIntent)
         }
 
-        settingsButton.setOnClickListener {
+        binding.buttonPanelSettings.setOnClickListener {
             val displayIntent = Intent(this, SettingsActivity::class.java)
             startActivity(displayIntent)
         }
