@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="r_18sp">18sp</dimen>
+    <dimen name="o_12sp">12sp</dimen>
     <dimen name="o_16sp">16sp</dimen>
     <dimen name="o_18sp">18sp</dimen>
     <dimen name="o_24sp">24sp</dimen>
     <dimen name="o_0dp">0dp</dimen>
+    <dimen name="o_4dp">4dp</dimen>
     <dimen name="o_6dp">6dp</dimen>
     <dimen name="o_8dp">8dp</dimen>
     <dimen name="o_12dp">12dp</dimen>

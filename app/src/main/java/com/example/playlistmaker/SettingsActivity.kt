@@ -3,26 +3,22 @@ package com.example.playlistmaker
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.appcompat.widget.SwitchCompat
-import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.playlistmaker.databinding.ActivitySettingsBinding
 
 class SettingsActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivitySettingsBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings)
+        binding = ActivitySettingsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        val toolbar = findViewById<Toolbar>(R.id.tool_bar_settings)
-        val shareButton = findViewById<Button>(R.id.button_share_app)
-        val userAgreementButton = findViewById<Button>(R.id.button_user_agreement)
-        val writeSupportButton = findViewById<Button>(R.id.button_write_support)
-        val switch = findViewById<SwitchCompat>(R.id.switch_day_or_night)
-
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.toolBarSettings)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowTitleEnabled(true)
 
@@ -32,19 +28,19 @@ class SettingsActivity : AppCompatActivity() {
             insets
         }
 
-        toolbar.setNavigationOnClickListener {
+        binding.toolBarSettings.setNavigationOnClickListener {
             finish()
         }
 
-        shareButton.setOnClickListener{
-            val ShareButton:Intent = Intent().apply {
+        binding.buttonShareApp.setOnClickListener {
+            val shareButton: Intent = Intent().apply {
                 action = Intent.ACTION_SEND
                 putExtra(Intent.EXTRA_TEXT, getString(R.string.shareHT))
-                setType("text/plain")
+                type = "text/plain"
             }
-            startActivity(ShareButton)
+            startActivity(shareButton)
         }
-        writeSupportButton.setOnClickListener {
+        binding.buttonWriteSupport.setOnClickListener {
             Intent().apply {
                 action = Intent.ACTION_SENDTO
                 data = Uri.parse("mailto:")
@@ -54,14 +50,15 @@ class SettingsActivity : AppCompatActivity() {
                 startActivity(this)
             }
         }
-        userAgreementButton.setOnClickListener {
-            val userAgrOpen:Intent = Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.userPolicWeb)))
+        binding.buttonUserAgreement.setOnClickListener {
+            val userAgrOpen =
+                Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.userPolicWeb)))
             startActivity(userAgrOpen)
         }
-        switch.setOnClickListener {
-            if (switch.isChecked){
+        binding.switchDayOrNight.setOnClickListener {
+            if (binding.switchDayOrNight.isChecked) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            }else{
+            } else {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             }
         }
