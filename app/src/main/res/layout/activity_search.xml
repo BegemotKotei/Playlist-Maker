@@ -19,7 +19,7 @@
         android:layout_height="wrap_content">
 
         <EditText
-            android:id="@+id/searchText"
+            android:id="@+id/edSearchText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/o_16dp"
@@ -42,7 +42,7 @@
 
 
         <ImageView
-            android:id="@+id/clearIcon"
+            android:id="@+id/ivClearIcon"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="end"

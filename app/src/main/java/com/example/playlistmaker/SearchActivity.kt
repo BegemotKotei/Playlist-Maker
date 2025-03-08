@@ -48,8 +48,8 @@ class SearchActivity : AppCompatActivity() {
         )
 
         val rwTrack = findViewById<RecyclerView>(R.id.rwTrack)
-        val clearButton = findViewById<ImageView>(R.id.clearIcon)
-        val searchField = findViewById<EditText>(R.id.searchText)
+        val clearButton = findViewById<ImageView>(R.id.ivClearIcon)
+        val searchField = findViewById<EditText>(R.id.edSearchText)
 
         rwTrack.adapter = trackAdapter
 
