@@ -3,6 +3,7 @@ package com.example.playlistmaker
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.databinding.TrackItemBinding
 
 class TrackAdapter(private val data: ArrayList<Track>) : RecyclerView.Adapter<TrackViewHolder>() {
 
@@ -15,9 +16,9 @@ class TrackAdapter(private val data: ArrayList<Track>) : RecyclerView.Adapter<Tr
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
-        val view =
-            LayoutInflater.from(parent.context).inflate(R.layout.track_item, parent, false)
-        return TrackViewHolder(view)
+        val binding =
+            TrackItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return TrackViewHolder(binding)
 
     }
 }
