@@ -4,8 +4,9 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Bundle
 import android.text.Editable
-import android.view.inputmethod.EditorInfo
 import android.text.TextWatcher
+import android.util.Log
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -90,6 +91,7 @@ class SearchActivity : AppCompatActivity() {
                             call: Call<TrackResponse>,
                             response: Response<TrackResponse>
                         ) {
+                            Log.i("SearchGetFragment", response.toString())
                             binding.rwTrack.isVisible = true
                             binding.llHolderNothingOrWrong.isVisible = false
 
@@ -116,6 +118,7 @@ class SearchActivity : AppCompatActivity() {
                         }
 
                         override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
+                            Log.i("SearchGetFragment", t.toString())
                             binding.rwTrack.isVisible = false
                             binding.llHolderNothingOrWrong.isVisible = true
                             binding.ivSunOrWiFi.setImageResource(R.drawable.nointernet_ic)
