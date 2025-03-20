@@ -49,4 +49,8 @@
         <item name="android:iconTint">@color/whiteorblack</item>
     </style>
 
+    <style name="ButtonSmall">
+        <item name="cornerRadius">54dp</item>
+    </style>
+
 </resources>
