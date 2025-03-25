@@ -22,12 +22,10 @@ import retrofit2.converter.gson.GsonConverterFactory
 class SearchActivity : AppCompatActivity() {
 
     private val itunesBaseUrl = "https://itunes.apple.com"
-
     private val retrofit = Retrofit.Builder()
         .baseUrl(itunesBaseUrl)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
-
     private val iTunesService = retrofit.create(iTunesApi::class.java)
     private val tracks = ArrayList<Track>()
     private var searchString = ""
@@ -53,12 +51,9 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         setSupportActionBar(binding.toolBarSearch)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowTitleEnabled(true)
-
-
         var historyTracks = searchHistory.read()
 
         val onItemClickListener = object : (Track) -> Unit {
@@ -72,7 +67,6 @@ class SearchActivity : AppCompatActivity() {
         binding.rwTrack.adapter = trackAdapter
 
         binding.etSearchText.setText(searchString)
-
         ViewCompat.setOnApplyWindowInsetsListener(binding.toolBarSearch) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -103,41 +97,46 @@ class SearchActivity : AppCompatActivity() {
             }
         }
 
-
         val simpleTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                // Показываю/скрываю иконку очистки
                 binding.ivClearIcon.isVisible = !s.isNullOrEmpty()
-                searchString = binding.etSearchText.toString()
 
-                if (binding.etSearchText.hasFocus() && s?.isEmpty() == true) {
-                    if (historyTracks.isNotEmpty()) {
-                        binding.tvHistorySearch.isVisible = true
-                        binding.bClearHistorySearch.isVisible = true
+                // Обновляю searchString
+                searchString = s.toString()
+
+                // Проверяю фокус и содержимое поля
+                if (binding.etSearchText.hasFocus()) {
+                    if (s.isNullOrEmpty()) {
+                        // Если поле пустое и имеет фокус – показываю историю
+                        if (historyTracks.isNotEmpty()) {
+                            trackAdapter.updateData(historyTracks)
+                            binding.tvHistorySearch.isVisible = true
+                            binding.bClearHistorySearch.isVisible = true
+                        }
+                        binding.llHolderNothingOrWrong.isVisible = false
+                    } else {
+                        // Если есть текст - показываю результаты поиска
+                        trackAdapter.updateData(tracks)
+                        binding.tvHistorySearch.isVisible = false
+                        binding.bClearHistorySearch.isVisible = false
+                        binding.llHolderNothingOrWrong.isVisible = false
                     }
-                    binding.llHolderNothingOrWrong.isVisible = false
-                } else {
-                    binding.rwTrack.adapter = trackAdapter
-                    trackAdapter.notifyDataSetChanged()
-                    binding.tvHistorySearch.isVisible = false
-                    binding.bClearHistorySearch.isVisible = false
-                    binding.llHolderNothingOrWrong.isVisible = false
                 }
             }
 
             override fun afterTextChanged(s: Editable?) {
                 // empty
             }
-
         }
 
         binding.etSearchText.addTextChangedListener(simpleTextWatcher)
 
         binding.ivClearIcon.setOnClickListener {
             binding.etSearchText.setText("")
-
             val inputMethodManager =
                 getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
             inputMethodManager.hideSoftInputFromWindow(binding.etSearchText.windowToken, 0)
@@ -146,25 +145,31 @@ class SearchActivity : AppCompatActivity() {
         }
 
         binding.toolBarSearch.setNavigationOnClickListener { finish() }
-
         binding.btResearch.setOnClickListener {
             sendToServer()
         }
-
         binding.etSearchText.setOnEditorActionListener { view, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 sendToServer()
-                true
             }
             false
         }
-
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            v.setPadding(
+                insets.getInsets(WindowInsetsCompat.Type.systemBars()).left,
+                0,
+                insets.getInsets(WindowInsetsCompat.Type.systemBars()).right,
+                insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom
+            )
+            insets
+        }
     }
 
     private fun sendToServer() {
         if (binding.etSearchText.text.isNotEmpty()) {
             iTunesService.search(binding.etSearchText.text.toString())
                 .enqueue(object : Callback<TrackResponse> {
+                    @SuppressLint("NotifyDataSetChanged")
                     override fun onResponse(
                         call: Call<TrackResponse>,
                         response: Response<TrackResponse>

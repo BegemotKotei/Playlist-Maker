@@ -96,8 +96,8 @@
             android:fontFamily="@font/ys_display_medium"
             android:text="@string/clear_history"
             android:textAllCaps="false"
-            android:textSize="@dimen/o_16sp"
             android:textColor="@color/blackorwhite"
+            android:textSize="@dimen/o_16sp"
             android:visibility="gone" />
     </LinearLayout>
 
@@ -163,8 +163,7 @@
             android:textAllCaps="false"
             android:textColor="@color/blackorwhite"
             android:textSize="14sp"
-            app:tint="@color/whiteorblack"
-            />
+            app:tint="@color/whiteorblack" />
 
     </LinearLayout>
 
