@@ -58,7 +58,7 @@ class SearchActivity : AppCompatActivity() {
 
         val onItemClickListener = object : (Track) -> Unit {
             override fun invoke(item: Track) {
-                historyTracks = searchHistory.write(historyTracks, item)
+                historyTracks = searchHistory.addTrackToHistory(historyTracks, item)
             }
         }
 
@@ -74,9 +74,12 @@ class SearchActivity : AppCompatActivity() {
         }
 
         binding.bClearHistorySearch.setOnClickListener {
+            // Очищаю список треков
             historyTracks.clear()
-            searchHistory.write(historyTracks)
+            // Сохраняю пустую историю
+            searchHistory.setHistory(historyTracks)
 
+            // Скрываем элементы интерфейса, если история пуста
             if (historyTracks.isEmpty()) {
                 binding.tvHistorySearch.isVisible = false
                 binding.bClearHistorySearch.isVisible = false

@@ -14,26 +14,31 @@ class SearchHistory(private val sharedPreferences: SharedPreferences) {
         }
     }
 
-    fun write(trackList: ArrayList<Track>, addTrack: Track? = null): ArrayList<Track> {
-        if (addTrack == null) {
-            val json = Gson().toJson(trackList)
-            sharedPreferences.edit().putString(HISTORY, json).apply()
-        } else {
-            val trackId = addTrack.trackId
-            val iterator = trackList.iterator()
-            for (items in iterator) {
-                if (items.trackId == trackId) {
-                    iterator.remove()
-                }
-            }
+    fun setHistory(trackList: ArrayList<Track>) {
+        val json = Gson().toJson(trackList)
+        sharedPreferences.edit().putString(HISTORY, json).apply()
+    }
 
-            trackList.add(addTrack)
-            if (trackList.size > MAX_HISTORY_SIZE) {
-                trackList.removeAt(0)
-            }
-            val json = Gson().toJson(trackList)
-            sharedPreferences.edit().putString(HISTORY, json).apply()
+    fun addTrackToHistory(trackList: ArrayList<Track>, addTrack: Track): ArrayList<Track> {
+        // Нахожу индекс трека, если он уже есть в списке, если нет – возвращаю -1.
+        val existingTrackIndex = trackList.indexOfFirst { it.trackId == addTrack.trackId }
+
+        // Проверяю, есть ли трек в истории
+        if (existingTrackIndex != -1) {
+            // Если есть – удаляю его
+            trackList.removeAt(existingTrackIndex)
         }
+
+        // Добавляю трек в начало
+        trackList.add(0, addTrack)
+
+        // Ограничиваю размер истории
+        if (trackList.size > MAX_HISTORY_SIZE) {
+            trackList.removeAt(trackList.size - 1)
+        }
+
+        val json = Gson().toJson(trackList)
+        sharedPreferences.edit().putString(HISTORY, json).apply()
         return trackList
     }
 
