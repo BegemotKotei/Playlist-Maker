@@ -12,6 +12,7 @@ class MediaLibraryActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding = ActivityMediaLibraryBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -19,7 +20,7 @@ class MediaLibraryActivity : AppCompatActivity() {
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowTitleEnabled(true)
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.tool_bar_media_library)) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.toolBarMediaLibrary) { v, insets ->
             val systemBar = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBar.left, systemBar.top, systemBar.right, systemBar.bottom)
             insets

@@ -4,7 +4,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.playlistmaker.databinding.ActivitySettingsBinding
@@ -15,6 +14,7 @@ class SettingsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -22,11 +22,17 @@ class SettingsActivity : AppCompatActivity() {
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowTitleEnabled(true)
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.tool_bar_settings)) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.toolBarSettings) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        val sharedPrefs = getSharedPreferences(App.getThemePreferences(), MODE_PRIVATE)
+        val themeDayOrNight = false
+
+        binding.switchDayOrNight.isChecked =
+            sharedPrefs.getBoolean(App.getDayNight(), themeDayOrNight)
 
         binding.toolBarSettings.setNavigationOnClickListener {
             finish()
@@ -40,6 +46,7 @@ class SettingsActivity : AppCompatActivity() {
             }
             startActivity(shareButton)
         }
+
         binding.buttonWriteSupport.setOnClickListener {
             Intent().apply {
                 action = Intent.ACTION_SENDTO
@@ -50,17 +57,15 @@ class SettingsActivity : AppCompatActivity() {
                 startActivity(this)
             }
         }
+
         binding.buttonUserAgreement.setOnClickListener {
             val userAgrOpen =
                 Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.userPolicWeb)))
             startActivity(userAgrOpen)
         }
-        binding.switchDayOrNight.setOnClickListener {
-            if (binding.switchDayOrNight.isChecked) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            } else {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            }
+
+        binding.switchDayOrNight.setOnCheckedChangeListener { switcher, checked ->
+            (applicationContext as App).switchTheme(checked)
         }
     }
 }
