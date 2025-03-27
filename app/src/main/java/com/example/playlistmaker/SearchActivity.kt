@@ -49,13 +49,19 @@ class SearchActivity : AppCompatActivity() {
     @SuppressLint("MissingInflatedId", "NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+
         setSupportActionBar(binding.toolBarSearch)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowTitleEnabled(true)
+
+        //получаю историю треков из памяти(sharedPrefs)
         var historyTracks = searchHistory.read()
 
+        // Настраиваю адаптер
         val onItemClickListener = object : (Track) -> Unit {
             override fun invoke(item: Track) {
                 historyTracks = searchHistory.addTrackToHistory(historyTracks, item)
@@ -63,16 +69,19 @@ class SearchActivity : AppCompatActivity() {
         }
 
         trackAdapter = TrackAdapter(tracks, onItemClickListener)
-
         binding.rwTrack.adapter = trackAdapter
 
+        // Настраиваю поле ввода
         binding.etSearchText.setText(searchString)
+
+
         ViewCompat.setOnApplyWindowInsetsListener(binding.toolBarSearch) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
+        // Обрабатываю очистку истории
         binding.bClearHistorySearch.setOnClickListener {
             // Очищаю список треков
             historyTracks.clear()
@@ -86,6 +95,7 @@ class SearchActivity : AppCompatActivity() {
             }
         }
 
+        // Обрабатываю фокус поля поиска
         binding.etSearchText.setOnFocusChangeListener { view, hasFocus ->
             if (hasFocus && binding.etSearchText.text.isEmpty()) {
                 trackAdapter.updateData(historyTracks)
@@ -138,6 +148,7 @@ class SearchActivity : AppCompatActivity() {
 
         binding.etSearchText.addTextChangedListener(simpleTextWatcher)
 
+        // Обрабатываю клик на иконку очистки
         binding.ivClearIcon.setOnClickListener {
             binding.etSearchText.setText("")
             val inputMethodManager =
@@ -148,6 +159,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
         binding.toolBarSearch.setNavigationOnClickListener { finish() }
+
         binding.btResearch.setOnClickListener {
             sendToServer()
         }
@@ -157,6 +169,8 @@ class SearchActivity : AppCompatActivity() {
             }
             false
         }
+
+        // Настраиваю взаимодействие с системными полями
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             v.setPadding(
                 insets.getInsets(WindowInsetsCompat.Type.systemBars()).left,

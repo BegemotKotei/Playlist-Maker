@@ -14,6 +14,7 @@ class SettingsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -29,6 +30,7 @@ class SettingsActivity : AppCompatActivity() {
 
         val sharedPrefs = getSharedPreferences(App.getThemePreferences(), MODE_PRIVATE)
         val themeDayOrNight = false
+
         binding.switchDayOrNight.isChecked =
             sharedPrefs.getBoolean(App.getDayNight(), themeDayOrNight)
 
@@ -44,6 +46,7 @@ class SettingsActivity : AppCompatActivity() {
             }
             startActivity(shareButton)
         }
+
         binding.buttonWriteSupport.setOnClickListener {
             Intent().apply {
                 action = Intent.ACTION_SENDTO
@@ -54,11 +57,13 @@ class SettingsActivity : AppCompatActivity() {
                 startActivity(this)
             }
         }
+
         binding.buttonUserAgreement.setOnClickListener {
             val userAgrOpen =
                 Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.userPolicWeb)))
             startActivity(userAgrOpen)
         }
+
         binding.switchDayOrNight.setOnCheckedChangeListener { switcher, checked ->
             (applicationContext as App).switchTheme(checked)
         }
