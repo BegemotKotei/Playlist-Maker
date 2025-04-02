@@ -2,6 +2,7 @@ package com.example.playlistmaker
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -30,7 +31,10 @@ class SearchActivity : AppCompatActivity() {
     private val tracks = ArrayList<Track>()
     private var searchString = ""
     private lateinit var binding: ActivitySearchBinding
-    private lateinit var trackAdapter: TrackAdapter
+    val historyTracks: ArrayList<Track>
+        get() = searchHistory.read()
+    private var showHistory = false
+    private val trackAdapter by lazy { TrackAdapter() }
     private val searchHistory by lazy {
         val sharedPrefs = getSharedPreferences(SearchHistory.getHistoryMain(), MODE_PRIVATE)
         SearchHistory(sharedPrefs)
@@ -58,17 +62,14 @@ class SearchActivity : AppCompatActivity() {
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowTitleEnabled(true)
 
-        //получаю историю треков из памяти(sharedPrefs)
-        var historyTracks = searchHistory.read()
-
         // Настраиваю адаптер
-        val onItemClickListener = object : (Track) -> Unit {
-            override fun invoke(item: Track) {
-                historyTracks = searchHistory.addTrackToHistory(historyTracks, item)
-            }
+        trackAdapter.onClick = { item ->
+            searchHistory.addTrackToHistory(item)
+            val playerIntent = Intent(this@SearchActivity, MusicPlayerActivity::class.java)
+            playerIntent.putExtra(MusicPlayerActivity.getTrackKey(), item)
+            startActivity(playerIntent)
         }
 
-        trackAdapter = TrackAdapter(tracks, onItemClickListener)
         binding.rwTrack.adapter = trackAdapter
 
         // Настраиваю поле ввода
@@ -84,7 +85,9 @@ class SearchActivity : AppCompatActivity() {
         // Обрабатываю очистку истории
         binding.bClearHistorySearch.setOnClickListener {
             // Очищаю список треков
-            historyTracks.clear()
+            trackAdapter.getDate().clear()
+            // Очищаю историю поиска
+            searchHistory.clearHistory()
             // Сохраняю пустую историю
             searchHistory.setHistory(historyTracks)
 
@@ -98,13 +101,13 @@ class SearchActivity : AppCompatActivity() {
         // Обрабатываю фокус поля поиска
         binding.etSearchText.setOnFocusChangeListener { view, hasFocus ->
             if (hasFocus && binding.etSearchText.text.isEmpty()) {
-                trackAdapter.updateData(historyTracks)
+                showHistory = true
+                trackAdapter.setDate(historyTracks)
                 if (historyTracks.isNotEmpty()) {
                     binding.tvHistorySearch.isVisible = true
                     binding.bClearHistorySearch.isVisible = true
                 }
             } else {
-                trackAdapter.updateData(tracks)
                 binding.tvHistorySearch.isVisible = false
                 binding.bClearHistorySearch.isVisible = false
             }
@@ -112,6 +115,8 @@ class SearchActivity : AppCompatActivity() {
 
         val simpleTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                showHistory = true
+                trackAdapter.setDate(historyTracks)
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -126,14 +131,14 @@ class SearchActivity : AppCompatActivity() {
                     if (s.isNullOrEmpty()) {
                         // Если поле пустое и имеет фокус – показываю историю
                         if (historyTracks.isNotEmpty()) {
-                            trackAdapter.updateData(historyTracks)
                             binding.tvHistorySearch.isVisible = true
                             binding.bClearHistorySearch.isVisible = true
                         }
                         binding.llHolderNothingOrWrong.isVisible = false
                     } else {
+                        showHistory = false
+                        trackAdapter.setDate(tracks)
                         // Если есть текст - показываю результаты поиска
-                        trackAdapter.updateData(tracks)
                         binding.tvHistorySearch.isVisible = false
                         binding.bClearHistorySearch.isVisible = false
                         binding.llHolderNothingOrWrong.isVisible = false
@@ -155,7 +160,8 @@ class SearchActivity : AppCompatActivity() {
                 getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
             inputMethodManager.hideSoftInputFromWindow(binding.etSearchText.windowToken, 0)
             tracks.clear()
-            trackAdapter.notifyDataSetChanged()
+            showHistory = false
+            trackAdapter.setDate(historyTracks)
         }
 
         binding.toolBarSearch.setNavigationOnClickListener { finish() }
@@ -198,7 +204,8 @@ class SearchActivity : AppCompatActivity() {
                             val results = response.body()?.results
                             if (results?.isNotEmpty() == true) {
                                 tracks.addAll(results)
-                                trackAdapter.notifyDataSetChanged()
+                                showHistory = false
+                                trackAdapter.setDate(tracks)
                                 binding.rwTrack.isVisible = true
                                 binding.llHolderNothingOrWrong.isVisible = false
                             } else {
@@ -231,6 +238,13 @@ class SearchActivity : AppCompatActivity() {
         binding.ivSunOrWiFi.setImageResource(R.drawable.sun_ic)
         binding.tvTextHolder.setText(R.string.nothing)
         binding.btResearch.isVisible = false
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (showHistory) {
+            trackAdapter.setDate(historyTracks)
+        }
     }
 
     companion object {

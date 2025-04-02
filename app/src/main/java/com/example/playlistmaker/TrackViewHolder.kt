@@ -21,7 +21,7 @@ class TrackViewHolder(private val binding: TrackItemBinding) :
                 .load(item.artworkUrl100)
                 .placeholder(R.drawable.placeholder_ic)
                 .centerInside()
-                .transform(RoundedCorners(10))
+                .transform(RoundedCorners(getRadiusCutImage()))
                 .into(binding.ivArtworkUrl100)
         }
     }

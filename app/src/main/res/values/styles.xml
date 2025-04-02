@@ -25,14 +25,14 @@
     </style>
 
     <style name="SettingsButtonStyle" parent="Widget.MaterialComponents.Button.UnelevatedButton">
-        <item name="android:backgroundTint">@color/blackorwhite</item>
+        <item name="android:backgroundTint">@color/blackOrWhite</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:paddingStart">@dimen/o_16dp</item>
         <item name="android:paddingTop">@dimen/o_20dp</item>
         <item name="android:paddingBottom">@dimen/o_20dp</item>
         <item name="android:paddingEnd">@dimen/o_12dp</item>
         <item name="textAllCaps">false</item>
-        <item name="android:textColor">@color/whiteorblack</item>
+        <item name="android:textColor">@color/whiteOrBlack</item>
         <item name="android:textSize">@dimen/o_16sp</item>
         <item name="android:fontFamily">@font/ys_display_regular</item>
         <item name="android:textFontWeight">400</item>
@@ -40,17 +40,39 @@
     </style>
 
     <style name="Toolbar">
-
-        <item name="android:textColor">@color/whiteorblack</item>
+        <item name="android:textColor">@color/whiteOrBlack</item>
         <item name="android:textSize">22sp</item>
         <item name="android:fontFamily">@font/ys_display_medium</item>
         <item name="android:textFontWeight">500</item>
         <item name="navigationIcon">@drawable/arrow_back</item>
-        <item name="android:iconTint">@color/whiteorblack</item>
+        <item name="android:iconTint">@color/whiteOrBlack</item>
     </style>
 
     <style name="ButtonSmall">
         <item name="cornerRadius">54dp</item>
+    </style>
+
+    <style name="playerText">
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textColor">@color/grey</item>
+        <item name="android:textSize">@dimen/o_12sp</item>
+    </style>
+
+    <style name="playerTextAnswer">
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textColor">@color/whiteOrBlack</item>
+        <item name="android:textSize">@dimen/o_12sp</item>
+    </style>
+
+    <style name="ButtonPlayer">
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">@dimen/o_0dp</item>
+        <item name="android:insetLeft">@dimen/o_0dp</item>
+        <item name="android:insetTop">@dimen/o_0dp</item>
+        <item name="android:insetRight">@dimen/o_0dp</item>
+        <item name="android:insetBottom">@dimen/o_0dp</item>
     </style>
 
 </resources>

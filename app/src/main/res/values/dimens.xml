@@ -13,7 +13,11 @@
     <dimen name="o_16dp">16dp</dimen>
     <dimen name="o_20dp">20dp</dimen>
     <dimen name="o_24dp">24dp</dimen>
+    <dimen name="o_28dp">28dp</dimen>
+    <dimen name="o_32dp">32dp</dimen>
+    <dimen name="o_40dp">40dp</dimen>
     <dimen name="o_44dp">44dp</dimen>
     <dimen name="o_48dp">48dp</dimen>
-
+    <dimen name="o_52dp">52dp</dimen>
+    <dimen name="o_84dp">84dp</dimen>
 </resources>
