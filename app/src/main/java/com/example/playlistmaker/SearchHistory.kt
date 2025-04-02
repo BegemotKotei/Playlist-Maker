@@ -5,16 +5,16 @@ import com.google.gson.Gson
 
 class SearchHistory(private val sharedPreferences: SharedPreferences) {
 
-    fun read(): ArrayList<Track> {
+    fun read(): MutableList<Track> {
         val json = sharedPreferences.getString(HISTORY, null)
         return if (json.isNullOrEmpty()) {
-            ArrayList()
+            mutableListOf()
         } else {
-            Gson().fromJson(json, Array<Track>::class.java).toCollection(ArrayList())
+            Gson().fromJson(json, Array<Track>::class.java).toMutableList()
         }
     }
 
-    fun addTrackToHistory(addTrack: Track): ArrayList<Track> {
+    fun addTrackToHistory(addTrack: Track): MutableList<Track> {
         var trackList = read()
         // Проверяю, есть ли трек в истории, если есть удаляю его
         trackList.find {
@@ -26,14 +26,14 @@ class SearchHistory(private val sharedPreferences: SharedPreferences) {
 
         // Ограничиваю размер истории
         if (trackList.size > MAX_HISTORY_SIZE) {
-            trackList = ArrayList(trackList.subList(0, MAX_HISTORY_SIZE - 1))
+            trackList = trackList.subList(0, MAX_HISTORY_SIZE - 1)
         }
 
         setHistory(trackList)
         return trackList
     }
 
-    fun setHistory(trackList: ArrayList<Track>) {
+    fun setHistory(trackList: MutableList<Track>) {
         val json = Gson().toJson(trackList)
         sharedPreferences.edit().putString(HISTORY, json).apply()
     }

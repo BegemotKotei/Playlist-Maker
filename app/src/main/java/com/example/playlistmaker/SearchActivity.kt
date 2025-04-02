@@ -28,10 +28,10 @@ class SearchActivity : AppCompatActivity() {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
     private val iTunesService = retrofit.create(iTunesApi::class.java)
-    private val tracks = ArrayList<Track>()
+    private val tracks = mutableListOf<Track>()
     private var searchString = ""
     private lateinit var binding: ActivitySearchBinding
-    val historyTracks: ArrayList<Track>
+    val historyTracks: MutableList<Track>
         get() = searchHistory.read()
     private var showHistory = false
     private val trackAdapter by lazy { TrackAdapter() }
@@ -247,7 +247,7 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    companion object {
-        private const val SEARCH = "SEARCH"
+    private companion object {
+        const val SEARCH = "SEARCH"
     }
 }

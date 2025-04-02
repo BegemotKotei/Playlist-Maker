@@ -8,7 +8,7 @@ import com.example.playlistmaker.databinding.TrackItemBinding
 
 class TrackAdapter : RecyclerView.Adapter<TrackViewHolder>() {
 
-    private var data: ArrayList<Track> = arrayListOf()
+    private var data: MutableList<Track> = mutableListOf()
         @SuppressLint("NotifyDataSetChanged")
         set(value) {
             field = value
@@ -33,17 +33,11 @@ class TrackAdapter : RecyclerView.Adapter<TrackViewHolder>() {
 
     }
 
-    fun getDate(): ArrayList<Track> {
+    fun getDate(): MutableList<Track> {
         return data
     }
 
-    fun setDate(newData: ArrayList<Track>) {
+    fun setDate(newData: MutableList<Track>) {
         data = newData
     }
-
-//    @SuppressLint("NotifyDataSetChanged")
-//    fun updateData(newData: ArrayList<Track>) {
-//        data = newData
-//        notifyDataSetChanged()
-//    }
 }

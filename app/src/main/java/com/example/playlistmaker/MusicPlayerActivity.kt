@@ -25,29 +25,29 @@ class MusicPlayerActivity : AppCompatActivity() {
         binding.ivBack.setOnClickListener { finish() }
 
         intent.parcelable<Track>(getTrackKey())?.let { track ->
-            binding.tvNameMusic.text = track.trackName
-            binding.tvGroupName.text = track.artistName
-            binding.tvTimeMusicAnswer.text = dateFormat.format(track.trackTimeMillis.toLong())
-            if (track.collectionName == null) {
-                binding.textGroup.isVisible = false
-            } else {
-                binding.tvGroupMusicAnswer.text = track.collectionName
-            }
-            binding.tvEarAnswer.text = getFormattedDate(track.releaseDate)
-            binding.tvTypeMusicAnswer.text = track.primaryGenreName
-            binding.tvCountryAnswer.text = track.country
-
-            val urlImage = track.artworkUrl100?.replaceAfterLast('/', "512x512bb.jpg")
-
-            Glide.with(this)
-                .load(urlImage)
-                .placeholder(R.drawable.placeholder_ic)
-                .centerInside()
-                .transform(RoundedCorners(getRadiusCutImage()))
-                .into(binding.ivMusicImage)
+            displayTrackInfo(track)
+            loadTrackImage(track)
         }
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) {v, insets ->
+        setupIntents()
+    }
+
+    private fun displayTrackInfo(track: Track) {
+        binding.tvNameMusic.text = track.trackName
+        binding.tvGroupName.text = track.artistName
+        binding.tvTimeMusicAnswer.text = dateFormat.format(track.trackTimeMillis.toLong())
+        if (track.collectionName == null) {
+            binding.textGroup.isVisible = false
+        } else {
+            binding.tvGroupMusicAnswer.text = track.collectionName
+        }
+        binding.tvEarAnswer.text = getFormattedDate(track.releaseDate)
+        binding.tvTypeMusicAnswer.text = track.primaryGenreName
+        binding.tvCountryAnswer.text = track.country
+    }
+
+    private fun setupIntents() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             v.setPadding(
                 insets.getInsets(WindowInsetsCompat.Type.systemBars()).left,
                 insets.getInsets(WindowInsetsCompat.Type.systemBars()).top,
@@ -58,14 +58,30 @@ class MusicPlayerActivity : AppCompatActivity() {
         }
     }
 
+    private fun loadTrackImage(track: Track) {
+        val urlImage = track.artworkUrl100?.replaceAfterLast('/', "512x512bb.jpg")
+
+        Glide.with(this)
+            .load(urlImage)
+            .placeholder(R.drawable.placeholder_ic)
+            .centerInside()
+            .transform(RoundedCorners(getRadiusCutImage()))
+            .into(binding.ivMusicImage)
+    }
+
     private fun getFormattedDate(inputDate: String?): String {
-        inputDate ?: return ""
+        if (inputDate.isNullOrEmpty()) return ""
 
-        val dfIn = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-        val dfOut = SimpleDateFormat("yyyy", Locale.getDefault())
+        val inputFormat: SimpleDateFormat by lazy {
+            SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+        }
 
-        dfIn.parse(inputDate)?.let { date ->
-            return dfOut.format(date).orEmpty()
+        val outputFormat: SimpleDateFormat by lazy {
+            SimpleDateFormat("yyyy", Locale.getDefault())
+        }
+
+        inputFormat.parse(inputDate)?.let { date ->
+            return outputFormat.format(date).orEmpty()
         } ?: return ""
     }
 
