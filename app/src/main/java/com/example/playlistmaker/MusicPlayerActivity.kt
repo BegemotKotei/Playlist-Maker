@@ -1,6 +1,7 @@
 package com.example.playlistmaker
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -27,23 +28,28 @@ class MusicPlayerActivity : AppCompatActivity() {
         intent.parcelable<Track>(getTrackKey())?.let { track ->
             displayTrackInfo(track)
             loadTrackImage(track)
-        }
+        } ?: run { Log.i("MusicPlayerActivity", "Intent не содержит трек") }
 
         setupIntents()
     }
 
     private fun displayTrackInfo(track: Track) {
-        binding.tvNameMusic.text = track.trackName
-        binding.tvGroupName.text = track.artistName
-        binding.tvTimeMusicAnswer.text = dateFormat.format(track.trackTimeMillis.toLong())
-        if (track.collectionName == null) {
-            binding.textGroup.isVisible = false
-        } else {
-            binding.tvGroupMusicAnswer.text = track.collectionName
+        try {
+            binding.tvNameMusic.text = track.trackName
+            binding.tvGroupName.text = track.artistName
+            binding.tvTimeMusicAnswer.text = dateFormat.format(track.trackTimeMillis.toLong())
+            if (track.collectionName == null) {
+                binding.textGroup.isVisible = false
+            } else {
+                binding.tvGroupMusicAnswer.text = track.collectionName
+            }
+            binding.tvEarAnswer.text = getFormattedDate(track.releaseDate)
+            binding.tvTypeMusicAnswer.text = track.primaryGenreName
+            binding.tvCountryAnswer.text = track.country
+            Log.i("MusicPlayerActivity", track.toString())
+        } catch (e: Exception) {
+            Log.i("MusicPlayerActivity", e.toString())
         }
-        binding.tvEarAnswer.text = getFormattedDate(track.releaseDate)
-        binding.tvTypeMusicAnswer.text = track.primaryGenreName
-        binding.tvCountryAnswer.text = track.country
     }
 
     private fun setupIntents() {
@@ -67,6 +73,7 @@ class MusicPlayerActivity : AppCompatActivity() {
             .centerInside()
             .transform(RoundedCorners(getRadiusCutImage()))
             .into(binding.ivMusicImage)
+
     }
 
     private fun getFormattedDate(inputDate: String?): String {

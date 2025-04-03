@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.core.view.setPadding
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 import retrofit2.Call
 import retrofit2.Callback
@@ -176,7 +177,10 @@ class SearchActivity : AppCompatActivity() {
             false
         }
 
-        // Настраиваю взаимодействие с системными полями
+        setupInsets()
+    }
+
+    private fun setupInsets() {
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             v.setPadding(
                 insets.getInsets(WindowInsetsCompat.Type.systemBars()).left,
@@ -197,7 +201,7 @@ class SearchActivity : AppCompatActivity() {
                         call: Call<TrackResponse>,
                         response: Response<TrackResponse>
                     ) {
-                        Log.i("SearchGetFragment", response.toString())
+                        Log.i("SearchActivity", response.toString())
 
                         if (response.isSuccessful) {
                             tracks.clear()
@@ -217,7 +221,7 @@ class SearchActivity : AppCompatActivity() {
                     }
 
                     override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
-                        Log.i("SearchGetFragment", t.toString())
+                        Log.i("SearchActivity", t.toString())
                         showError()
                     }
                 })
