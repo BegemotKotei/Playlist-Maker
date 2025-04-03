@@ -34,7 +34,7 @@
             android:layout_width="match_parent"
             tools:text="[Лёша]"
             android:layout_marginBottom="@dimen/o_4dp"
-            android:textColor="@color/whiteorblack"
+            android:textColor="@color/whiteOrBlack"
             android:ellipsize="end"
             android:singleLine="true"
             android:layout_height="wrap_content"/>

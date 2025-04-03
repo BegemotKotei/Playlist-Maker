@@ -5,41 +5,41 @@ import com.google.gson.Gson
 
 class SearchHistory(private val sharedPreferences: SharedPreferences) {
 
-    fun read(): ArrayList<Track> {
+    fun read(): MutableList<Track> {
         val json = sharedPreferences.getString(HISTORY, null)
         return if (json.isNullOrEmpty()) {
-            ArrayList<Track>()
+            mutableListOf()
         } else {
-            Gson().fromJson(json, Array<Track>::class.java).toCollection(ArrayList())
+            Gson().fromJson(json, Array<Track>::class.java).toMutableList()
         }
     }
 
-    fun setHistory(trackList: ArrayList<Track>) {
-        val json = Gson().toJson(trackList)
-        sharedPreferences.edit().putString(HISTORY, json).apply()
-    }
-
-    fun addTrackToHistory(trackList: ArrayList<Track>, addTrack: Track): ArrayList<Track> {
-        // Нахожу индекс трека, если он уже есть в списке, если нет – возвращаю -1.
-        val existingTrackIndex = trackList.indexOfFirst { it.trackId == addTrack.trackId }
-
-        // Проверяю, есть ли трек в истории
-        if (existingTrackIndex != -1) {
-            // Если есть – удаляю его
-            trackList.removeAt(existingTrackIndex)
-        }
+    fun addTrackToHistory(addTrack: Track): MutableList<Track> {
+        var trackList = read()
+        // Проверяю, есть ли трек в истории, если есть удаляю его
+        trackList.find {
+            it.trackId == addTrack.trackId
+        }?.let { trackList.remove(it) }
 
         // Добавляю трек в начало
         trackList.add(0, addTrack)
 
         // Ограничиваю размер истории
         if (trackList.size > MAX_HISTORY_SIZE) {
-            trackList.removeAt(trackList.size - 1)
+            trackList = trackList.subList(0, MAX_HISTORY_SIZE - 1)
         }
 
+        setHistory(trackList)
+        return trackList
+    }
+
+    fun setHistory(trackList: MutableList<Track>) {
         val json = Gson().toJson(trackList)
         sharedPreferences.edit().putString(HISTORY, json).apply()
-        return trackList
+    }
+
+    fun clearHistory() {
+        sharedPreferences.edit().remove(HISTORY).apply()
     }
 
     companion object {

@@ -6,10 +6,16 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.databinding.TrackItemBinding
 
-class TrackAdapter(
-    private var data: ArrayList<Track>,
-    val listener: ((Track) -> Unit)
-) : RecyclerView.Adapter<TrackViewHolder>() {
+class TrackAdapter : RecyclerView.Adapter<TrackViewHolder>() {
+
+    private var data: MutableList<Track> = mutableListOf()
+        @SuppressLint("NotifyDataSetChanged")
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
+
+    var onClick: (Track) -> Unit = {}
 
     override fun getItemCount(): Int {
         return data.size
@@ -17,7 +23,7 @@ class TrackAdapter(
 
     override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
         holder.bind(data[position])
-        holder.itemView.setOnClickListener { listener(data[position]) }
+        holder.itemView.setOnClickListener { onClick(data[position]) }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
@@ -27,9 +33,11 @@ class TrackAdapter(
 
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    fun updateData(newData: ArrayList<Track>) {
+    fun getDate(): MutableList<Track> {
+        return data
+    }
+
+    fun setDate(newData: MutableList<Track>) {
         data = newData
-        notifyDataSetChanged()
     }
 }

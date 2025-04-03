@@ -3,9 +3,9 @@
     <color name="black">#1A1B22</color>
     <color name="white">#FFFFFFFF</color>
     <color name="blue">#3772E7</color>
-    <color name="blackorblue">#1A1B22</color>
-    <color name="blackorwhite">#1A1B22</color>
-    <color name="whiteorblack">#FFFFFF</color>
+    <color name="blackOrBlue">#1A1B22</color>
+    <color name="blackOrWhite">#1A1B22</color>
+    <color name="whiteOrBlack">#FFFFFF</color>
     <color name="greyOrWhite">#FFFFFF</color>
     <color name="greyOrWhite1">#FFFFFF</color>
     <color name="greyOrBlue">#3772E7</color>
