@@ -182,11 +182,12 @@ class SearchActivity : AppCompatActivity() {
 
     private fun setupInsets() {
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val systemBar = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(
-                insets.getInsets(WindowInsetsCompat.Type.systemBars()).left,
+                systemBar.left,
                 0,
-                insets.getInsets(WindowInsetsCompat.Type.systemBars()).right,
-                insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom
+                systemBar.right,
+                systemBar.bottom
             )
             insets
         }

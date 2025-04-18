@@ -9,6 +9,7 @@ import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.databinding.ActivityMusicPlayerBinding
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -28,7 +29,10 @@ class MusicPlayerActivity : AppCompatActivity() {
         intent.parcelable<Track>(getTrackKey())?.let { track ->
             displayTrackInfo(track)
             loadTrackImage(track)
-        } ?: run { Log.i("MusicPlayerActivity", "Intent не содержит трек") }
+        } ?: run { Log.i(
+            "MusicPlayerActivity",
+            "Intent does not contain a track"
+        ) }
 
         setupIntents()
     }
@@ -46,9 +50,15 @@ class MusicPlayerActivity : AppCompatActivity() {
             binding.tvEarAnswer.text = getFormattedDate(track.releaseDate)
             binding.tvTypeMusicAnswer.text = track.primaryGenreName
             binding.tvCountryAnswer.text = track.country
-            Log.i("MusicPlayerActivity", track.toString())
+            Log.i(
+                "MusicPlayerActivity",
+                track.toString()
+            )
         } catch (e: Exception) {
-            Log.i("MusicPlayerActivity", e.toString())
+            Log.i(
+                "MusicPlayerActivity",
+                e.toString()
+            )
         }
     }
 
@@ -77,7 +87,10 @@ class MusicPlayerActivity : AppCompatActivity() {
     }
 
     private fun getFormattedDate(inputDate: String?): String {
-        if (inputDate.isNullOrEmpty()) return ""
+        if (inputDate.isNullOrEmpty()) {
+            Log.i("MusicPlayerActivity", "Input date is null or empty")
+            return ""
+        }
 
         val inputFormat: SimpleDateFormat by lazy {
             SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
@@ -87,9 +100,29 @@ class MusicPlayerActivity : AppCompatActivity() {
             SimpleDateFormat("yyyy", Locale.getDefault())
         }
 
-        inputFormat.parse(inputDate)?.let { date ->
-            return outputFormat.format(date).orEmpty()
-        } ?: return ""
+        return try {
+            inputFormat.parse(inputDate)?.let { date ->
+                outputFormat.format(date).orEmpty()
+            } ?: run {
+                Log.i(
+                    "MusicPlayerActivity",
+                    "Failed to parse date: $inputDate"
+                )
+                ""
+            }
+        } catch (e: ParseException) {
+            Log.i(
+                "MusicPlayerActivity",
+                "ParseException while parsing date $inputDate, error: ${e.message}"
+            )
+            ""
+        } catch (e: Exception) {
+            Log.i(
+                "MusicPlayerActivity",
+                "Unexpected error while processing date: $inputDate, error: ${e.message}"
+            )
+            ""
+        }
     }
 
     companion object {
