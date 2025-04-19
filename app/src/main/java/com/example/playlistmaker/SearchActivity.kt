@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -13,7 +15,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
-import androidx.core.view.setPadding
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 import retrofit2.Call
 import retrofit2.Callback
@@ -40,6 +41,9 @@ class SearchActivity : AppCompatActivity() {
         val sharedPrefs = getSharedPreferences(SearchHistory.getHistoryMain(), MODE_PRIVATE)
         SearchHistory(sharedPrefs)
     }
+    private val searchRunnable = Runnable { sendToServer() }
+    private val handler = Handler(Looper.getMainLooper())
+    private var isClickAllowed = true
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -58,17 +62,16 @@ class SearchActivity : AppCompatActivity() {
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
-        setSupportActionBar(binding.toolBarSearch)
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        supportActionBar!!.setDisplayShowTitleEnabled(true)
+        setupToolBar()
 
         // Настраиваю адаптер
         trackAdapter.onClick = { item ->
-            searchHistory.addTrackToHistory(item)
-            val playerIntent = Intent(this@SearchActivity, MusicPlayerActivity::class.java)
-            playerIntent.putExtra(MusicPlayerActivity.getTrackKey(), item)
-            startActivity(playerIntent)
+            if (clickDebounce()) {
+                searchHistory.addTrackToHistory(item)
+                val playerIntent = Intent(this@SearchActivity, MusicPlayerActivity::class.java)
+                playerIntent.putExtra(MusicPlayerActivity.getTrackKey(), item)
+                startActivity(playerIntent)
+            }
         }
 
         binding.rwTrack.adapter = trackAdapter
@@ -100,7 +103,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
         // Обрабатываю фокус поля поиска
-        binding.etSearchText.setOnFocusChangeListener { view, hasFocus ->
+        binding.etSearchText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus && binding.etSearchText.text.isEmpty()) {
                 showHistory = true
                 trackAdapter.setDate(historyTracks)
@@ -121,6 +124,8 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                searchDebounce()
+
                 // Показываю/скрываю иконку очистки
                 binding.ivClearIcon.isVisible = !s.isNullOrEmpty()
 
@@ -170,7 +175,7 @@ class SearchActivity : AppCompatActivity() {
         binding.btResearch.setOnClickListener {
             sendToServer()
         }
-        binding.etSearchText.setOnEditorActionListener { view, actionId, event ->
+        binding.etSearchText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 sendToServer()
             }
@@ -178,6 +183,33 @@ class SearchActivity : AppCompatActivity() {
         }
 
         setupInsets()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (showHistory) {
+            trackAdapter.setDate(historyTracks)
+        }
+    }
+
+    private fun searchDebounce() {
+        handler.removeCallbacks(searchRunnable)
+        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+    }
+
+    private fun clickDebounce(): Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+        }
+        return current
+    }
+
+    private fun setupToolBar() {
+        setSupportActionBar(binding.toolBarSearch)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        supportActionBar!!.setDisplayShowTitleEnabled(true)
     }
 
     private fun setupInsets() {
@@ -195,6 +227,8 @@ class SearchActivity : AppCompatActivity() {
 
     private fun sendToServer() {
         if (binding.etSearchText.text.isNotEmpty()) {
+            binding.progressBar.isVisible = true
+
             iTunesService.search(binding.etSearchText.text.toString())
                 .enqueue(object : Callback<TrackResponse> {
                     @SuppressLint("NotifyDataSetChanged")
@@ -203,8 +237,8 @@ class SearchActivity : AppCompatActivity() {
                         response: Response<TrackResponse>
                     ) {
                         Log.i("SearchActivity", response.toString())
-
                         if (response.isSuccessful) {
+                            binding.progressBar.isVisible = false
                             tracks.clear()
                             val results = response.body()?.results
                             if (results?.isNotEmpty() == true) {
@@ -226,10 +260,12 @@ class SearchActivity : AppCompatActivity() {
                         showError()
                     }
                 })
+
         }
     }
 
     private fun showError() {
+        binding.progressBar.isVisible = false
         binding.rwTrack.isVisible = false
         binding.llHolderNothingOrWrong.isVisible = true
         binding.ivSunOrWiFi.setImageResource(R.drawable.nointernet_ic)
@@ -238,6 +274,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun showNoResults() {
+        binding.progressBar.isVisible = false
         binding.rwTrack.isVisible = false
         binding.llHolderNothingOrWrong.isVisible = true
         binding.ivSunOrWiFi.setImageResource(R.drawable.sun_ic)
@@ -245,14 +282,9 @@ class SearchActivity : AppCompatActivity() {
         binding.btResearch.isVisible = false
     }
 
-    override fun onResume() {
-        super.onResume()
-        if (showHistory) {
-            trackAdapter.setDate(historyTracks)
-        }
-    }
-
     private companion object {
         const val SEARCH = "SEARCH"
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 }
