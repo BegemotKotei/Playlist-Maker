@@ -1,9 +1,13 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation.search
 
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.example.playlistmaker.R
+import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.databinding.TrackItemBinding
+import com.example.playlistmaker.presentation.dpToPx
+import com.example.playlistmaker.presentation.getRadiusCutImage
 import java.text.SimpleDateFormat
 import java.util.Locale
 

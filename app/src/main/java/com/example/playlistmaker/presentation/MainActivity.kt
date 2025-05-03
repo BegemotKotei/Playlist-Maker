@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -7,8 +7,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.setPadding
 import com.example.playlistmaker.databinding.ActivityMainBinding
+import com.example.playlistmaker.presentation.medialibrary.MediaLibraryActivity
+import com.example.playlistmaker.presentation.search.SearchActivity
+import com.example.playlistmaker.presentation.settings.SettingsActivity
 
 class MainActivity : AppCompatActivity() {
 

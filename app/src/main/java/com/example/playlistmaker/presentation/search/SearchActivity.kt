@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation.search
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -15,6 +15,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import com.example.playlistmaker.presentation.player.MusicPlayerActivity
+import com.example.playlistmaker.R
+import com.example.playlistmaker.domain.models.Track
+import com.example.playlistmaker.data.network.iTunesApi
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 import retrofit2.Call
 import retrofit2.Callback
