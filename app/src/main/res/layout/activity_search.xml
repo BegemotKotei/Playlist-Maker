@@ -41,7 +41,10 @@
             android:singleLine="true"
             android:textColor="@color/black"
             android:textColorHint="@color/greyOrBlack"
-            android:textSize="@dimen/o_16sp" />
+            android:textSize="@dimen/o_16sp"
+            android:textCursorDrawable="@drawable/cursor_blue"
+            android:textColorCursor="@color/blue"
+            android:textColorHighlight="@color/blue"/>
 
 
         <ImageView

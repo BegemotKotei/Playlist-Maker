@@ -61,7 +61,9 @@ class MusicPlayerActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        pausePlayer()
+        if (mediaPlayer.isPlaying) {
+            pausePlayer()
+        }
     }
 
     override fun onDestroy() {
@@ -98,8 +100,13 @@ class MusicPlayerActivity : AppCompatActivity() {
     private fun loadTrackImage(track: Track) {
         val urlImage = track.artworkUrl100?.replaceAfterLast('/', "512x512bb.jpg")
 
-        Glide.with(this).load(urlImage).placeholder(R.drawable.placeholder_ic).centerInside()
-            .transform(RoundedCorners(dpToPx(getRadiusCutImage(), this))).into(binding.ivMusicImage)
+        Glide
+            .with(this)
+            .load(urlImage)
+            .placeholder(R.drawable.placeholder_ic)
+            .centerInside()
+            .transform(RoundedCorners(dpToPx(getRadiusCutImage(), this)))
+            .into(binding.ivMusicImage)
 
     }
 
@@ -157,24 +164,30 @@ class MusicPlayerActivity : AppCompatActivity() {
         }
 
         try {
+            mediaPlayer.reset() // Сбросить перед повторным использованием
             mediaPlayer.setDataSource(url)
             mediaPlayer.prepareAsync()
             mediaPlayer.setOnPreparedListener {
                 playerState = PlayerState.PREPARED
+                updatePlayButtonState()
                 Log.i(
                     "MusicPlayerActivity",
                     "MediaPlayer prepared, duration: ${mediaPlayer.duration}"
                 )
             }
             mediaPlayer.setOnCompletionListener {
-                playButton.setIconResource(R.drawable.ic_play)
                 playerState = PlayerState.PREPARED
+                updatePlayButtonState()
+                mainThreadHandler.removeCallbacksAndMessages(null)
+                timeMusic30.text = TIME_START
             }
             mediaPlayer.setOnErrorListener { _, what, extra ->
                 Log.e(
                     "MusicPlayerActivity",
                     "Error occurred: what=$what, extra=$extra"
                 )
+                playerState = PlayerState.DEFAULT
+                updatePlayButtonState()
                 false
             }
         } catch (e: IOException) {
@@ -183,6 +196,16 @@ class MusicPlayerActivity : AppCompatActivity() {
                 "Error setting data source",
                 e
             )
+            playerState = PlayerState.DEFAULT
+            updatePlayButtonState()
+        }
+    }
+
+    private fun updatePlayButtonState() {
+        when (playerState) {
+            PlayerState.PLAYING -> playButton.setIconResource(R.drawable.pause_ic)
+            PlayerState.PREPARED, PlayerState.PAUSED -> playButton.setIconResource(R.drawable.ic_play)
+            else -> playButton.setIconResource(R.drawable.ic_play)
         }
     }
 
