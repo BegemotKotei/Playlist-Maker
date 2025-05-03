@@ -40,7 +40,7 @@
         android:layout_height="@dimen/o_0dp"
         android:layout_marginTop="@dimen/o_40dp"
         android:layout_marginBottom="@dimen/o_24dp"
-        app:layout_constraintBottom_toTopOf="@+id/tvNameMusic"
+        app:layout_constraintBottom_toTopOf="@id/tvNameMusic"
         app:layout_constraintEnd_toStartOf="@id/rightBorder"
         app:layout_constraintStart_toStartOf="@id/leftBorder"
         app:layout_constraintTop_toBottomOf="@id/ivBack"

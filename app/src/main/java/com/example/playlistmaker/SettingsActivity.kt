@@ -18,15 +18,7 @@ class SettingsActivity : AppCompatActivity() {
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setSupportActionBar(binding.toolBarSettings)
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        supportActionBar!!.setDisplayShowTitleEnabled(true)
-
-        ViewCompat.setOnApplyWindowInsetsListener(binding.toolBarSettings) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
+        setupToolBar()
 
         val sharedPrefs = getSharedPreferences(App.getThemePreferences(), MODE_PRIVATE)
         val themeDayOrNight = false
@@ -67,5 +59,26 @@ class SettingsActivity : AppCompatActivity() {
         binding.switchDayOrNight.setOnCheckedChangeListener { switcher, checked ->
             (applicationContext as App).switchTheme(checked)
         }
+
+        setupInsets()
+    }
+
+    private fun setupInsets() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val systemBar = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(
+                systemBar.left,
+                systemBar.top,
+                systemBar.right,
+                systemBar.bottom
+            )
+            insets
+        }
+    }
+
+    private fun setupToolBar() {
+        setSupportActionBar(binding.toolBarSettings)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        supportActionBar!!.setDisplayShowTitleEnabled(true)
     }
 }
