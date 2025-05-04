@@ -1,79 +1,61 @@
 package com.example.playlistmaker.presentation.player
 
-import android.media.MediaPlayer
+import android.os.Handler
+import android.os.Looper
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class MusicPlayerViewModel: ViewModel() {
-    private var mediaPlayer: MediaPlayer? = null
-    private var playerState = PlayerState.DEFAULT
-    private var currentPosition = 0
+class MusicPlayerViewModel : ViewModel() {
+
     private val dateFormat = SimpleDateFormat("mm:ss", Locale.getDefault())
 
-    fun initMediaPlayer(url: String?, onPrepared: () -> Unit, onCompletion: () -> Unit) {
-        if (url.isNullOrBlank()) return
+    private val _timerLiveData = MutableLiveData<String>()
+    val timerLiveData: LiveData<String>
+        get() = _timerLiveData
 
-        mediaPlayer?.release()
-        mediaPlayer = MediaPlayer().apply {
-            try {
-                setDataSource(url)
-                setOnPreparedListener {
-                    playerState = PlayerState.PREPARED
-                    onPrepared()
+    private val mainThreadHandler by lazy { Handler(Looper.getMainLooper()) }
+
+    private var playerPosition: Long = 0L
+
+    fun setPlayerPosition(position: Int) {
+        playerPosition = position.toLong()
+    }
+
+    private fun createUpdateTimerMusicTask(): Runnable {
+        return object : Runnable {
+            override fun run() {
+
+                if (playerPosition < MUSIC_TIME) {
+                    _timerLiveData.postValue(dateFormat.format(playerPosition).toString())
+                    mainThreadHandler.postDelayed(this, DELAY)
+                } else {
+                    _timerLiveData.postValue(TIME_START)
+                    mainThreadHandler.postDelayed(this, DELAY)
                 }
-                setOnCompletionListener {
-                    playerState = PlayerState.PREPARED
-                    onCompletion()
-                }
-                setOnErrorListener { _, _, _ ->
-                    false
-                }
-                prepareAsync()
-            } catch (e: IOException) {
-                playerState = PlayerState.DEFAULT
             }
         }
     }
 
-    fun playbackControl() {
-        when (playerState) {
-            PlayerState.PLAYING -> pausePlayer()
-            PlayerState.PREPARED, PlayerState.PAUSED -> startPlayer()
-            else -> Unit
+    fun startTimerMusic(playerState: PlayerState) {
+        if (playerState == PlayerState.PREPARED || playerState == PlayerState.PAUSED)
+            mainThreadHandler.post(
+                createUpdateTimerMusicTask()
+            ) else {
+            mainThreadHandler.removeCallbacksAndMessages(null)
         }
     }
 
-    fun getCurrentPosition(): String {
-        return mediaPlayer?.let {
-            dateFormat.format(it.currentPosition.toLong())
-        } ?: "00:00"
+    override fun onCleared() {
+        super.onCleared()
+        mainThreadHandler.removeCallbacksAndMessages(null)
     }
 
-    fun isPlaying() = playerState == PlayerState.PLAYING
-
-    fun getFormattedDate(inputDate: String?) = DateFormatter.formatReleaseDate(inputDate)
-
-    private fun startPlayer() {
-        mediaPlayer?.let {
-            it.seekTo(currentPosition)
-            it.start()
-            playerState = PlayerState.PLAYING
-        }
+    private companion object {
+        const val MUSIC_TIME = 29900
+        const val TIME_START = "00:00"
+        const val DELAY = 300L
     }
-
-    private fun pausePlayer() {
-        mediaPlayer?.let {
-            currentPosition = it.currentPosition
-            it.pause()
-            playerState = PlayerState.PAUSED
-        }
-    }
-
-    fun release() {
-        mediaPlayer?.release()
-        mediaPlayer = null
-    }
-
 }

@@ -9,19 +9,15 @@ import androidx.core.content.edit
 
 class SearchHistoryStorageImpl : SearchHistoryStorage {
 
-    override fun read(sharedPreferences: SharedPreferences): MutableList<TrackDto> {
-        val json = sharedPreferences.getString(HISTORY, null)
-        return if (json.isNullOrEmpty()) {
-            mutableListOf()
-        } else {
-            Gson().fromJson(json, Array<TrackDto>::class.java).toMutableList()
-        }
+    override fun read(sharedPreferences: SharedPreferences): ArrayList<TrackDto> {
+        val json = sharedPreferences.getString(HISTORY, null) ?: return ArrayList()
+        return Gson().fromJson(json, Array<TrackDto>::class.java).toCollection(ArrayList())
     }
 
     override fun addTrackToHistory(
         sharedPreferences: SharedPreferences,
         track: Track?
-    ): MutableList<TrackDto> {
+    ): ArrayList<TrackDto> {
         var trackList = read(sharedPreferences)
         val addTrackDto = TrackDto(
             track?.trackName.toString(),
@@ -45,7 +41,7 @@ class SearchHistoryStorageImpl : SearchHistoryStorage {
 
         // Ограничиваю размер истории
         if (trackList.size > MAX_HISTORY_SIZE) {
-            trackList = trackList.subList(0, MAX_HISTORY_SIZE - 1)
+            trackList = ArrayList(trackList.subList(0, MAX_HISTORY_SIZE))
         }
 
         setHistory(
@@ -57,23 +53,20 @@ class SearchHistoryStorageImpl : SearchHistoryStorage {
 
     override fun setHistory(
         sharedPreferences: SharedPreferences,
-        trackList: MutableList<TrackDto>
+        trackList: ArrayList<TrackDto>
     ) {
         val json = Gson().toJson(trackList)
-        sharedPreferences.edit() { putString(HISTORY, json) }
+        sharedPreferences.edit { putString(HISTORY, json) }
     }
 
-    override fun clearHistory(sharedPreferences: SharedPreferences) {
-        sharedPreferences.edit() { remove(HISTORY) }
+    override fun clearHistory(sharedPreferences: SharedPreferences): ArrayList<TrackDto> {
+        sharedPreferences.edit { remove(HISTORY) }
+        return ArrayList()
     }
 
     companion object {
         private const val HISTORY = "history"
-        private const val HISTORY_MAIN = "historyMain"
         private const val MAX_HISTORY_SIZE = 10
 
-        fun getHistoryMain(): String {
-            return HISTORY_MAIN
-        }
     }
 }

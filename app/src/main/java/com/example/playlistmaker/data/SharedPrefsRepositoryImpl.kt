@@ -6,53 +6,43 @@ import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.domain.sharedpref.SharedPrefsRepository
 
 class SharedPrefsRepositoryImpl(private val storage: SearchHistoryStorage) : SharedPrefsRepository {
+
     override fun saveReadClear(
         sharedPreferences: SharedPreferences,
         use: String,
         track: Track?
     ): ArrayList<Track> {
-        val answer = ArrayList<Track>()
-
-        when (use) {
-            USE_READ -> answer.addAll(trackDtoToTrack(storage.read(sharedPreferences)))
-            USE_WRITE -> answer.addAll(
-                trackDtoToTrack(
-                    storage.addTrackToHistory(
-                        sharedPreferences,
-                        track
-                    )
-                )
-            )
-
+        return when (use) {
+            USE_READ -> trackDtoToTrack(storage.read(sharedPreferences))
+            USE_WRITE -> trackDtoToTrack(storage.addTrackToHistory(sharedPreferences, track))
             USE_CLEAR -> {
                 storage.clearHistory(sharedPreferences)
-                answer.addAll(trackDtoToTrack(storage.read(sharedPreferences)))
+                ArrayList()
             }
+            else -> throw IllegalArgumentException("Unknown operation: $use")
         }
-        return answer
     }
 
-    private fun trackDtoToTrack(list: MutableList<TrackDto>): ArrayList<Track> {
-        val answer = list.map {
+    private fun trackDtoToTrack(list: List<TrackDto>): ArrayList<Track> {
+        return list.map { dto ->
             Track(
-                trackName = it.trackName,
-                artistName = it.artistName,
-                trackTimeMillis = it.trackTimeMillis,
-                artworkUrl100 = it.artworkUrl100,
-                trackId = it.trackId,
-                collectionName = it.collectionName,
-                releaseDate = it.releaseDate,
-                primaryGenreName = it.primaryGenreName,
-                country = it.country,
-                previewUrl = it.previewUrl
+                trackName = dto.trackName,
+                artistName = dto.artistName,
+                trackTimeMillis = dto.trackTimeMillis,
+                artworkUrl100 = dto.artworkUrl100,
+                trackId = dto.trackId,
+                collectionName = dto.collectionName,
+                releaseDate = dto.releaseDate,
+                primaryGenreName = dto.primaryGenreName,
+                country = dto.country,
+                previewUrl = dto.previewUrl
             )
-        }
-        return answer.toCollection(ArrayList())
+        }.toCollection(ArrayList())
     }
 
-    companion object {
-        private const val USE_CLEAR = "clear"
-        private const val USE_READ = "read"
-        private const val USE_WRITE = "write"
+    private companion object {
+        const val USE_CLEAR = "clear"
+        const val USE_READ = "read"
+        const val USE_WRITE = "write"
     }
 }
