@@ -1,8 +1,9 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation
 
 import android.app.Application
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.edit
 
 class App : Application() {
 
@@ -22,7 +23,7 @@ class App : Application() {
             if (darkThemeEnabled) AppCompatDelegate.MODE_NIGHT_YES
             else AppCompatDelegate.MODE_NIGHT_NO
         )
-        sharedPrefs.edit().putBoolean(DAY_NIGHT, darkTheme).apply()
+        sharedPrefs.edit { putBoolean(DAY_NIGHT, darkTheme) }
     }
 
     companion object {
