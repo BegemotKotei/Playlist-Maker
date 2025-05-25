@@ -1,6 +1,10 @@
-package com.example.playlistmaker.search.domain.models
+package com.example.playlistmaker.search.presentation.models
 
-data class Track(
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
+data class TrackUI(
     val trackName: String,
     val artistName: String,
     val trackTimeMillis: String,
@@ -11,4 +15,4 @@ data class Track(
     val primaryGenreName: String?,
     val country: String?,
     val previewUrl: String?
-)
+) : Parcelable

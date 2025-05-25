@@ -12,31 +12,39 @@ import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.domain.sharedpref.SharedPrefsInteractor
 
 class SearchActivityViewModel(
-    private val sharedPrefsInteractor: SharedPrefsInteractor
+    private val sharedPrefsInteractor: SharedPrefsInteractor,
+    private val tracksInteractor: TracksInteractor
 ) : ViewModel() {
-
-    private val _tracks = MutableLiveData<List<Track>>()
-    val tracks: LiveData<List<Track>>
-        get() = _tracks
-    private val _searchStatus = MutableLiveData<ResponseStatus>()
-    val searchStatus: LiveData<ResponseStatus>
-        get() = _searchStatus
-    private val interactorTracks = Creator.provideTracksInteractor()
-
-    fun searchTracks(trackName: String) {
-        interactorTracks.searchTracks(
-            trackName,
-            consumer = object : TracksInteractor.TracksConsumer {
-                override fun consume(foundTrack: List<Track>, status: ResponseStatus) {
-                    _searchStatus.postValue(status)
-                    _tracks.postValue(foundTrack)
-                }
-            })
-    }
-
+    private val _searchState = MutableLiveData<SearchState>()
+    val searchState: LiveData<SearchState>
+        get() = _searchState
     private val _tracksHistory = MutableLiveData<ArrayList<Track>>()
     val tracksHistory: LiveData<ArrayList<Track>>
         get() = _tracksHistory
+
+    fun searchTracks(trackName: String) {
+        _searchState.postValue(SearchState.Loading)
+
+        tracksInteractor.searchTracks(
+            trackName,
+            consumer = object : TracksInteractor.TracksConsumer {
+                override fun consume(foundTrack: List<Track>, status: ResponseStatus) {
+                    when (status) {
+                        ResponseStatus.SUCCESS -> {
+                            if (foundTrack.isEmpty()) {
+                                _searchState.postValue(SearchState.Empty)
+                            } else {
+                                _searchState.postValue(SearchState.Success(foundTrack))
+                            }
+                        }
+
+                        ResponseStatus.ERROR -> {
+                            _searchState.postValue(SearchState.Error(status))
+                        }
+                    }
+                }
+            })
+    }
 
     fun sharedPrefsWork(uses: String, track: Track? = null) {
         sharedPrefsInteractor.readWriteClear(
@@ -49,11 +57,14 @@ class SearchActivityViewModel(
             })
     }
 
+    @Suppress("UNCHECKED_CAST")
     class Factory(private val context: Context) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             val sharedPrefs = Creator.provideSharedPrefsInteractor(context)
+            val tracksInteractor = Creator.provideTracksInteractor()
             return SearchActivityViewModel(
-                sharedPrefsInteractor = sharedPrefs
+                sharedPrefsInteractor = sharedPrefs,
+                tracksInteractor = tracksInteractor
             ) as T
         }
     }

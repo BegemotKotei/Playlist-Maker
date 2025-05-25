@@ -13,7 +13,7 @@ import com.example.playlistmaker.databinding.ActivityMusicPlayerBinding
 import com.example.playlistmaker.dpToPx
 import com.example.playlistmaker.getRadiusCutImage
 import com.example.playlistmaker.parcelable
-import com.example.playlistmaker.search.domain.models.Track
+import com.example.playlistmaker.search.presentation.models.TrackUI
 
 class MusicPlayerActivity : AppCompatActivity() {
 
@@ -40,7 +40,7 @@ class MusicPlayerActivity : AppCompatActivity() {
     }
 
     private fun loadTrackData() {
-        intent.parcelable<Track>(TRACK_KEY)?.let { track ->
+        intent.parcelable<TrackUI>(TRACK_KEY)?.let { track ->
             url = track.previewUrl
             binding.tvNameMusic.text = track.trackName
             binding.tvGroupName.text = track.artistName

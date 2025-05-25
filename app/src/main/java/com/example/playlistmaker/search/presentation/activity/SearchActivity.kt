@@ -2,7 +2,6 @@ package com.example.playlistmaker.search.presentation.activity
 
 import android.app.Activity
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -11,15 +10,17 @@ import android.text.TextWatcher
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.example.playlistmaker.player.presentation.MusicPlayerActivity
-import com.example.playlistmaker.search.domain.models.ResponseStatus
-import com.example.playlistmaker.search.domain.models.Track
+import com.example.playlistmaker.search.presentation.mapper.TrackMapper
+import com.example.playlistmaker.search.presentation.models.TrackUI
 import com.example.playlistmaker.search.presentation.stateHolders.SearchActivityViewModel
+import com.example.playlistmaker.search.presentation.stateHolders.SearchState
 
 class SearchActivity : AppCompatActivity() {
 
@@ -30,13 +31,11 @@ class SearchActivity : AppCompatActivity() {
     private var isClickAllowed = true
     private val handler = Handler(Looper.getMainLooper())
     val adapter by lazy { TrackAdapter() }
-    private val viewModel: SearchActivityViewModel by viewModels{
+    private val viewModel: SearchActivityViewModel by viewModels {
         SearchActivityViewModel.Factory(this)
     }
-    private var searchStatus = ResponseStatus.SUCCESS
-    val historyTracks: ArrayList<Track> = arrayListOf()
+    private val historyTracks: ArrayList<TrackUI> = arrayListOf()
 
-    val tracks = ArrayList<Track>()
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(SEARCH, searchString)
@@ -53,40 +52,28 @@ class SearchActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         viewModel.sharedPrefsWork(USE_READ)
-        viewModel.tracksHistory.observe(this) {
+        viewModel.tracksHistory.observe(this) { track ->
             historyTracks.clear()
-            historyTracks.addAll(it)
+            historyTracks.addAll(
+                track.map {
+                    trackD ->
+                    TrackMapper.mapToTrackUI(trackD)
+                }
+            )
         }
 
-        viewModel.tracks.observe(this) {
-            tracks.clear()
-            when (searchStatus) {
-                ResponseStatus.SUCCESS -> {
-                    tracks.addAll(it)
-                    if (tracks.isNotEmpty()) {
-                        binding.progressBar.isVisible = false
-                        binding.rwTrack.isVisible = true
-                        showHistory = false
-                        adapter.data = tracks
-                    }
-                    if (tracks.isEmpty()) {
-                        binding.progressBar.isVisible = false
-                        binding.rwTrack.isVisible = false
-                        binding.llHolderNothingOrWrong.isVisible = true
-                        binding.ivSunOrWiFi.setImageResource(R.drawable.sun_ic)
-                        binding.tvTextHolder.setText(R.string.nothing)
-                        binding.btResearch.isVisible = false
-                    }
+        viewModel.searchState.observe(this) { state ->
+            when (state) {
+                is SearchState.Success -> {
+                    showSearchResults(
+                        state.tracks
+                            .map { TrackMapper.mapToTrackUI(it) }
+                    )
                 }
-
-                ResponseStatus.ERROR -> {
-                    showError()
-                }
+                is SearchState.Error -> showError()
+                SearchState.Loading -> showLoading()
+                SearchState.Empty -> showEmptyResults()
             }
-        }
-
-        viewModel.searchStatus.observe(this) {
-            searchStatus = it
         }
 
         fun clickDebounce(): Boolean {
@@ -98,11 +85,13 @@ class SearchActivity : AppCompatActivity() {
             return current
         }
 
-        adapter.onClick = { item ->
+        adapter.onClick = { trackUI ->
             if (clickDebounce()) {
-                viewModel.sharedPrefsWork(USE_WRITE, item)
-                val playerIntent = Intent(this@SearchActivity, MusicPlayerActivity::class.java)
-                playerIntent.putExtra(MusicPlayerActivity.getTrackKey(), item)
+                val domainTrack = TrackMapper.mapToTrack(trackUI)
+                viewModel.sharedPrefsWork(USE_WRITE, domainTrack)
+                val playerIntent = Intent(this@SearchActivity, MusicPlayerActivity::class.java).apply {
+                    putExtra(MusicPlayerActivity.getTrackKey(), trackUI)
+                }
                 startActivity(playerIntent)
             }
         }
@@ -155,7 +144,6 @@ class SearchActivity : AppCompatActivity() {
                     binding.llHolderNothingOrWrong.isVisible = false
                 } else {
                     showHistory = false
-                    adapter.data = tracks
                     binding.tvHistorySearch.isVisible = false
                     binding.bClearHistorySearch.isVisible = false
                     binding.llHolderNothingOrWrong.isVisible = false
@@ -174,7 +162,6 @@ class SearchActivity : AppCompatActivity() {
             val inputMethodManager =
                 getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
             inputMethodManager.hideSoftInputFromWindow(binding.etSearchText.windowToken, 0)
-            tracks.clear()
             showHistory = true
             adapter.data = historyTracks
         }
@@ -192,6 +179,34 @@ class SearchActivity : AppCompatActivity() {
         setupInsets()
     }
 
+    private fun showSearchResults(tracks: List<TrackUI>) {
+        binding.progressBar.isVisible = false
+        if (tracks.isNotEmpty()) {
+            binding.rwTrack.isVisible = true
+            showHistory = false
+            adapter.data = tracks as ArrayList<TrackUI>
+            binding.llHolderNothingOrWrong.isVisible = false
+        } else {
+            showEmptyResults()
+        }
+    }
+
+    private fun showEmptyResults() {
+        binding.progressBar.isVisible = false
+        binding.rwTrack.isVisible = false
+        binding.llHolderNothingOrWrong.isVisible = true
+        binding.ivSunOrWiFi.setImageResource(R.drawable.sun_ic)
+        binding.tvTextHolder.setText(R.string.nothing)
+        binding.btResearch.isVisible = false
+    }
+
+    private fun showLoading() {
+        binding.rwTrack.isVisible = false
+        binding.llHolderNothingOrWrong.isVisible = false
+        binding.btResearch.isVisible = false
+        binding.progressBar.isVisible = true
+    }
+
     private fun searchDebounce() {
         handler.removeCallbacks(searchRunnable)
         handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
@@ -200,10 +215,6 @@ class SearchActivity : AppCompatActivity() {
     private fun sendToServer() {
         if (binding.etSearchText.text.isNotBlank()) {
             viewModel.searchTracks(binding.etSearchText.text.toString())
-            binding.rwTrack.isVisible = false
-            binding.llHolderNothingOrWrong.isVisible = false
-            binding.btResearch.isVisible = false
-            binding.progressBar.isVisible = true
         }
     }
 
@@ -243,6 +254,5 @@ class SearchActivity : AppCompatActivity() {
         const val USE_CLEAR = "clear"
         const val USE_READ = "read"
         const val USE_WRITE = "write"
-
     }
 }

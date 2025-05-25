@@ -5,16 +5,16 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.databinding.TrackItemBinding
-import com.example.playlistmaker.search.domain.models.Track
+import com.example.playlistmaker.search.presentation.models.TrackUI
 
 class TrackAdapter : RecyclerView.Adapter<TrackViewHolder>() {
-    var data: ArrayList<Track> = arrayListOf()
+    var data: ArrayList<TrackUI> = arrayListOf()
         @SuppressLint("NotifyDataSetChanged")
         set(value) {
             field = value
             notifyDataSetChanged()
         }
-    var onClick: (Track) -> Unit = {}
+    var onClick: (TrackUI) -> Unit = {}
     override fun getItemCount(): Int {
         return data.size
     }
