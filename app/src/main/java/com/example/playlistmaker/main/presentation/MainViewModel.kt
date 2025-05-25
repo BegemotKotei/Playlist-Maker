@@ -22,7 +22,7 @@ class MainViewModel(private val settingsInteractor: SettingsInteractor) : ViewMo
     class Factory(private val context: Context): ViewModelProvider.Factory {
         override fun <T: ViewModel> create(modelClass: Class<T>): T {
             return MainViewModel(
-                SettingsInteractorImpl(Creator.settingRepository(context))
+                SettingsInteractorImpl(Creator.provideSettingsRepository(context))
             ) as T
         }
     }

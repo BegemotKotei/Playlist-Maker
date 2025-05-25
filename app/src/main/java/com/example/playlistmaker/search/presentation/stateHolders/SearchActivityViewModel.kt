@@ -51,7 +51,7 @@ class SearchActivityViewModel(
 
     class Factory(private val context: Context) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            val sharedPrefs = Creator.SharedPrefsInteractor(context)
+            val sharedPrefs = Creator.provideSharedPrefsInteractor(context)
             return SearchActivityViewModel(
                 sharedPrefsInteractor = sharedPrefs
             ) as T

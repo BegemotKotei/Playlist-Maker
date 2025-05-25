@@ -5,6 +5,7 @@ import com.example.playlistmaker.player.data.MediaPlayerInteractorImpl
 import com.example.playlistmaker.player.domain.MediaPlayerInteractor
 import com.example.playlistmaker.search.data.SharedPrefsRepositoryImpl
 import com.example.playlistmaker.search.data.TrackRepositoryImpl
+import com.example.playlistmaker.search.data.network.RetrofitConfig
 import com.example.playlistmaker.search.data.network.RetrofitNetworkClient
 import com.example.playlistmaker.search.data.sharedstorage.SearchHistoryStorageImpl
 import com.example.playlistmaker.search.domain.api.TracksInteractor
@@ -19,8 +20,9 @@ import com.example.playlistmaker.settings.domain.ExternalNavigator
 import com.example.playlistmaker.settings.domain.SettingsRepository
 
 object Creator {
+
     private fun getTracksRepository(): TracksRepository {
-        return TrackRepositoryImpl(RetrofitNetworkClient())
+        return TrackRepositoryImpl(RetrofitNetworkClient(RetrofitConfig().provideRetrofit()))
     }
 
     fun provideTracksInteractor(): TracksInteractor {
@@ -31,13 +33,13 @@ object Creator {
         return SharedPrefsRepositoryImpl(SearchHistoryStorageImpl(context))
     }
 
-    fun SharedPrefsInteractor(context: Context): SharedPrefsInteractor {
+    fun provideSharedPrefsInteractor(context: Context): SharedPrefsInteractor {
         return SharedPrefsInteractorImpl(getSharedPrefsRepository(context))
     }
 
-    fun settingRepository(context: Context): SettingsRepository = SettingsRepositoryImpl(context)
+    fun provideSettingsRepository(context: Context): SettingsRepository = SettingsRepositoryImpl(context)
 
-    fun externalNavigator(context: Context): ExternalNavigator = ExternalNavigatorImpl(context)
+    fun provideExternalNavigator(context: Context): ExternalNavigator = ExternalNavigatorImpl(context)
 
     fun provideMediaPlayerInteractor(): MediaPlayerInteractor {
         return MediaPlayerInteractorImpl()

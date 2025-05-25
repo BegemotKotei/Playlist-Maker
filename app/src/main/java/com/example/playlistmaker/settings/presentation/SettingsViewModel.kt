@@ -50,10 +50,10 @@ class SettingsViewModel(
 
     class Factory(private val context: Context) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            val settingsRepository = Creator.settingRepository(context)
+            val settingsRepository = Creator.provideSettingsRepository(context)
             return SettingsViewModel(
                 sharingInteractor = SharingInteractorImpl(
-                    externalNavigator = Creator.externalNavigator(context),
+                    externalNavigator = Creator.provideExternalNavigator(context),
                     settingsRepository = settingsRepository
                 ),
                 settingsInteractor = SettingsInteractorImpl(settingsRepository)
