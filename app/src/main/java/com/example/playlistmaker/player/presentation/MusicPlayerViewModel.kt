@@ -1,111 +1,133 @@
 package com.example.playlistmaker.player.presentation
 
-import android.media.MediaPlayer
 import android.os.Handler
 import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import com.example.playlistmaker.creator.Creator
+import com.example.playlistmaker.player.domain.MediaPlayerInteractor
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class MusicPlayerViewModel : ViewModel() {
+class MusicPlayerViewModel(
+    private val mediaPlayerInteractor: MediaPlayerInteractor
+) : ViewModel() {
 
     private val dateFormat = SimpleDateFormat("mm:ss", Locale.getDefault())
-
-    private var mediaPlayer = MediaPlayer()
-    private var mediaPlayerState = PlayerState.DEFAULT
-
-    private val _timerLiveData = MutableLiveData<String>()
-    val timerLiveData: LiveData<String>
-        get() = _timerLiveData
-
-    private val _playerState = MutableLiveData<PlayerState>()
-
-    val playerState: LiveData<PlayerState>
-        get() = _playerState
-
     private val mainThreadHandler by lazy { Handler(Looper.getMainLooper()) }
 
-    private var playerPosition: Long = 0L
-
-    fun setPlayerPosition() {
-        playerPosition = mediaPlayer.currentPosition.toLong()
+    private val _playerState = MutableLiveData<PlayerState>().apply {
+        value = PlayerState()
     }
+    val playerState: LiveData<PlayerState>
+        get() = _playerState
 
     private fun createUpdateTimerMusicTask(): Runnable {
         return object : Runnable {
             override fun run() {
+                val currentPosition = mediaPlayerInteractor.getCurrentPosition()
+                val currentTime = dateFormat.format(currentPosition)
 
-                if (playerPosition < MUSIC_TIME) {
-                    _timerLiveData.postValue(dateFormat.format(playerPosition).toString())
-                    mainThreadHandler.postDelayed(this, DELAY)
+                if (currentPosition < MUSIC_TIME) {
+                    _playerState.postValue(
+                        _playerState.value?.copy(
+                            currentTime = currentTime
+                        )
+                    )
                 } else {
-                    _timerLiveData.postValue(TIME_START)
+                    mediaPlayerInteractor.seekTo(0)
+                    mediaPlayerInteractor.pause()
+                    _playerState.postValue(
+                        PlayerState(
+                            state = PlayerState.State.PREPARED,
+                            currentTime = "00:00"
+                        )
+                    )
+                }
+                if (mediaPlayerInteractor.isPlaying()) {
                     mainThreadHandler.postDelayed(this, DELAY)
                 }
             }
         }
     }
 
-    fun startTimerMusic() {
-        if (mediaPlayerState == PlayerState.PREPARED || mediaPlayerState == PlayerState.PAUSED)
-            mainThreadHandler.post(
-                createUpdateTimerMusicTask()
-            ) else {
-            mainThreadHandler.removeCallbacksAndMessages(null)
-        }
+    private fun startTimerMusic() {
+        mainThreadHandler.post(createUpdateTimerMusicTask())
     }
 
     override fun onCleared() {
         super.onCleared()
-        mainThreadHandler.removeCallbacksAndMessages(null)
+        releasePlayer()
     }
 
     fun preparePlayer(url: String) {
-        mediaPlayer.setDataSource(url)
-        mediaPlayer.prepareAsync()
-        mediaPlayer.setOnPreparedListener {
-            mediaPlayerState = PlayerState.PREPARED
-        }
-
-        mediaPlayer.setOnCompletionListener {
-            _playerState.postValue(mediaPlayerState)
-            mediaPlayerState = PlayerState.PREPARED
+        try {
+            mediaPlayerInteractor.prepare(
+                url = url,
+                onPrepared = {
+                    _playerState.postValue(PlayerState(state = PlayerState.State.PREPARED))
+                },
+                onCompletion = {
+                    _playerState.postValue(
+                        PlayerState(
+                            state = PlayerState.State.PREPARED,
+                            currentTime = "00:00"
+                        )
+                    )
+                }
+            )
+        } catch (e: Exception) {
+            _playerState.postValue(PlayerState(state = PlayerState.State.DEFAULT))
         }
     }
 
     private fun startPlayer() {
-        mediaPlayer.start()
-        _playerState.postValue(mediaPlayerState)
-        mediaPlayerState = PlayerState.PLAYING
+        mediaPlayerInteractor.start()
+        _playerState.postValue(
+            _playerState.value?.copy(
+                state = PlayerState.State.PLAYING
+            )
+        )
+        startTimerMusic()
     }
 
     fun pausePlayer() {
-        mediaPlayer.pause()
-        _playerState.postValue(mediaPlayerState)
-        mediaPlayerState = PlayerState.PAUSED
+        mediaPlayerInteractor.pause()
+        _playerState.postValue(
+            _playerState.value?.copy(
+                state = PlayerState.State.PAUSED
+            )
+        )
     }
 
-    fun mediaPlayerRelease() {
-        mediaPlayer.release()
+    fun releasePlayer() {
+        mainThreadHandler.removeCallbacksAndMessages(null)
+        mediaPlayerInteractor.release()
+        _playerState.postValue(PlayerState())
     }
 
     fun playbackControl() {
-        when (mediaPlayerState) {
-            PlayerState.PLAYING -> {
-                pausePlayer()
-            }
+        when (_playerState.value?.state) {
+            PlayerState.State.PLAYING -> pausePlayer()
+            PlayerState.State.PREPARED,
+            PlayerState.State.PAUSED -> startPlayer()
 
-            PlayerState.PREPARED, PlayerState.PAUSED -> {
-                startPlayer()
-            }
             else -> Unit
         }
     }
+
+    class Factory : ViewModelProvider.Factory {
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            val mediaPlayerInteractor = Creator.provideMediaPlayerInteractor()
+            return MusicPlayerViewModel(mediaPlayerInteractor) as T
+        }
+    }
+
     private companion object {
         const val MUSIC_TIME = 29900
-        const val TIME_START = "00:00"
         const val DELAY = 300L
     }
 }

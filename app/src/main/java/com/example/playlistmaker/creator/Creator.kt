@@ -1,6 +1,8 @@
 package com.example.playlistmaker.creator
 
 import android.content.Context
+import com.example.playlistmaker.player.data.MediaPlayerInteractorImpl
+import com.example.playlistmaker.player.domain.MediaPlayerInteractor
 import com.example.playlistmaker.search.data.SharedPrefsRepositoryImpl
 import com.example.playlistmaker.search.data.TrackRepositoryImpl
 import com.example.playlistmaker.search.data.network.RetrofitNetworkClient
@@ -36,4 +38,8 @@ object Creator {
     fun settingRepository(context: Context): SettingsRepository = SettingsRepositoryImpl(context)
 
     fun externalNavigator(context: Context): ExternalNavigator = ExternalNavigatorImpl(context)
+
+    fun provideMediaPlayerInteractor(): MediaPlayerInteractor {
+        return MediaPlayerInteractorImpl()
+    }
 }
