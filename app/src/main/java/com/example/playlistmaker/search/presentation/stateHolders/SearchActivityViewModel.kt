@@ -18,12 +18,10 @@ class SearchActivityViewModel(
     private val _searchState = MutableLiveData<SearchState>()
     val searchState: LiveData<SearchState>
         get() = _searchState
-    private val _tracksHistory = MutableLiveData<ArrayList<Track>>()
-    val tracksHistory: LiveData<ArrayList<Track>>
-        get() = _tracksHistory
+    private var currentHistory: List<Track> = emptyList()
 
     fun searchTracks(trackName: String) {
-        _searchState.postValue(SearchState.Loading)
+        _searchState.postValue(SearchState.Loading(currentHistory))
 
         tracksInteractor.searchTracks(
             trackName,
@@ -32,14 +30,14 @@ class SearchActivityViewModel(
                     when (status) {
                         ResponseStatus.SUCCESS -> {
                             if (foundTrack.isEmpty()) {
-                                _searchState.postValue(SearchState.Empty)
+                                _searchState.postValue(SearchState.Empty(currentHistory))
                             } else {
-                                _searchState.postValue(SearchState.Success(foundTrack))
+                                _searchState.postValue(SearchState.Success(foundTrack, currentHistory))
                             }
                         }
 
                         ResponseStatus.ERROR -> {
-                            _searchState.postValue(SearchState.Error(status))
+                            _searchState.postValue(SearchState.Error(status, currentHistory))
                         }
                     }
                 }
@@ -52,7 +50,16 @@ class SearchActivityViewModel(
             track,
             consumer = object : SharedPrefsInteractor.SharedPrefsConsumer {
                 override fun consume(foundSharedPrefs: ArrayList<Track>) {
-                    _tracksHistory.postValue(foundSharedPrefs)
+                    currentHistory = foundSharedPrefs
+                    _searchState.value?.let { currentState ->
+                        val newState = when (currentState) {
+                            is SearchState.Success -> currentState.copy(history = foundSharedPrefs)
+                            is SearchState.Error -> currentState.copy(history = foundSharedPrefs)
+                            is SearchState.Loading -> SearchState.Loading(foundSharedPrefs)
+                            is SearchState.Empty -> SearchState.Empty(foundSharedPrefs)
+                        }
+                        _searchState.postValue(newState)
+                    }
                 }
             })
     }

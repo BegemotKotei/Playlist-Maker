@@ -7,12 +7,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.creator.Creator
-import com.example.playlistmaker.player.domain.MediaPlayerInteractor
+import com.example.playlistmaker.player.domain.api.PlayerInteractor
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 class MusicPlayerViewModel(
-    private val mediaPlayerInteractor: MediaPlayerInteractor
+    private val playerInteractor: PlayerInteractor
 ) : ViewModel() {
 
     private val dateFormat = SimpleDateFormat("mm:ss", Locale.getDefault())
@@ -27,7 +27,7 @@ class MusicPlayerViewModel(
     private fun createUpdateTimerMusicTask(): Runnable {
         return object : Runnable {
             override fun run() {
-                val currentPosition = mediaPlayerInteractor.getCurrentPosition()
+                val currentPosition = playerInteractor.getCurrentPosition()
                 val currentTime = dateFormat.format(currentPosition)
 
                 if (currentPosition < MUSIC_TIME) {
@@ -37,8 +37,8 @@ class MusicPlayerViewModel(
                         )
                     )
                 } else {
-                    mediaPlayerInteractor.seekTo(0)
-                    mediaPlayerInteractor.pause()
+                    playerInteractor.seekTo(0)
+                    playerInteractor.playPause()
                     _playerState.postValue(
                         PlayerState(
                             state = PlayerState.State.PREPARED,
@@ -46,7 +46,7 @@ class MusicPlayerViewModel(
                         )
                     )
                 }
-                if (mediaPlayerInteractor.isPlaying()) {
+                if (playerInteractor.isPlaying()) {
                     mainThreadHandler.postDelayed(this, DELAY)
                 }
             }
@@ -64,7 +64,7 @@ class MusicPlayerViewModel(
 
     fun preparePlayer(url: String) {
         try {
-            mediaPlayerInteractor.prepare(
+            playerInteractor.prepareTrack(
                 url = url,
                 onPrepared = {
                     _playerState.postValue(PlayerState(state = PlayerState.State.PREPARED))
@@ -84,7 +84,7 @@ class MusicPlayerViewModel(
     }
 
     private fun startPlayer() {
-        mediaPlayerInteractor.start()
+        playerInteractor.play()
         _playerState.postValue(
             _playerState.value?.copy(
                 state = PlayerState.State.PLAYING
@@ -94,7 +94,7 @@ class MusicPlayerViewModel(
     }
 
     fun pausePlayer() {
-        mediaPlayerInteractor.pause()
+        playerInteractor.pause()
         _playerState.postValue(
             _playerState.value?.copy(
                 state = PlayerState.State.PAUSED
@@ -104,7 +104,7 @@ class MusicPlayerViewModel(
 
     fun releasePlayer() {
         mainThreadHandler.removeCallbacksAndMessages(null)
-        mediaPlayerInteractor.release()
+        playerInteractor.releasePlayer()
         _playerState.postValue(PlayerState())
     }
 
@@ -121,8 +121,8 @@ class MusicPlayerViewModel(
     class Factory : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            val mediaPlayerInteractor = Creator.provideMediaPlayerInteractor()
-            return MusicPlayerViewModel(mediaPlayerInteractor) as T
+            val playerInteractor = Creator.providePlayerInteractor()
+            return MusicPlayerViewModel(playerInteractor) as T
         }
     }
 
