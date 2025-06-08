@@ -1,7 +1,6 @@
 package com.example.playlistmaker.player.presentation
 
 import android.os.Bundle
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -9,19 +8,18 @@ import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
+import com.example.playlistmaker.app.dpToPx
+import com.example.playlistmaker.app.getRadiusCutImage
+import com.example.playlistmaker.app.parcelable
 import com.example.playlistmaker.databinding.ActivityMusicPlayerBinding
-import com.example.playlistmaker.dpToPx
-import com.example.playlistmaker.getRadiusCutImage
-import com.example.playlistmaker.parcelable
 import com.example.playlistmaker.search.presentation.models.TrackUI
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MusicPlayerActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMusicPlayerBinding
     private var url: String? = null
-    private val viewModel by viewModels<MusicPlayerViewModel> {
-        MusicPlayerViewModel.Factory()
-    }
+    private val viewModel: MusicPlayerViewModel by viewModel<MusicPlayerViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

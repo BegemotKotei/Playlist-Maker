@@ -8,7 +8,7 @@ import com.example.playlistmaker.settings.domain.ExternalNavigator
 class ExternalNavigatorImpl(private val context: Context) : ExternalNavigator {
 
     override fun shareLink(link: String) {
-        val intent = Intent().apply {
+        val intent = Intent().setFlags(Intent.FLAG_ACTIVITY_NEW_TASK).apply {
             action = Intent.ACTION_SEND
             putExtra(Intent.EXTRA_TEXT, link)
             type = "text/plain"
@@ -28,8 +28,8 @@ class ExternalNavigatorImpl(private val context: Context) : ExternalNavigator {
     }
 
     override fun userPolicy(link: String) {
-        val userPolicyOpen =
-            Intent(Intent.ACTION_VIEW, link.toUri())
+        val userPolicyOpen = Intent(Intent.ACTION_VIEW, link.toUri())
+        userPolicyOpen.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         context.startActivity(userPolicyOpen)
     }
 }
