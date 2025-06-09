@@ -9,7 +9,6 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -21,6 +20,7 @@ import com.example.playlistmaker.search.presentation.mapper.TrackMapper
 import com.example.playlistmaker.search.presentation.models.TrackUI
 import com.example.playlistmaker.search.presentation.stateHolders.SearchActivityViewModel
 import com.example.playlistmaker.search.presentation.stateHolders.SearchState
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity() {
 
@@ -32,9 +32,7 @@ class SearchActivity : AppCompatActivity() {
     private var currentHistory: List<TrackUI> = emptyList()
     private val handler = Handler(Looper.getMainLooper())
     private val adapter by lazy { TrackAdapter() }
-    private val viewModel: SearchActivityViewModel by viewModels {
-        SearchActivityViewModel.Factory(this)
-    }
+    private val viewModel: SearchActivityViewModel by viewModel<SearchActivityViewModel>()
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)

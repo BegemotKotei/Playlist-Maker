@@ -2,17 +2,15 @@ package com.example.playlistmaker.settings.presentation
 
 import android.content.res.Configuration
 import android.os.Bundle
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.playlistmaker.databinding.ActivitySettingsBinding
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingActivity : AppCompatActivity() {
-    private val viewModel: SettingsViewModel by viewModels {
-        SettingsViewModel.Factory(this)
-    }
+    private val viewModel: SettingsViewModel by viewModel<SettingsViewModel>()
     private lateinit var binding: ActivitySettingsBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,7 +67,7 @@ class SettingActivity : AppCompatActivity() {
     }
 
     private fun setupInsets() {
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) {v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             val systemBar = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(
                 systemBar.left,

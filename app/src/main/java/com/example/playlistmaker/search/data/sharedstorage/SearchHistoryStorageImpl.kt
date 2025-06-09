@@ -2,18 +2,20 @@ package com.example.playlistmaker.search.data.sharedstorage
 
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
+import android.content.SharedPreferences
 import androidx.core.content.edit
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.data.SearchHistoryStorage
 import com.example.playlistmaker.search.data.dto.TrackDto
 import com.google.gson.Gson
 
-class SearchHistoryStorageImpl(private val context: Context) : SearchHistoryStorage {
+class SearchHistoryStorageImpl(
+    private val sharedPreferences: SharedPreferences,
+    private val gson: Gson): SearchHistoryStorage {
 
     override fun read(): ArrayList<TrackDto> {
-        val sharedPreferences = context.getSharedPreferences(HISTORY_MAIN, MODE_PRIVATE)
         val json = sharedPreferences.getString(HISTORY, null) ?: return ArrayList()
-        return Gson().fromJson(json, Array<TrackDto>::class.java).toCollection(ArrayList())
+        return gson.fromJson(json, Array<TrackDto>::class.java).toCollection(ArrayList())
     }
 
     override fun addTrackToHistory(
@@ -54,20 +56,17 @@ class SearchHistoryStorageImpl(private val context: Context) : SearchHistoryStor
     override fun setHistory(
         trackList: ArrayList<TrackDto>
     ) {
-        val sharedPreferences = context.getSharedPreferences(HISTORY_MAIN, MODE_PRIVATE)
         val json = Gson().toJson(trackList)
         sharedPreferences.edit { putString(HISTORY, json) }
     }
 
     override fun clearHistory(): ArrayList<TrackDto> {
-        val sharedPreferences = context.getSharedPreferences(HISTORY_MAIN, MODE_PRIVATE)
         sharedPreferences.edit { remove(HISTORY) }
         return ArrayList()
     }
 
     private companion object {
         const val HISTORY = "history"
-        const val HISTORY_MAIN = "historyMain"
         const val MAX_HISTORY_SIZE = 10
 
     }

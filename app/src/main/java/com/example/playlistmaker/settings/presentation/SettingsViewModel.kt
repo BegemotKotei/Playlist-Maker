@@ -1,15 +1,10 @@
 package com.example.playlistmaker.settings.presentation
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.settings.domain.SettingsInteractor
 import com.example.playlistmaker.settings.domain.SharingInteractor
-import com.example.playlistmaker.settings.domain.impl.SettingsInteractorImpl
-import com.example.playlistmaker.settings.domain.impl.SharingInteractorImpl
 
 class SettingsViewModel(
     private val sharingInteractor: SharingInteractor,
@@ -46,20 +41,4 @@ class SettingsViewModel(
     fun userPolicy() {
         sharingInteractor.openTerms()
     }
-
-
-    @Suppress("UNCHECKED_CAST")
-    class Factory(private val context: Context) : ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            val settingsRepository = Creator.provideSettingsRepository(context)
-            return SettingsViewModel(
-                sharingInteractor = SharingInteractorImpl(
-                    externalNavigator = Creator.provideExternalNavigator(context),
-                    settingsRepository = settingsRepository
-                ),
-                settingsInteractor = SettingsInteractorImpl(settingsRepository)
-            ) as T
-        }
-    }
-
 }

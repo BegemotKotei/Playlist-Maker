@@ -5,8 +5,6 @@ import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -115,14 +113,6 @@ class MusicPlayerViewModel(
             PlayerState.State.PAUSED -> startPlayer()
 
             else -> Unit
-        }
-    }
-
-    class Factory : ViewModelProvider.Factory {
-        @Suppress("UNCHECKED_CAST")
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            val playerInteractor = Creator.providePlayerInteractor()
-            return MusicPlayerViewModel(playerInteractor) as T
         }
     }
 

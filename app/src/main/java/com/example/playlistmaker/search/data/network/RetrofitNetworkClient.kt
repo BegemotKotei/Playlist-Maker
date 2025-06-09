@@ -6,11 +6,7 @@ import com.example.playlistmaker.search.data.dto.TrackSearchRequest
 import retrofit2.HttpException
 import retrofit2.Retrofit
 
-class RetrofitNetworkClient(
-    private val retrofit: Retrofit
-) : NetworkClient {
-
-    private val iTunesApi = retrofit.create(iTunesApi::class.java)
+class RetrofitNetworkClient(private val iTunesApi: iTunesApi) : NetworkClient {
 
     override fun doRequest(dto: Any): Response {
         try {

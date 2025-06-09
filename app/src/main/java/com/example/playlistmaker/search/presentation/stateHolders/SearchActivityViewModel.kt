@@ -1,11 +1,8 @@
 package com.example.playlistmaker.search.presentation.stateHolders
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.search.domain.api.TracksInteractor
 import com.example.playlistmaker.search.domain.models.ResponseStatus
 import com.example.playlistmaker.search.domain.models.Track
@@ -32,7 +29,12 @@ class SearchActivityViewModel(
                             if (foundTrack.isEmpty()) {
                                 _searchState.postValue(SearchState.Empty(currentHistory))
                             } else {
-                                _searchState.postValue(SearchState.Success(foundTrack, currentHistory))
+                                _searchState.postValue(
+                                    SearchState.Success(
+                                        foundTrack,
+                                        currentHistory
+                                    )
+                                )
                             }
                         }
 
@@ -62,17 +64,5 @@ class SearchActivityViewModel(
                     }
                 }
             })
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    class Factory(private val context: Context) : ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            val sharedPrefs = Creator.provideSharedPrefsInteractor(context)
-            val tracksInteractor = Creator.provideTracksInteractor()
-            return SearchActivityViewModel(
-                sharedPrefsInteractor = sharedPrefs,
-                tracksInteractor = tracksInteractor
-            ) as T
-        }
     }
 }
