@@ -1,6 +1,7 @@
 package com.example.playlistmaker.di
 
 import android.content.Context
+import android.media.AudioAttributes
 import android.media.MediaPlayer
 import com.example.playlistmaker.search.data.NetworkClient
 import com.example.playlistmaker.search.data.SearchHistoryStorage
@@ -21,7 +22,7 @@ val dataModule = module {
     single<NetworkClient> {
         RetrofitNetworkClient(get())
     }
-    single<MediaPlayer> {
+    factory<MediaPlayer> {
         MediaPlayer()
     }
     single { provideOkHttpClient() }

@@ -26,7 +26,7 @@ val repositoryModule = module {
     single<TracksRepository> {
         TracksRepositoryImpl(networkClient = get())
     }
-    single<MediaPlayerRepository> {
+    factory<MediaPlayerRepository> {
         MediaPlayerRepositoryImpl(mediaPlayer = get())
     }
 }
