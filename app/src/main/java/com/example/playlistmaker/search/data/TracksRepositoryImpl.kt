@@ -9,7 +9,7 @@ import com.example.playlistmaker.search.data.dto.TrackSearchRequest
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class TrackRepositoryImpl(private val networkClient: NetworkClient) : TracksRepository {
+class TracksRepositoryImpl(private val networkClient: NetworkClient) : TracksRepository {
 
     override fun searchTracks(expression: String): TrackResults {
         val response = networkClient.doRequest(TrackSearchRequest(expression))
