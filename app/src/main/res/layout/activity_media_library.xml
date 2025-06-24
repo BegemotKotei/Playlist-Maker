@@ -15,4 +15,20 @@
         android:layout_height="wrap_content"
         app:title="@string/media_library" />
 
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/blackOrWhite"
+        app:tabIndicatorColor="@color/whiteOrBlack"
+        app:tabRippleColor="@color/whiteOrBlack"
+        app:tabTextAppearance="@style/TabStyle"
+        app:tabTextColor="@color/whiteOrBlack" />
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/o_0dp"
+        android:layout_weight="1" />
+
 </LinearLayout>

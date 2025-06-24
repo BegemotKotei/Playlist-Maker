@@ -2,6 +2,7 @@
 <resources>
     <dimen name="r_18sp">18sp</dimen>
     <dimen name="o_12sp">12sp</dimen>
+    <dimen name="o_14sp">14sp</dimen>
     <dimen name="o_16sp">16sp</dimen>
     <dimen name="o_18sp">18sp</dimen>
     <dimen name="o_24sp">24sp</dimen>
@@ -20,4 +21,5 @@
     <dimen name="o_48dp">48dp</dimen>
     <dimen name="o_52dp">52dp</dimen>
     <dimen name="o_84dp">84dp</dimen>
+    <dimen name="o_106dp">106dp</dimen>
 </resources>
