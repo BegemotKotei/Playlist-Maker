@@ -7,7 +7,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.playlistmaker.databinding.ActivityMainBinding
-import com.example.playlistmaker.media.presentation.MediaLibraryActivity
+import com.example.playlistmaker.media.presentation.activity.MediaLibraryActivity
 import com.example.playlistmaker.search.presentation.activity.SearchActivity
 import com.example.playlistmaker.settings.presentation.SettingActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
