@@ -8,6 +8,13 @@
     android:orientation="vertical"
     tools:context=".search.presentation.fragment.SearchFragment">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/tool_bar_search"
+        style="@style/Toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:title="@string/search" />
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

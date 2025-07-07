@@ -6,7 +6,14 @@
     android:layout_height="match_parent"
     android:background="@color/blackOrWhite"
     android:orientation="vertical"
-    tools:context=".settings.presentation.fragment.SettingsFragment">
+    tools:context=".settings.presentation.SettingsFragment">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/tool_bar_settings"
+        style="@style/Toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:title="@string/settings" />
 
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/switch_day_or_night"
