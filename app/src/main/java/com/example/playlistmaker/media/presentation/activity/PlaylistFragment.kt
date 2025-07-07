@@ -9,28 +9,35 @@ import androidx.fragment.app.viewModels
 import com.example.playlistmaker.databinding.FragmentPlaylistBinding
 import com.example.playlistmaker.media.presentation.viewModel.PlayListViewModel
 
-class FragmentPlaylist : Fragment() {
+class PlaylistFragment : Fragment() {
 
     private val viewModel: PlayListViewModel by viewModels<PlayListViewModel>()
-    private lateinit var binding: FragmentPlaylistBinding
+    private var _binding: FragmentPlaylistBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentPlaylistBinding.inflate(inflater, container, false)
-        return binding.root
+        _binding = FragmentPlaylistBinding.inflate(inflater, container, false)
+        val view = binding.root
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     companion object {
         private const val PLAYLIST_NUMBER = "playlist_number"
 
-        fun newInstance() = FragmentPlaylist().apply {
+        fun newInstance() = PlaylistFragment().apply {
             arguments = Bundle().apply {
                 putInt(PLAYLIST_NUMBER, 1)
             }
