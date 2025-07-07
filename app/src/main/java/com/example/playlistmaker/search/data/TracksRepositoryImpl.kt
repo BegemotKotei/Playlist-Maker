@@ -15,8 +15,12 @@ class TracksRepositoryImpl(private val networkClient: NetworkClient) : TracksRep
         val response = networkClient.doRequest(TrackSearchRequest(expression))
         return if (response.resultCode == 200) {
             TrackResults(
-                status = ResponseStatus.SUCCESS,
-                data = (response as TrackResponse).results.map {
+                status = if ((response as TrackResponse).results.isEmpty()) {
+                    ResponseStatus.EMPTY
+                } else {
+                    ResponseStatus.SUCCESS
+                },
+                data = response.results.map {
                     Track(
                         trackName = it.trackName,
                         artistName = it.artistName,

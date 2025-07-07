@@ -61,6 +61,9 @@ class MusicPlayerViewModel(
     }
 
     fun preparePlayer(url: String) {
+        if (playerInteractor.isPlaying()) {
+            playerInteractor.releasePlayer()
+        }
         try {
             playerInteractor.prepareTrack(
                 url = url,
@@ -93,6 +96,7 @@ class MusicPlayerViewModel(
 
     fun pausePlayer() {
         playerInteractor.pause()
+        mainThreadHandler.removeCallbacksAndMessages(null)
         _playerState.postValue(
             _playerState.value?.copy(
                 state = PlayerState.State.PAUSED

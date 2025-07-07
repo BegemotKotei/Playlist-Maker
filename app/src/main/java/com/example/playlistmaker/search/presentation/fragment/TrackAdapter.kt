@@ -1,4 +1,4 @@
-package com.example.playlistmaker.search.presentation.activity
+package com.example.playlistmaker.search.presentation.fragment
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -8,7 +8,7 @@ import com.example.playlistmaker.databinding.TrackItemBinding
 import com.example.playlistmaker.search.presentation.models.TrackUI
 
 class TrackAdapter : RecyclerView.Adapter<TrackViewHolder>() {
-    var data: ArrayList<TrackUI> = arrayListOf()
+    var data: List<TrackUI> = emptyList()
         @SuppressLint("NotifyDataSetChanged")
         set(value) {
             field = value

@@ -5,14 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/blackOrWhite"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".settings.presentation.SettingsFragment">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/tool_bar_settings"
         style="@style/Toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:navigationIcon="@drawable/arrow_back"
         app:title="@string/settings" />
 
     <com.google.android.material.switchmaterial.SwitchMaterial
@@ -21,16 +21,16 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginTop="@dimen/o_24dp"
+        android:fontFamily="@font/ys_display_regular"
         android:paddingStart="@dimen/o_16dp"
         android:paddingTop="@dimen/o_20dp"
         android:paddingEnd="@dimen/o_6dp"
         android:paddingBottom="@dimen/o_20dp"
         android:text="@string/dark_mode"
-        android:textColor="@color/whiteOrBlack"
-        android:textSize="@dimen/o_16sp"
-        android:fontFamily="@font/ys_display_regular"
-        android:textFontWeight="400"
         android:textAllCaps="false"
+        android:textColor="@color/whiteOrBlack"
+        android:textFontWeight="400"
+        android:textSize="@dimen/o_16sp"
         app:thumbTint="@color/greyOrBlue"
         app:trackTint="@color/greyOrBlue1"
         app:useMaterialThemeColors="false"

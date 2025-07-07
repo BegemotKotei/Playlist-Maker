@@ -1,4 +1,4 @@
-package com.example.playlistmaker.media.presentation.activity
+package com.example.playlistmaker.media.presentation.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,13 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.example.playlistmaker.databinding.FragmentPlaylistBinding
-import com.example.playlistmaker.media.presentation.viewModel.PlayListViewModel
+import com.example.playlistmaker.databinding.FragmentLikeMusicBinding
+import com.example.playlistmaker.media.presentation.viewModel.LikeMusicViewModel
 
-class PlaylistFragment : Fragment() {
+class LikeMusicFragment : Fragment() {
 
-    private val viewModel: PlayListViewModel by viewModels<PlayListViewModel>()
-    private var _binding: FragmentPlaylistBinding? = null
+    private val viewModel: LikeMusicViewModel by viewModels<LikeMusicViewModel>()
+    private var _binding: FragmentLikeMusicBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -20,7 +20,7 @@ class PlaylistFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentPlaylistBinding.inflate(inflater, container, false)
+        _binding = FragmentLikeMusicBinding.inflate(inflater, container, false)
         val view = binding.root
         return view
     }
@@ -35,11 +35,11 @@ class PlaylistFragment : Fragment() {
     }
 
     companion object {
-        private const val PLAYLIST_NUMBER = "playlist_number"
+        private const val LIKE_MUSIC_NUMBER = "like_music_number"
 
-        fun newInstance() = PlaylistFragment().apply {
+        fun newInstance() = LikeMusicFragment().apply {
             arguments = Bundle().apply {
-                putInt(PLAYLIST_NUMBER, 1)
+                putInt(LIKE_MUSIC_NUMBER, 1)
             }
         }
     }
