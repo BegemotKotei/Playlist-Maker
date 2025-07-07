@@ -1,57 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/blackOrBlue"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/tvApp_name"
-        android:layout_width="match_parent"
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/rootFragmentContainerView"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:defaultNavHost="true"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigationView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:navGraph="@navigation/main_navigation_graph" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigationView"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/o_16dp"
-        android:layout_marginTop="@dimen/o_12dp"
-        android:text="@string/app_name"
-        android:textAppearance="@style/MainTitle" />
-
-    <Button
-        android:id="@+id/buttonPanelSearch"
-        style="@style/MainButtonStyle"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/o_0dp"
-        android:layout_marginHorizontal="@dimen/o_16dp"
-        android:layout_marginTop="24dp"
-        android:layout_weight="3"
-        android:text="@string/search"
-        app:icon="@drawable/search"
-        tools:ignore="DuplicateIds" />
-
-
-    <Button
-        android:id="@+id/buttonPanelMediaLibrary"
-        style="@style/MainButtonStyle"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/o_0dp"
-        android:layout_marginHorizontal="@dimen/o_16dp"
-        android:layout_marginTop="@dimen/o_16dp"
-        android:layout_weight="3"
-        android:text="@string/media_library"
-        app:icon="@drawable/media_library"
-        tools:ignore="DuplicateIds" />
-
-    <Button
-        android:id="@+id/buttonPanelSettings"
-        style="@style/MainButtonStyle"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/o_0dp"
-        android:layout_marginHorizontal="@dimen/o_16dp"
-        android:layout_marginTop="@dimen/o_16dp"
-        android:layout_marginBottom="28dp"
-        android:layout_weight="3"
-        android:text="@string/settings"
-        app:icon="@drawable/settings"
-        tools:ignore="DuplicateIds" />
-
-</LinearLayout>
+        app:backgroundTint="@color/blackOrWhite"
+        app:itemIconTint="@drawable/bottom_nav_selector"
+        app:itemTextColor="@drawable/bottom_nav_selector"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/bottom_navigation_menu" />
+</androidx.constraintlayout.widget.ConstraintLayout>
