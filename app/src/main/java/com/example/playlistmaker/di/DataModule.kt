@@ -1,7 +1,6 @@
 package com.example.playlistmaker.di
 
 import android.content.Context
-import android.media.AudioAttributes
 import android.media.MediaPlayer
 import com.example.playlistmaker.search.data.NetworkClient
 import com.example.playlistmaker.search.data.SearchHistoryStorage
@@ -40,7 +39,7 @@ val dataModule = module {
 private const val HISTORY_MAIN = "historyMain"
 private const val BASE_URL = "https://itunes.apple.com"
 private fun provideITunesApi(builder: Retrofit) =
-    builder.create(com.example.playlistmaker.search.data.network.iTunesApi::class.java)
+    builder.create(com.example.playlistmaker.search.data.network.ITunesApi::class.java)
 
 private fun provideRetrofit(baseUrl: String, okHttpClient: OkHttpClient) = Retrofit.Builder()
     .baseUrl(baseUrl)

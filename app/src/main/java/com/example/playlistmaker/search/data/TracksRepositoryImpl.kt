@@ -6,38 +6,44 @@ import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.domain.models.TrackResults
 import com.example.playlistmaker.search.data.dto.TrackResponse
 import com.example.playlistmaker.search.data.dto.TrackSearchRequest
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 class TracksRepositoryImpl(private val networkClient: NetworkClient) : TracksRepository {
 
-    override fun searchTracks(expression: String): TrackResults {
+    override fun searchTracks(expression: String): Flow<TrackResults> = flow {
         val response = networkClient.doRequest(TrackSearchRequest(expression))
-        return if (response.resultCode == 200) {
-            TrackResults(
-                status = if ((response as TrackResponse).results.isEmpty()) {
-                    ResponseStatus.EMPTY
-                } else {
-                    ResponseStatus.SUCCESS
-                },
-                data = response.results.map {
-                    Track(
-                        trackName = it.trackName,
-                        artistName = it.artistName,
-                        trackTimeMillis = getFormattedTime(it.trackTimeMillis),
-                        artworkUrl100 = it.artworkUrl100,
-                        trackId = it.trackId,
-                        collectionName = it.collectionName,
-                        releaseDate = getFormattedDate(it.releaseDate),
-                        primaryGenreName = it.primaryGenreName,
-                        country = it.country,
-                        previewUrl = it.previewUrl
-                    )
-                }
+        if (response.resultCode == 200) {
+            emit(
+                TrackResults(
+                    status = if ((response as TrackResponse).results.isEmpty()) {
+                        ResponseStatus.EMPTY
+                    } else {
+                        ResponseStatus.SUCCESS
+                    },
+                    data = response.results.map {
+                        Track(
+                            trackName = it.trackName,
+                            artistName = it.artistName,
+                            trackTimeMillis = getFormattedTime(it.trackTimeMillis),
+                            artworkUrl100 = it.artworkUrl100,
+                            trackId = it.trackId,
+                            collectionName = it.collectionName,
+                            releaseDate = getFormattedDate(it.releaseDate),
+                            primaryGenreName = it.primaryGenreName,
+                            country = it.country,
+                            previewUrl = it.previewUrl
+                        )
+                    }
+                )
             )
         } else {
-            TrackResults(
-                status = ResponseStatus.ERROR
+            emit(
+                TrackResults(
+                    status = ResponseStatus.ERROR
+                )
             )
         }
     }

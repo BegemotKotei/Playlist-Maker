@@ -19,6 +19,7 @@ import com.example.playlistmaker.search.domain.models.ResponseStatus
 import com.example.playlistmaker.search.presentation.mapper.TrackMapper
 import com.example.playlistmaker.search.presentation.models.TrackUI
 import com.example.playlistmaker.search.presentation.stateHolders.SearchFragmentViewModel
+import com.example.playlistmaker.ui.MainActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment : Fragment() {
@@ -54,7 +55,10 @@ class SearchFragment : Fragment() {
             binding.tvHistorySearch.isVisible = answer
         }
 
-        adapter.onClick = { item -> onClickAdapter(item) }
+        adapter.onClick = { item ->
+            (activity as MainActivity).animateBottomNavigationViewFalse()
+            onClickAdapter(item)
+        }
 
         binding.run {
             rwTrack.adapter = adapter
@@ -103,13 +107,14 @@ class SearchFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        (activity as MainActivity).animateBottomNavigationViewTrue()
         viewModel.resume()
     }
 
     private fun onClickAdapter(track: TrackUI) {
         if (viewModel.isClickAllowed.value == true) {
-            viewModel.writeHistory(track)
             viewModel.clickDebounce()
+            viewModel.writeHistory(track)
             findNavController().popBackStack(R.id.musicPlayerFragment, true)
             findNavController().navigate(
                 R.id.action_searchFragment_to_musicPlayerFragment,
@@ -167,7 +172,6 @@ class SearchFragment : Fragment() {
     }
 
     private fun etTextChangedWatcher(s: CharSequence?) {
-        viewModel
         binding.run {
             ivClearIcon.isVisible = !s.isNullOrEmpty()
             s?.let {

@@ -3,24 +3,26 @@ package com.example.playlistmaker.search.data.network
 import com.example.playlistmaker.search.data.NetworkClient
 import com.example.playlistmaker.search.data.dto.Response
 import com.example.playlistmaker.search.data.dto.TrackSearchRequest
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import retrofit2.HttpException
-import retrofit2.Retrofit
 
-class RetrofitNetworkClient(private val iTunesApi: iTunesApi) : NetworkClient {
+class RetrofitNetworkClient(private val iTunesApi: ITunesApi) : NetworkClient {
 
-    override fun doRequest(dto: Any): Response {
-        try {
-            if (dto is TrackSearchRequest) {
-                val resp = iTunesApi.search(dto.expression).execute()
-                val body = resp.body() ?: Response()
-                return body.apply { resultCode = resp.code() }
-            } else {
-                return Response().apply { resultCode = 400 }
+    override suspend fun doRequest(dto: Any): Response {
+        return withContext(Dispatchers.IO) {
+            try {
+                if (dto is TrackSearchRequest) {
+                    val result = iTunesApi.search(dto.expression)
+                    result.apply { resultCode = 200 }
+                } else {
+                    Response().apply { resultCode = 400 }
+                }
+            } catch (ex: HttpException) {
+                Response().apply { resultCode = ex.code() }
+            } catch (ex: Exception) {
+                Response().apply { resultCode = 400 }
             }
-        } catch (exception: HttpException) {
-            return Response().apply { resultCode = exception.code() }
-        } catch (e: Exception) {
-            return Response().apply { resultCode = 400 }
         }
     }
 }

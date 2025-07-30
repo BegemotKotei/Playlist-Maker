@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -16,12 +15,10 @@ import com.example.playlistmaker.app.getRadiusCutImage
 import com.example.playlistmaker.app.parcelable
 import com.example.playlistmaker.databinding.FragmentMusicPlayerBinding
 import com.example.playlistmaker.player.presentation.MusicPlayerViewModel
-import com.example.playlistmaker.player.presentation.PlayerState
 import com.example.playlistmaker.search.presentation.models.TrackUI
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MusicPlayerFragment : Fragment() {
-
     private var _binding: FragmentMusicPlayerBinding? = null
     private val binding get() = _binding!!
     private var url: String? = null
@@ -94,15 +91,9 @@ class MusicPlayerFragment : Fragment() {
             viewModel.preparePlayer(it)
             viewModel.playerState.observe(viewLifecycleOwner) { state ->
                 state?.let {
-                    binding.tvTimeMusic30.text = state.currentTime
-                    binding.mbPlayMusic.setIconResource(
-                        when (state.state) {
-                            PlayerState.State.PLAYING -> R.drawable.pause_ic
-                            PlayerState.State.PAUSED -> R.drawable.ic_play
-                            PlayerState.State.PREPARED -> R.drawable.ic_play
-                            else -> R.drawable.ic_play
-                        }
-                    )
+                    binding.tvTimeMusic30.text = state.progress
+                    binding.mbPlayMusic.setIconResource(state.buttonIconRes)
+                    binding.mbPlayMusic.isEnabled = state.isPlayButtonEnabled
                 }
             }
         }
@@ -110,10 +101,5 @@ class MusicPlayerFragment : Fragment() {
 
     companion object {
         private const val TRACK_KEY = "TRACK"
-        fun newInstance(track: TrackUI): MusicPlayerFragment {
-            return MusicPlayerFragment().apply {
-                arguments = bundleOf(TRACK_KEY to track)
-            }
-        }
     }
 }

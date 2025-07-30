@@ -32,6 +32,14 @@ class MainActivity : AppCompatActivity() {
         setupInsets()
     }
 
+    fun animateBottomNavigationViewTrue() {
+        binding.bottomNavigationView.isVisible = true
+    }
+
+    fun animateBottomNavigationViewFalse() {
+        binding.bottomNavigationView.isVisible = false
+    }
+
     private fun hideBottomNavigation() {
         binding.bottomNavigationView.animate()
             .translationY(binding.bottomNavigationView.height.toFloat())
