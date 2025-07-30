@@ -10,9 +10,9 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
-import com.example.playlistmaker.app.dpToPx
-import com.example.playlistmaker.app.getRadiusCutImage
-import com.example.playlistmaker.app.parcelable
+import com.example.playlistmaker.core.dpToPx
+import com.example.playlistmaker.core.getRadiusCutImage
+import com.example.playlistmaker.core.parcelable
 import com.example.playlistmaker.databinding.FragmentMusicPlayerBinding
 import com.example.playlistmaker.player.presentation.MusicPlayerViewModel
 import com.example.playlistmaker.search.presentation.models.TrackUI

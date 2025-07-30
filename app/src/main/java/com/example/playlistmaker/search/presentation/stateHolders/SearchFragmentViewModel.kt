@@ -82,11 +82,11 @@ class SearchFragmentViewModel(
         }
     }
 
-    fun searchTracks(trackName: String) {
+    fun searchTracks(searchQuery: String) {
         _searchStatus.postValue(ResponseStatus.LOADING)
         viewModelScope.launch {
             tracksInteractor
-                .searchTracks(trackName)
+                .searchTracks(searchQuery)
                 .collect { pair ->
                     _searchStatus.postValue(pair.second)
                     _tracks.postValue(pair.first)

@@ -13,7 +13,7 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 class MusicPlayerViewModel(
-    private val playerInteractor: PlayerInteractor
+    private val playerInteractor: PlayerInteractor,
 ) : ViewModel() {
     private val dateFormat = SimpleDateFormat("mm:ss", Locale.getDefault())
     private var progressUpdateJob: Job? = null
@@ -52,7 +52,7 @@ class MusicPlayerViewModel(
         _playerState.postValue(
             when (val currentState = _playerState.value) {
                 is PlayerState.Playing -> PlayerState.Paused(currentState.progress)
-                else -> PlayerState.Paused("00:00")
+                else -> PlayerState.Paused(PlayerState.DEFAULT_TIME)
             }
         )
     }
@@ -75,9 +75,9 @@ class MusicPlayerViewModel(
         playerInteractor.play()
         _playerState.postValue(
             when (val currentState = _playerState.value) {
-                is PlayerState.Prepared -> PlayerState.Playing("00:00")
+                is PlayerState.Prepared -> PlayerState.Playing(PlayerState.DEFAULT_TIME)
                 is PlayerState.Paused -> PlayerState.Playing(currentState.progress)
-                else -> PlayerState.Playing("00:00")
+                else -> PlayerState.Playing(PlayerState.DEFAULT_TIME)
             }
         )
         startProgressUpdates()
