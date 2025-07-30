@@ -1,55 +1,44 @@
 package com.example.playlistmaker.search.presentation.stateHolders
 
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.search.domain.api.TracksInteractor
 import com.example.playlistmaker.search.domain.models.ResponseStatus
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.domain.sharedpref.SharedPrefsInteractor
 import com.example.playlistmaker.search.presentation.mapper.TrackMapper
 import com.example.playlistmaker.search.presentation.models.TrackUI
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class SearchFragmentViewModel(
     private val sharedPrefsInteractor: SharedPrefsInteractor,
     private val tracksInteractor: TracksInteractor
 ) : ViewModel() {
-
-    private val searchRunnable = Runnable {
-        if (searchText.isNotBlank()) {
-            searchTracks(searchText)
-        }
-    }
-    private val handler = Handler(Looper.getMainLooper())
-
-    fun clickDebounce() {
-        _isClickAllowed.value?.let { isAllowed ->
-            if (isAllowed) {
-                _isClickAllowed.postValue(false)
-                handler.postDelayed(
-                    {
-                        _isClickAllowed.postValue(true)
-                    },
-                    CLICK_DEBOUNCE_DELAY
-                )
-            }
-        }
-    }
-
+    private var searchJob: Job? = null
+    private var latestSearchText: String? = null
     private val _isClickAllowed = MutableLiveData<Boolean>()
     val isClickAllowed: LiveData<Boolean>
         get() = _isClickAllowed
 
     private var searchText = ""
-
     private val historyTracks: List<Track>
         get() = getHistory()
 
     private val _showHistory = MutableLiveData(false)
     val showHistory: LiveData<Boolean>
         get() = _showHistory
+
+    private val _tracks = MutableLiveData<List<Track>>()
+    val tracks: LiveData<List<Track>>
+        get() = _tracks
+
+    private val _searchStatus = MutableLiveData<ResponseStatus>()
+    val searchStatus: LiveData<ResponseStatus>
+        get() = _searchStatus
 
     fun showHistoryBoolean(answer: Boolean, rewrite: Boolean = true) {
         if (answer) {
@@ -65,35 +54,47 @@ class SearchFragmentViewModel(
         }
     }
 
-    private val _tracks = MutableLiveData<List<Track>>()
-    val tracks: LiveData<List<Track>>
-        get() = _tracks
-    private val _searchStatus = MutableLiveData<ResponseStatus>()
-    val searchStatus: LiveData<ResponseStatus>
-        get() = _searchStatus
-
     fun setSearchText(text: String) {
         searchText = text
     }
 
-    fun searchDebounce() {
-        handler.removeCallbacks(searchRunnable)
-        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+    fun clickDebounce() {
+        _isClickAllowed.value?.let { isAllowed ->
+            if (isAllowed) {
+                _isClickAllowed.postValue(false)
+                viewModelScope.launch {
+                    delay(CLICK_DEBOUNCE_DELAY)
+                    _isClickAllowed.postValue(true)
+                }
+            }
+        }
     }
 
-    fun searchTracks(trackName: String) {
+    fun searchDebounce() {
+        if (latestSearchText == searchText) {
+            return
+        }
+        latestSearchText = searchText
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(SEARCH_DEBOUNCE_DELAY)
+            searchTracks(searchText)
+        }
+    }
+
+    fun searchTracks(searchQuery: String) {
         _searchStatus.postValue(ResponseStatus.LOADING)
-        tracksInteractor.searchTracks(
-            trackName,
-            consumer = object : TracksInteractor.TracksConsumer {
-                override fun consume(foundTrack: List<Track>, status: ResponseStatus) {
-                    _searchStatus.postValue(status)
-                    _tracks.postValue(foundTrack)
-                    if (status == ResponseStatus.SUCCESS) {
+        viewModelScope.launch {
+            tracksInteractor
+                .searchTracks(searchQuery)
+                .collect { pair ->
+                    _searchStatus.postValue(pair.second)
+                    _tracks.postValue(pair.first)
+                    if (pair.second == ResponseStatus.SUCCESS) {
                         _showHistory.postValue(false)
                     }
                 }
-            })
+        }
     }
 
     private fun getHistory() = sharedPrefsInteractor.readWriteClearWithoutConsumer(USE_READ, null)

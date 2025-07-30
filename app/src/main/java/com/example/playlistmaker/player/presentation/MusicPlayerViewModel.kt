@@ -1,62 +1,29 @@
 package com.example.playlistmaker.player.presentation
 
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 class MusicPlayerViewModel(
-    private val playerInteractor: PlayerInteractor
+    private val playerInteractor: PlayerInteractor,
 ) : ViewModel() {
-
     private val dateFormat = SimpleDateFormat("mm:ss", Locale.getDefault())
-    private val mainThreadHandler by lazy { Handler(Looper.getMainLooper()) }
+    private var progressUpdateJob: Job? = null
 
-    private val _playerState = MutableLiveData<PlayerState>().apply {
-        value = PlayerState()
-    }
-    val playerState: LiveData<PlayerState>
-        get() = _playerState
-
-    private fun createUpdateTimerMusicTask(): Runnable {
-        return object : Runnable {
-            override fun run() {
-                val currentPosition = playerInteractor.getCurrentPosition()
-                val currentTime = dateFormat.format(currentPosition)
-
-                if (currentPosition < MUSIC_TIME) {
-                    _playerState.postValue(
-                        _playerState.value?.copy(
-                            currentTime = currentTime
-                        )
-                    )
-                } else {
-                    playerInteractor.seekTo(0)
-                    playerInteractor.playPause()
-                    _playerState.postValue(
-                        PlayerState(
-                            state = PlayerState.State.PREPARED,
-                            currentTime = "00:00"
-                        )
-                    )
-                }
-                if (playerInteractor.isPlaying()) {
-                    mainThreadHandler.postDelayed(this, DELAY)
-                }
-            }
-        }
-    }
-
-    private fun startTimerMusic() {
-        mainThreadHandler.post(createUpdateTimerMusicTask())
-    }
+    private val _playerState = MutableLiveData<PlayerState>(PlayerState.Default())
+    val playerState: LiveData<PlayerState> = _playerState
 
     override fun onCleared() {
         super.onCleared()
+        progressUpdateJob?.cancel()
         releasePlayer()
     }
 
@@ -68,55 +35,74 @@ class MusicPlayerViewModel(
             playerInteractor.prepareTrack(
                 url = url,
                 onPrepared = {
-                    _playerState.postValue(PlayerState(state = PlayerState.State.PREPARED))
+                    _playerState.postValue(PlayerState.Prepared())
                 },
                 onCompletion = {
-                    _playerState.postValue(
-                        PlayerState(
-                            state = PlayerState.State.PREPARED,
-                            currentTime = "00:00"
-                        )
-                    )
+                    _playerState.postValue(PlayerState.Prepared())
                 }
             )
         } catch (e: Exception) {
-            _playerState.postValue(PlayerState(state = PlayerState.State.DEFAULT))
+            _playerState.postValue(PlayerState.Default())
+        }
+    }
+
+    fun pausePlayer() {
+        playerInteractor.pause()
+        progressUpdateJob?.cancel()
+        _playerState.postValue(
+            when (val currentState = _playerState.value) {
+                is PlayerState.Playing -> PlayerState.Paused(currentState.progress)
+                else -> PlayerState.Paused(PlayerState.DEFAULT_TIME)
+            }
+        )
+    }
+
+    fun releasePlayer() {
+        progressUpdateJob?.cancel()
+        playerInteractor.releasePlayer()
+        _playerState.postValue(PlayerState.Default())
+    }
+
+    fun playbackControl() {
+        when (_playerState.value) {
+            is PlayerState.Playing -> pausePlayer()
+            is PlayerState.Prepared, is PlayerState.Paused -> startPlayer()
+            else -> Unit
         }
     }
 
     private fun startPlayer() {
         playerInteractor.play()
         _playerState.postValue(
-            _playerState.value?.copy(
-                state = PlayerState.State.PLAYING
-            )
+            when (val currentState = _playerState.value) {
+                is PlayerState.Prepared -> PlayerState.Playing(PlayerState.DEFAULT_TIME)
+                is PlayerState.Paused -> PlayerState.Playing(currentState.progress)
+                else -> PlayerState.Playing(PlayerState.DEFAULT_TIME)
+            }
         )
-        startTimerMusic()
+        startProgressUpdates()
     }
 
-    fun pausePlayer() {
-        playerInteractor.pause()
-        mainThreadHandler.removeCallbacksAndMessages(null)
-        _playerState.postValue(
-            _playerState.value?.copy(
-                state = PlayerState.State.PAUSED
-            )
-        )
+    private fun startProgressUpdates() {
+        progressUpdateJob?.cancel()
+        progressUpdateJob = viewModelScope.launch {
+            while (isActive && playerInteractor.isPlaying()) {
+                updateProgress()
+                delay(DELAY)
+            }
+        }
     }
 
-    fun releasePlayer() {
-        mainThreadHandler.removeCallbacksAndMessages(null)
-        playerInteractor.releasePlayer()
-        _playerState.postValue(PlayerState())
-    }
+    private fun updateProgress() {
+        val currentPosition = playerInteractor.getCurrentPosition()
+        val currentTime = dateFormat.format(currentPosition)
 
-    fun playbackControl() {
-        when (_playerState.value?.state) {
-            PlayerState.State.PLAYING -> pausePlayer()
-            PlayerState.State.PREPARED,
-            PlayerState.State.PAUSED -> startPlayer()
-
-            else -> Unit
+        if (currentPosition < MUSIC_TIME) {
+            _playerState.postValue(PlayerState.Playing(currentTime))
+        } else {
+            playerInteractor.seekTo(0)
+            playerInteractor.playPause()
+            _playerState.postValue(PlayerState.Prepared())
         }
     }
 
