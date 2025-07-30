@@ -14,4 +14,8 @@ class SharedPrefsInteractorImpl(
     ) {
         consumer.consume(repository.saveReadClear(use, track))
     }
+
+    override fun readWriteClearWithoutConsumer(use: String, track: Track?): List<Track> {
+        return repository.saveReadClear(use, track)
+    }
 }
