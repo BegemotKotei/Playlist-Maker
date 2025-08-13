@@ -2,7 +2,7 @@ package com.example.playlistmaker.app
 
 import android.app.Application
 import com.example.playlistmaker.di.dataModule
-import com.example.playlistmaker.di.interatorModule
+import com.example.playlistmaker.di.interactorModule
 import com.example.playlistmaker.di.repositoryModule
 import com.example.playlistmaker.di.viewModelModule
 import org.koin.android.ext.koin.androidContext
@@ -14,7 +14,7 @@ class App : Application() {
 
         startKoin {
             androidContext(this@App)
-            modules(dataModule, repositoryModule, interatorModule, viewModelModule)
+            modules(dataModule, repositoryModule, interactorModule, viewModelModule)
         }
     }
 }

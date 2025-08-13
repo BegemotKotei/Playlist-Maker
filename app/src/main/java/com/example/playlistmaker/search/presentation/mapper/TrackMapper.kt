@@ -15,22 +15,28 @@ object TrackMapper {
             releaseDate = track.releaseDate,
             primaryGenreName = track.primaryGenreName,
             country = track.country,
-            previewUrl = track.previewUrl
+            previewUrl = track.previewUrl,
+            isLiked = track.isLiked
         )
     }
 
-    fun mapToTrack(trackUi: TrackUI): Track {
+    fun mapToTrack(trackUI: TrackUI): Track {
         return Track(
-            trackName = trackUi.trackName,
-            artistName = trackUi.artistName,
-            trackTimeMillis = trackUi.trackTimeMillis,
-            artworkUrl100 = trackUi.artworkUrl100,
-            trackId = trackUi.trackId,
-            collectionName = trackUi.collectionName,
-            releaseDate = trackUi.releaseDate,
-            primaryGenreName = trackUi.primaryGenreName,
-            country = trackUi.country,
-            previewUrl = trackUi.previewUrl
+            trackName = trackUI.trackName,
+            artistName = trackUI.artistName,
+            trackTimeMillis = trackUI.trackTimeMillis,
+            artworkUrl100 = trackUI.artworkUrl100,
+            trackId = trackUI.trackId,
+            collectionName = trackUI.collectionName,
+            releaseDate = trackUI.releaseDate,
+            primaryGenreName = trackUI.primaryGenreName,
+            country = trackUI.country,
+            previewUrl = trackUI.previewUrl,
+            isLiked = trackUI.isLiked
         )
+    }
+
+    fun mapToTrackUIList(tracks: List<Track>): List<TrackUI> {
+        return tracks.map { track -> mapToTrackUI(track) }
     }
 }

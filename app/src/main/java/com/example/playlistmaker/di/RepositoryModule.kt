@@ -1,5 +1,8 @@
 package com.example.playlistmaker.di
 
+import com.example.playlistmaker.db.data.LikeTrackRepositoryImpl
+import com.example.playlistmaker.db.domain.LikeTrackRepository
+import com.example.playlistmaker.db.mappers.TrackDbMapper
 import com.example.playlistmaker.player.data.MediaPlayerRepositoryImpl
 import com.example.playlistmaker.player.domain.api.MediaPlayerRepository
 import com.example.playlistmaker.search.data.SharedPrefsRepositoryImpl
@@ -18,15 +21,19 @@ val repositoryModule = module {
         SettingsRepositoryImpl(context = androidContext())
     }
     single<SharedPrefsRepository> {
-        SharedPrefsRepositoryImpl(storage = get())
+        SharedPrefsRepositoryImpl(storage = get(), appDatabase = get())
     }
     factory<ExternalNavigator> {
         ExternalNavigatorImpl(context = androidContext())
     }
     single<TracksRepository> {
-        TracksRepositoryImpl(networkClient = get())
+        TracksRepositoryImpl(networkClient = get(), appDatabase = get())
     }
     factory<MediaPlayerRepository> {
         MediaPlayerRepositoryImpl(mediaPlayer = get())
     }
+    single<LikeTrackRepository> {
+        LikeTrackRepositoryImpl(appDatabase = get(), trackDbMapper = get())
+    }
+    factory { TrackDbMapper() }
 }

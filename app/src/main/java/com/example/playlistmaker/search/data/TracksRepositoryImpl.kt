@@ -1,5 +1,6 @@
 package com.example.playlistmaker.search.data
 
+import com.example.playlistmaker.db.data.AppDatabase
 import com.example.playlistmaker.search.domain.api.TracksRepository
 import com.example.playlistmaker.search.domain.models.ResponseStatus
 import com.example.playlistmaker.search.domain.models.Track
@@ -11,11 +12,15 @@ import kotlinx.coroutines.flow.flow
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class TracksRepositoryImpl(private val networkClient: NetworkClient) : TracksRepository {
+class TracksRepositoryImpl(
+    private val networkClient: NetworkClient,
+    private val appDatabase: AppDatabase
+) : TracksRepository {
 
     override fun searchTracks(expression: String): Flow<TrackResults> = flow {
         val response = networkClient.doRequest(TrackSearchRequest(expression))
         if (response.resultCode == 200) {
+            val likedTracksId = appDatabase.trackDao().getTracksIdList()
             emit(
                 TrackResults(
                     status = if ((response as TrackResponse).results.isEmpty()) {
@@ -34,7 +39,8 @@ class TracksRepositoryImpl(private val networkClient: NetworkClient) : TracksRep
                             releaseDate = getFormattedDate(it.releaseDate),
                             primaryGenreName = it.primaryGenreName,
                             country = it.country,
-                            previewUrl = it.previewUrl
+                            previewUrl = it.previewUrl,
+                            isLiked = isFavoriteBoolean(it.trackId, likedTracksId)
                         )
                     }
                 )
@@ -47,6 +53,9 @@ class TracksRepositoryImpl(private val networkClient: NetworkClient) : TracksRep
             )
         }
     }
+
+    private fun isFavoriteBoolean(trackId: String, tracksId: List<String>) =
+        tracksId.find { likedTrack -> likedTrack == trackId } != ""
 
     private fun getFormattedDate(inputDate: String?): String {
         inputDate ?: return ""
