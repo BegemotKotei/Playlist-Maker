@@ -21,19 +21,19 @@ val repositoryModule = module {
         SettingsRepositoryImpl(context = androidContext())
     }
     single<SharedPrefsRepository> {
-        SharedPrefsRepositoryImpl(storage = get(), appDatabase = get())
+        SharedPrefsRepositoryImpl(storage = get(), trackDao = get())
     }
     factory<ExternalNavigator> {
         ExternalNavigatorImpl(context = androidContext())
     }
     single<TracksRepository> {
-        TracksRepositoryImpl(networkClient = get(), appDatabase = get())
+        TracksRepositoryImpl(networkClient = get(), trackDao = get())
     }
     factory<MediaPlayerRepository> {
         MediaPlayerRepositoryImpl(mediaPlayer = get())
     }
     single<LikeTrackRepository> {
-        LikeTrackRepositoryImpl(appDatabase = get(), trackDbMapper = get())
+        LikeTrackRepositoryImpl(trackDao = get(), trackDbMapper = get())
     }
     factory { TrackDbMapper() }
 }

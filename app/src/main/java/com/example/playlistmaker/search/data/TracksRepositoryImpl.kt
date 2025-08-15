@@ -1,12 +1,12 @@
 package com.example.playlistmaker.search.data
 
-import com.example.playlistmaker.db.data.AppDatabase
+import com.example.playlistmaker.db.dao.TrackDao
+import com.example.playlistmaker.search.data.dto.TrackResponse
+import com.example.playlistmaker.search.data.dto.TrackSearchRequest
 import com.example.playlistmaker.search.domain.api.TracksRepository
 import com.example.playlistmaker.search.domain.models.ResponseStatus
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.domain.models.TrackResults
-import com.example.playlistmaker.search.data.dto.TrackResponse
-import com.example.playlistmaker.search.data.dto.TrackSearchRequest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import java.text.SimpleDateFormat
@@ -14,13 +14,12 @@ import java.util.Locale
 
 class TracksRepositoryImpl(
     private val networkClient: NetworkClient,
-    private val appDatabase: AppDatabase
+    private val trackDao: TrackDao
 ) : TracksRepository {
 
     override fun searchTracks(expression: String): Flow<TrackResults> = flow {
         val response = networkClient.doRequest(TrackSearchRequest(expression))
         if (response.resultCode == 200) {
-            val likedTracksId = appDatabase.trackDao().getTracksIdList()
             emit(
                 TrackResults(
                     status = if ((response as TrackResponse).results.isEmpty()) {
@@ -40,7 +39,7 @@ class TracksRepositoryImpl(
                             primaryGenreName = it.primaryGenreName,
                             country = it.country,
                             previewUrl = it.previewUrl,
-                            isLiked = isFavoriteBoolean(it.trackId, likedTracksId)
+                            isLiked = trackDao.hasLike(it.trackId) > 0
                         )
                     }
                 )
@@ -53,9 +52,6 @@ class TracksRepositoryImpl(
             )
         }
     }
-
-    private fun isFavoriteBoolean(trackId: String, tracksId: List<String>) =
-        tracksId.find { likedTrack -> likedTrack == trackId } != ""
 
     private fun getFormattedDate(inputDate: String?): String {
         inputDate ?: return ""

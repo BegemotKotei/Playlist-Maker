@@ -16,6 +16,10 @@ class LikeTrackInteractorImpl(private val repository: LikeTrackRepository) :
         repository.deleteLikeTrack(track)
     }
 
+    override suspend fun isTrackLiked(trackId: String): Boolean {
+        return repository.isTrackLiked(trackId)
+    }
+
     override fun likeTrackList(): Flow<List<Track>> {
         return repository.likeTrackList().map { tracks ->
             tracks.reversed()

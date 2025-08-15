@@ -14,7 +14,6 @@ val viewModelModule = module {
         MusicPlayerViewModel(
             playerInteractor = get(),
             likeTrackInteractor = get(),
-            appDatabase = get(),
             trackUI = trackUI
         )
     }

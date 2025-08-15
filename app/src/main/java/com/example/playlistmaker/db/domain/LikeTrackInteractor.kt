@@ -6,5 +6,6 @@ import kotlinx.coroutines.flow.Flow
 interface LikeTrackInteractor {
     suspend fun addLikeTrack(track: Track)
     suspend fun deleteLikeTrack(track: Track)
+    suspend fun isTrackLiked(trackId: String): Boolean
     fun likeTrackList(): Flow<List<Track>>
 }

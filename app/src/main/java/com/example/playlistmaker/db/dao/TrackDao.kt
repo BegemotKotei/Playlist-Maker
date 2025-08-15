@@ -23,4 +23,8 @@ interface TrackDao {
 
     @Query("SELECT COUNT(`track_table`.`trackId`)FROM `track_table` WHERE `track_table`.`trackId` = :id;")
     suspend fun hasLike(id: String): Int
+
+    @Query("SELECT EXISTS(SELECT 1 FROM `track_table` WHERE `trackId` = :id LIMIT 1)")
+    suspend fun isTrackLiked(id: String): Boolean
+
 }

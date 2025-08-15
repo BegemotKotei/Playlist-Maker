@@ -43,6 +43,9 @@ val dataModule = module {
             name = "database.db"
         ).build()
     }
+    single {
+        get<AppDatabase>().trackDao()
+    }
 }
 
 private const val HISTORY_MAIN = "historyMain"

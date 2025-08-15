@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.playlistmaker.db.data.AppDatabase
 import com.example.playlistmaker.db.domain.LikeTrackInteractor
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
 import com.example.playlistmaker.search.presentation.mapper.TrackMapper
@@ -20,7 +19,6 @@ import java.util.Locale
 class MusicPlayerViewModel(
     private val playerInteractor: PlayerInteractor,
     private val likeTrackInteractor: LikeTrackInteractor,
-    private val appDatabase: AppDatabase,
     private val trackUI: TrackUI
 ) : ViewModel() {
     private val dateFormat = SimpleDateFormat("mm:ss", Locale.getDefault())
@@ -39,7 +37,7 @@ class MusicPlayerViewModel(
     }
 
     fun getLikeStatus(id: String) = viewModelScope.launch(Dispatchers.IO) {
-        val like = appDatabase.trackDao().hasLike(id) > 0
+        val like = likeTrackInteractor.isTrackLiked(id)
         _isLiked.postValue(like)
     }
 

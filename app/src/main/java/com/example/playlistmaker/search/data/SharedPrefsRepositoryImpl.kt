@@ -1,15 +1,13 @@
 package com.example.playlistmaker.search.data
 
-import com.example.playlistmaker.db.data.AppDatabase
+import com.example.playlistmaker.db.dao.TrackDao
 import com.example.playlistmaker.search.data.dto.TrackDto
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.domain.sharedpref.SharedPrefsRepository
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
 
 class SharedPrefsRepositoryImpl(
     private val storage: SearchHistoryStorage,
-    private val appDatabase: AppDatabase
+    private val trackDao: TrackDao
 ) : SharedPrefsRepository {
 
     override suspend fun saveReadClear(
@@ -28,11 +26,8 @@ class SharedPrefsRepositoryImpl(
         }
     }
 
-    private fun trackDtoToTrack(list: List<TrackDto>): ArrayList<Track> {
-        val tracksIdList = ArrayList<String>()
-        MainScope().launch {
-            tracksIdList.addAll(appDatabase.trackDao().getTracksIdList())
-        }
+    private suspend fun trackDtoToTrack(list: List<TrackDto>): ArrayList<Track> {
+        val tracksIdList = trackDao.getTracksIdList()
         return list.map { dto ->
             Track(
                 trackName = dto.trackName,

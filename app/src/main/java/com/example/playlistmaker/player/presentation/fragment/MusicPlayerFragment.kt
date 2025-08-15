@@ -39,8 +39,8 @@ class MusicPlayerFragment : Fragment() {
         val trackUI = getTrackFromArgs()
         initViews()
         loadTrackData(trackUI)
-        setupPlayer()
-        isLiked()
+        observeSetupPlayer()
+        observeIsLiked()
     }
 
     override fun onPause() {
@@ -87,7 +87,7 @@ class MusicPlayerFragment : Fragment() {
         }
     }
 
-    private fun setupPlayer() {
+    private fun observeSetupPlayer() {
         url?.let {
             viewModel.preparePlayer(it)
             viewModel.playerState.observe(viewLifecycleOwner) { state ->
@@ -100,7 +100,7 @@ class MusicPlayerFragment : Fragment() {
         }
     }
 
-    private fun isLiked() {
+    private fun observeIsLiked() {
         viewModel.isLiked.observe(viewLifecycleOwner) { isLiked ->
             if (isLiked) {
                 binding.mbLikeMusic.setIconResource(R.drawable.like_ic_red)

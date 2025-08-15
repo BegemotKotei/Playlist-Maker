@@ -16,5 +16,5 @@ data class TrackEntity(
     val country: String?,
     val trackTimeMillis: String,
     val artworkUrl100: String?,
-    var isLiked: Boolean
+    var isLiked: Boolean = false
 )
