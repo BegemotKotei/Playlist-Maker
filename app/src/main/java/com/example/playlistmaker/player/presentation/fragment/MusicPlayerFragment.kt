@@ -8,21 +8,21 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
-import com.example.playlistmaker.core.dpToPx
-import com.example.playlistmaker.core.getRadiusCutImage
 import com.example.playlistmaker.core.parcelable
 import com.example.playlistmaker.databinding.FragmentMusicPlayerBinding
 import com.example.playlistmaker.player.presentation.MusicPlayerViewModel
 import com.example.playlistmaker.search.presentation.models.TrackUI
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class MusicPlayerFragment : Fragment() {
     private var _binding: FragmentMusicPlayerBinding? = null
     private val binding get() = _binding!!
     private var url: String? = null
-    private val viewModel: MusicPlayerViewModel by viewModel()
+    private val viewModel: MusicPlayerViewModel by viewModel<MusicPlayerViewModel> {
+        parametersOf(getTrackFromArgs())
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,9 +36,11 @@ class MusicPlayerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val trackUI = getTrackFromArgs()
         initViews()
-        loadTrackData()
-        setupPlayer()
+        loadTrackData(trackUI)
+        observeSetupPlayer()
+        observeIsLiked()
     }
 
     override fun onPause() {
@@ -52,6 +54,11 @@ class MusicPlayerFragment : Fragment() {
         _binding = null
     }
 
+    private fun getTrackFromArgs(): TrackUI {
+        return requireArguments().parcelable<TrackUI>(TRACK_KEY)
+            ?: throw IllegalStateException("TrackUI is required")
+    }
+
     private fun initViews() {
         binding.ivBack.setOnClickListener {
             findNavController().popBackStack()
@@ -59,34 +66,28 @@ class MusicPlayerFragment : Fragment() {
         binding.mbPlayMusic.setOnClickListener { viewModel.playbackControl() }
     }
 
-    private fun loadTrackData() {
-        arguments?.parcelable<TrackUI>(TRACK_KEY)?.let { track ->
-            url = track.previewUrl
-            binding.tvNameMusic.text = track.trackName
-            binding.tvGroupName.text = track.artistName
-            binding.tvTimeMusicAnswer.text = track.trackTimeMillis
+    private fun loadTrackData(trackUI: TrackUI) {
+        with(trackUI) {
+            viewModel.getLikeStatus(trackUI.trackId)
+            url = previewUrl
+            binding.tvNameMusic.text = trackName
+            binding.tvGroupName.text = artistName
+            binding.tvTimeMusicAnswer.text = trackTimeMillis
+            binding.textGroup.isVisible = !collectionName.isNullOrEmpty()
+            binding.tvGroupMusicAnswer.text = collectionName
+            binding.tvEarAnswer.text = releaseDate
+            binding.tvTypeMusicAnswer.text = primaryGenreName
+            binding.tvCountryAnswer.text = country
 
-            if (track.collectionName == null) {
-                binding.textGroup.isVisible = false
-            } else {
-                binding.tvGroupMusicAnswer.text = track.collectionName
-            }
-
-            binding.tvEarAnswer.text = track.releaseDate
-            binding.tvTypeMusicAnswer.text = track.primaryGenreName
-            binding.tvCountryAnswer.text = track.country
-
-            val urlImage = track.artworkUrl100?.replaceAfterLast('/', "512x512bb.jpg")
-            Glide.with(this)
+            val urlImage = artworkUrl100?.replaceAfterLast('/', "512x512bb.jpg")
+            Glide.with(this@MusicPlayerFragment)
                 .load(urlImage)
                 .placeholder(R.drawable.placeholder_ic)
-                .centerInside()
-                .transform(RoundedCorners(dpToPx(getRadiusCutImage(), requireContext())))
                 .into(binding.ivMusicImage)
         }
     }
 
-    private fun setupPlayer() {
+    private fun observeSetupPlayer() {
         url?.let {
             viewModel.preparePlayer(it)
             viewModel.playerState.observe(viewLifecycleOwner) { state ->
@@ -96,6 +97,21 @@ class MusicPlayerFragment : Fragment() {
                     binding.mbPlayMusic.isEnabled = state.isPlayButtonEnabled
                 }
             }
+        }
+    }
+
+    private fun observeIsLiked() {
+        viewModel.isLiked.observe(viewLifecycleOwner) { isLiked ->
+            if (isLiked) {
+                binding.mbLikeMusic.setIconResource(R.drawable.like_ic_red)
+                binding.mbLikeMusic.setIconTintResource(R.color.red)
+            } else {
+                binding.mbLikeMusic.setIconResource(R.drawable.like_ic)
+                binding.mbLikeMusic.setIconTintResource(R.color.white)
+            }
+        }
+        binding.mbLikeMusic.setOnClickListener {
+            viewModel.changeLikeStatus()
         }
     }
 

@@ -2,6 +2,8 @@ package com.example.playlistmaker.di
 
 import android.content.Context
 import android.media.MediaPlayer
+import androidx.room.Room
+import com.example.playlistmaker.db.data.AppDatabase
 import com.example.playlistmaker.search.data.NetworkClient
 import com.example.playlistmaker.search.data.SearchHistoryStorage
 import com.example.playlistmaker.search.data.network.RetrofitNetworkClient
@@ -33,6 +35,16 @@ val dataModule = module {
             HISTORY_MAIN,
             Context.MODE_PRIVATE
         )
+    }
+    single {
+        Room.databaseBuilder(
+            context = androidContext(),
+            klass = AppDatabase::class.java,
+            name = "database.db"
+        ).build()
+    }
+    single {
+        get<AppDatabase>().trackDao()
     }
 }
 

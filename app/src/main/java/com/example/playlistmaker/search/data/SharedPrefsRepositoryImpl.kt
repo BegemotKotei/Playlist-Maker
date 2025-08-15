@@ -1,12 +1,16 @@
 package com.example.playlistmaker.search.data
 
+import com.example.playlistmaker.db.dao.TrackDao
 import com.example.playlistmaker.search.data.dto.TrackDto
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.domain.sharedpref.SharedPrefsRepository
 
-class SharedPrefsRepositoryImpl(private val storage: SearchHistoryStorage) : SharedPrefsRepository {
+class SharedPrefsRepositoryImpl(
+    private val storage: SearchHistoryStorage,
+    private val trackDao: TrackDao
+) : SharedPrefsRepository {
 
-    override fun saveReadClear(
+    override suspend fun saveReadClear(
         use: String,
         track: Track?
     ): ArrayList<Track> {
@@ -22,7 +26,8 @@ class SharedPrefsRepositoryImpl(private val storage: SearchHistoryStorage) : Sha
         }
     }
 
-    private fun trackDtoToTrack(list: List<TrackDto>): ArrayList<Track> {
+    private suspend fun trackDtoToTrack(list: List<TrackDto>): ArrayList<Track> {
+        val tracksIdList = trackDao.getTracksIdList()
         return list.map { dto ->
             Track(
                 trackName = dto.trackName,
@@ -34,9 +39,20 @@ class SharedPrefsRepositoryImpl(private val storage: SearchHistoryStorage) : Sha
                 releaseDate = dto.releaseDate,
                 primaryGenreName = dto.primaryGenreName,
                 country = dto.country,
-                previewUrl = dto.previewUrl
+                previewUrl = dto.previewUrl,
+                isLiked = isFavoriteBoolean(dto.trackId, tracksIdList)
             )
         }.toCollection(ArrayList())
+    }
+
+    private fun isFavoriteBoolean(trackId: String, tracksId: List<String>): Boolean {
+        var answer = false
+        tracksId.forEach { likedTrack ->
+            if (likedTrack == trackId) {
+                answer = true
+            }
+        }
+        return answer
     }
 
     private companion object {

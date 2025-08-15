@@ -1,5 +1,7 @@
 package com.example.playlistmaker.di
 
+import com.example.playlistmaker.db.domain.LikeTrackInteractor
+import com.example.playlistmaker.db.domain.imlp.LikeTrackInteractorImpl
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
 import com.example.playlistmaker.player.domain.impl.PlayerInteractorImpl
 import com.example.playlistmaker.search.domain.api.TracksInteractor
@@ -12,7 +14,7 @@ import com.example.playlistmaker.settings.domain.impl.SettingsInteractorImpl
 import com.example.playlistmaker.settings.domain.impl.SharingInteractorImpl
 import org.koin.dsl.module
 
-val interatorModule = module {
+val interactorModule = module {
     factory<SettingsInteractor> {
         SettingsInteractorImpl(repository = get())
     }
@@ -27,5 +29,8 @@ val interatorModule = module {
     }
     factory<PlayerInteractor> {
         PlayerInteractorImpl(repository = get())
+    }
+    factory<LikeTrackInteractor> {
+        LikeTrackInteractorImpl(repository = get())
     }
 }

@@ -10,9 +10,12 @@ import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.domain.sharedpref.SharedPrefsInteractor
 import com.example.playlistmaker.search.presentation.mapper.TrackMapper
 import com.example.playlistmaker.search.presentation.models.TrackUI
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class SearchFragmentViewModel(
     private val sharedPrefsInteractor: SharedPrefsInteractor,
@@ -83,21 +86,27 @@ class SearchFragmentViewModel(
     }
 
     fun searchTracks(searchQuery: String) {
-        _searchStatus.postValue(ResponseStatus.LOADING)
-        viewModelScope.launch {
-            tracksInteractor
-                .searchTracks(searchQuery)
-                .collect { pair ->
-                    _searchStatus.postValue(pair.second)
-                    _tracks.postValue(pair.first)
-                    if (pair.second == ResponseStatus.SUCCESS) {
-                        _showHistory.postValue(false)
+        if (searchQuery.isNotEmpty()) {
+            _searchStatus.postValue(ResponseStatus.LOADING)
+            viewModelScope.launch {
+                tracksInteractor
+                    .searchTracks(searchQuery)
+                    .collect { pair ->
+                        _searchStatus.postValue(pair.second)
+                        _tracks.postValue(pair.first)
+                        if (pair.second == ResponseStatus.SUCCESS) {
+                            _showHistory.postValue(false)
+                        }
                     }
-                }
+            }
         }
     }
 
-    private fun getHistory() = sharedPrefsInteractor.readWriteClearWithoutConsumer(USE_READ, null)
+    private fun getHistory() = runBlocking {
+        async(Dispatchers.IO) {
+            sharedPrefsInteractor.readWriteClearWithoutConsumer(USE_READ, null)
+        }.await()
+    }
 
     fun writeHistory(trackUI: TrackUI?) {
         val track = trackUI?.let { TrackMapper.mapToTrack(it) }
@@ -117,15 +126,17 @@ class SearchFragmentViewModel(
         _isClickAllowed.postValue(true)
     }
 
-    private fun sharedPrefsWork(uses: String, track: Track? = null) {
+    private fun sharedPrefsWork(uses: String, track: Track? = null) = viewModelScope.launch(
+        Dispatchers.IO
+    ) {
         sharedPrefsInteractor.readWriteClear(
-            uses,
-            track,
+            use = uses,
+            track = track,
             consumer = object : SharedPrefsInteractor.SharedPrefsConsumer {
                 override fun consume(foundSharedPrefs: ArrayList<Track>) {
-
                 }
-            })
+            }
+        )
     }
 
     private companion object {

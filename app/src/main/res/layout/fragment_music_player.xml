@@ -82,7 +82,6 @@
         android:backgroundTint="@color/grey"
         app:cornerRadius="26dp"
         app:icon="@drawable/like_ic"
-        app:iconTint="@color/white"
         app:layout_constraintBaseline_toBaselineOf="@id/mbPlayMusic"
         app:layout_constraintBottom_toTopOf="@id/tvTimeMusic30"
         app:layout_constraintEnd_toStartOf="@id/rightBorder" />

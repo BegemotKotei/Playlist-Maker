@@ -8,7 +8,15 @@
         android:id="@+id/mediaLibraryFragment"
         android:name="com.example.playlistmaker.media.presentation.fragment.MediaLibraryFragment"
         android:label="media_library_fragment"
-        tools:layout="@layout/fragment_media_library" />
+        tools:layout="@layout/fragment_media_library">
+        <action
+            android:id="@+id/action_mediaLibraryFragment_to_musicPlayerFragment"
+            app:destination="@id/musicPlayerFragment"
+            app:enterAnim="@anim/slide_in_bottom"
+            app:exitAnim="@anim/slide_out_top"
+            app:popEnterAnim="@anim/slide_in_top"
+            app:popExitAnim="@anim/slide_out_bottom" />
+    </fragment>
     <fragment
         android:id="@+id/searchFragment"
         android:name="com.example.playlistmaker.search.presentation.fragment.SearchFragment"

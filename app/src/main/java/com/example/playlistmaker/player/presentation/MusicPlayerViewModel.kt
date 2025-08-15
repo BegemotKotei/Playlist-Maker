@@ -4,7 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.db.domain.LikeTrackInteractor
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
+import com.example.playlistmaker.search.presentation.mapper.TrackMapper
+import com.example.playlistmaker.search.presentation.models.TrackUI
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -14,17 +18,40 @@ import java.util.Locale
 
 class MusicPlayerViewModel(
     private val playerInteractor: PlayerInteractor,
+    private val likeTrackInteractor: LikeTrackInteractor,
+    private val trackUI: TrackUI
 ) : ViewModel() {
     private val dateFormat = SimpleDateFormat("mm:ss", Locale.getDefault())
     private var progressUpdateJob: Job? = null
-
     private val _playerState = MutableLiveData<PlayerState>(PlayerState.Default())
     val playerState: LiveData<PlayerState> = _playerState
+    private var _isLiked = MutableLiveData<Boolean>()
+    val isLiked: LiveData<Boolean>
+        get() = _isLiked
+
 
     override fun onCleared() {
         super.onCleared()
         progressUpdateJob?.cancel()
         releasePlayer()
+    }
+
+    fun getLikeStatus(id: String) = viewModelScope.launch(Dispatchers.IO) {
+        val like = likeTrackInteractor.isTrackLiked(id)
+        _isLiked.postValue(like)
+    }
+
+    fun changeLikeStatus() {
+        val newLikeStatus = _isLiked.value != true
+        _isLiked.postValue(newLikeStatus)
+
+        viewModelScope.launch {
+            if (newLikeStatus) {
+                likeTrackInteractor.addLikeTrack(track = TrackMapper.mapToTrack(trackUI))
+            } else {
+                likeTrackInteractor.deleteLikeTrack(track = TrackMapper.mapToTrack(trackUI))
+            }
+        }
     }
 
     fun preparePlayer(url: String) {
@@ -41,7 +68,7 @@ class MusicPlayerViewModel(
                     _playerState.postValue(PlayerState.Prepared())
                 }
             )
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             _playerState.postValue(PlayerState.Default())
         }
     }
