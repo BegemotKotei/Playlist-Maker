@@ -24,9 +24,10 @@ class SharingInteractorImpl(
         )
     }
 
+    override fun getTermsLink() = settingsRepository.getUserPolicy()
+
     private fun getShareAppLink() = settingsRepository.getAppShareLink()
     private fun getSupportEmail() = settingsRepository.getSupportEmail()
     private fun getSupportEmailTop() = settingsRepository.getSupportEmailTop()
     private fun getSupportEmailText() = settingsRepository.getSupportEmailText()
-    private fun getTermsLink() = settingsRepository.getUserPolicy()
 }

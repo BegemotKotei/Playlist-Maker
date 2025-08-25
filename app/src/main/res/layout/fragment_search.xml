@@ -52,7 +52,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="end"
             android:layout_marginEnd="@dimen/o_20dp"
-            android:src="@drawable/ic_menu_close_clear_cancel"
+            android:src="@drawable/clear_track_ic"
             android:visibility="gone" />
 
     </FrameLayout>
@@ -86,7 +86,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rwTrack"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/o_0dp"
+            android:layout_height="0dp"
             android:layout_marginTop="@dimen/o_16dp"
             android:layout_weight="1"
             android:orientation="vertical"
@@ -114,7 +114,7 @@
     <LinearLayout
         android:id="@+id/llHolderNothingOrWrong"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/o_0dp"
+        android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="vertical"
         android:visibility="gone">
@@ -135,14 +135,14 @@
                 android:id="@+id/ivSunOrWiFi"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="28dp"
+                android:layout_marginStart="@dimen/o_28dp"
                 android:layout_marginTop="26dp"
                 android:src="@drawable/sun_ic" />
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="72dp"
+                android:layout_marginStart="@dimen/o_72dp"
                 android:src="@drawable/com1_ic"
                 app:tint="@color/whiteOrBlack" />
 

@@ -12,10 +12,15 @@ inline fun <reified T : Parcelable> Bundle.parcelable(key: String): T? = when {
     else -> @Suppress("DEPRECATION") getParcelable(key) as? T
 }
 
-private const val RADIUS_CUT_IMAGE = 10f
+private const val RADIUS_CUT_IMAGE_ADAPTER = 2f
+private const val RADIUS_CUT_IMAGE_PLAYER = 8f
 
-fun getRadiusCutImage(): Float {
-    return RADIUS_CUT_IMAGE
+fun getRadiusCutImageAdapter(): Float {
+    return RADIUS_CUT_IMAGE_ADAPTER
+}
+
+fun getRadiusCutImagePlayer(): Float {
+    return RADIUS_CUT_IMAGE_PLAYER
 }
 
 fun dpToPx(dp: Float, context: Context): Int {

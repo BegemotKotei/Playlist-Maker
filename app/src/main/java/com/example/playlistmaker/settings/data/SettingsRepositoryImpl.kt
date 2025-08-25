@@ -16,15 +16,15 @@ class SettingsRepositoryImpl(private val context: Context) : SettingsRepository 
     override fun updateThemeSetting(theme: Int) =
         sharedPrefs.edit { putInt(THEME_KEY, theme) }
 
-    override fun getAppShareLink() = context.getString(R.string.shareHT)
+    override fun getAppShareLink() = context.getString(R.string.share_ht)
 
-    override fun getUserPolicy() = context.getString(R.string.userPolicWeb)
+    override fun getUserPolicy() = context.getString(R.string.user_policy_web)
 
     override fun getSupportEmail() = context.getString(R.string.email)
 
-    override fun getSupportEmailTop() = context.getString(R.string.emailSubject)
+    override fun getSupportEmailTop() = context.getString(R.string.email_subject)
 
-    override fun getSupportEmailText() = context.getString(R.string.emailText)
+    override fun getSupportEmailText() = context.getString(R.string.email_text)
 
     private companion object {
         const val PREF_NAME = "PREF_SETTINGS"
