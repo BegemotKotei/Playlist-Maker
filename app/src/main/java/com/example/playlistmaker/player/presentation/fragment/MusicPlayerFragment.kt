@@ -86,6 +86,7 @@ class MusicPlayerFragment : Fragment() {
         }
 
         viewModel.playLists.observe(viewLifecycleOwner) {
+
             adapter.data = it
         }
 

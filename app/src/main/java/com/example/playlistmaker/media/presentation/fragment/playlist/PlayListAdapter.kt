@@ -4,15 +4,15 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.databinding.PlaylistItemBinding
-import com.example.playlistmaker.playlist_create.domain.models.PlayList
+import com.example.playlistmaker.playlist_create.presentation.models.PlayListUI
 
 class PlayListAdapter : RecyclerView.Adapter<PlayListViewHolder>() {
-    var data: List<PlayList> = emptyList()
+    var data: List<PlayListUI> = emptyList()
         set(value) {
             field = value
             notifyDataSetChanged()
         }
-    var onClick: (PlayList) -> Unit = {}
+    var onClick: (PlayListUI) -> Unit = {}
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlayListViewHolder {
         val view = LayoutInflater.from(parent.context)
         return PlayListViewHolder(PlaylistItemBinding.inflate(view, parent, false))

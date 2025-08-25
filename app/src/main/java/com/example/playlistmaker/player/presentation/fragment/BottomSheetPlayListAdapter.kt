@@ -4,16 +4,16 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.databinding.PlaylistItemBsBinding
-import com.example.playlistmaker.playlist_create.domain.models.PlayList
+import com.example.playlistmaker.playlist_create.presentation.models.PlayListUI
 
 class BottomSheetPlayListAdapter : RecyclerView.Adapter<BottomSheetPlayListViewHolder>() {
-    var data: List<PlayList> = emptyList()
+    var data: List<PlayListUI> = emptyList()
     set(value) {
         field = value
         notifyDataSetChanged()
     }
 
-    var onClick: (PlayList) -> Unit = {}
+    var onClick: (PlayListUI) -> Unit = {}
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int

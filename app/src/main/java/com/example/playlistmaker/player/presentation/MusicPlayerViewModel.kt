@@ -7,7 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.db.domain.LikeTrackInteractor
 import com.example.playlistmaker.db.domain.PlayListInteractor
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
-import com.example.playlistmaker.playlist_create.domain.models.PlayList
+import com.example.playlistmaker.playlist_create.presentation.mapper.PlayListMapper
+import com.example.playlistmaker.playlist_create.presentation.models.PlayListUI
 import com.example.playlistmaker.search.presentation.mapper.TrackMapper
 import com.example.playlistmaker.search.presentation.models.TrackUI
 import kotlinx.coroutines.Dispatchers
@@ -33,8 +34,8 @@ class MusicPlayerViewModel(
     private var _isLiked = MutableLiveData<Boolean>()
     val isLiked: LiveData<Boolean>
         get() = _isLiked
-    private val _playList = MutableLiveData<List<PlayList>>()
-    val playLists: LiveData<List<PlayList>>
+    private val _playList = MutableLiveData<List<PlayListUI>>()
+    val playLists: LiveData<List<PlayListUI>>
         get() = _playList
     private var _trackAddedFlow = MutableSharedFlow<ToastState>()
     val trackAddedFlow = _trackAddedFlow.asSharedFlow()
@@ -53,7 +54,11 @@ class MusicPlayerViewModel(
             playListInteractor.listPlayList().collect { playLists ->
                 _playList.postValue(
                     playLists.map { playlist ->
-                        playlist.copy(count = playListInteractor.getCountTracks(playlist.id))
+                        PlayListMapper.mapToPlayListUI(
+                            playlist.copy(
+                                count = playListInteractor.getCountTracks(playlist.id)
+                            )
+                        )
                     }
                 )
             }

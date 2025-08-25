@@ -5,12 +5,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.db.domain.PlayListInteractor
-import com.example.playlistmaker.playlist_create.domain.models.PlayList
+import com.example.playlistmaker.playlist_create.presentation.mapper.PlayListMapper
+import com.example.playlistmaker.playlist_create.presentation.models.PlayListUI
 import kotlinx.coroutines.launch
 
 class PlayListViewModel(private val playlistInteractor: PlayListInteractor) : ViewModel() {
-    private val _playList = MutableLiveData<List<PlayList>>()
-    val playLists: LiveData<List<PlayList>>
+    private val _playList = MutableLiveData<List<PlayListUI>>()
+    val playLists: LiveData<List<PlayListUI>>
         get() = _playList
 
     fun update() {
@@ -18,7 +19,11 @@ class PlayListViewModel(private val playlistInteractor: PlayListInteractor) : Vi
             playlistInteractor.listPlayList().collect {
                 _playList.postValue(
                     it.map { playlist ->
-                        playlist.copy(count = playlistInteractor.getCountTracks(playlist.id))
+                        PlayListMapper.mapToPlayListUI(
+                            playlist.copy(
+                                count = playlistInteractor.getCountTracks(playlist.id)
+                            )
+                        )
                     }
                 )
             }

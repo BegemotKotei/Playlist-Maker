@@ -4,11 +4,11 @@ import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.PlaylistItemBsBinding
-import com.example.playlistmaker.playlist_create.domain.models.PlayList
+import com.example.playlistmaker.playlist_create.presentation.models.PlayListUI
 
 class BottomSheetPlayListViewHolder(private val binding: PlaylistItemBsBinding) :
     RecyclerView.ViewHolder(binding.root) {
-    fun bind(item: PlayList) {
+    fun bind(item: PlayListUI) {
         with(binding) {
             tvNamePlaylistBS.text = item.namePlayList
             tvCountTrackBS.text = item.count.toString() + " " + formatTrack(item.count.toInt())
