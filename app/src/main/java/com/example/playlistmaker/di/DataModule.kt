@@ -4,6 +4,7 @@ import android.content.Context
 import android.media.MediaPlayer
 import androidx.room.Room
 import com.example.playlistmaker.db.data.AppDatabase
+import com.example.playlistmaker.playlist_create.data.SaveImageToMemory
 import com.example.playlistmaker.search.data.NetworkClient
 import com.example.playlistmaker.search.data.SearchHistoryStorage
 import com.example.playlistmaker.search.data.network.RetrofitNetworkClient
@@ -46,6 +47,10 @@ val dataModule = module {
     single {
         get<AppDatabase>().trackDao()
     }
+    single {
+        get<AppDatabase>().playListDao()
+    }
+    factory { SaveImageToMemory(androidContext()) }
 }
 
 private const val HISTORY_MAIN = "historyMain"

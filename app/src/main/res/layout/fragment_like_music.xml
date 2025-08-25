@@ -26,14 +26,14 @@
             android:id="@+id/ivSunOrWiFi"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="28dp"
+            android:layout_marginStart="@dimen/o_28dp"
             android:layout_marginTop="26dp"
             android:src="@drawable/sun_ic" />
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="72dp"
+            android:layout_marginStart="@dimen/o_72dp"
             android:src="@drawable/com1_ic"
             app:tint="@color/whiteOrBlack" />
     </FrameLayout>

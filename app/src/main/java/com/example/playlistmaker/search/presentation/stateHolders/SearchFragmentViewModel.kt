@@ -86,6 +86,7 @@ class SearchFragmentViewModel(
     }
 
     fun searchTracks(searchQuery: String) {
+        searchJob?.cancel()
         if (searchQuery.isNotEmpty()) {
             _searchStatus.postValue(ResponseStatus.LOADING)
             viewModelScope.launch {

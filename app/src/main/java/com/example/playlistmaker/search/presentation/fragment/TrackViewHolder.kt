@@ -4,9 +4,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
-import com.example.playlistmaker.databinding.TrackItemBinding
 import com.example.playlistmaker.core.dpToPx
-import com.example.playlistmaker.core.getRadiusCutImage
+import com.example.playlistmaker.core.getRadiusCutImageAdapter
+import com.example.playlistmaker.databinding.TrackItemBinding
 import com.example.playlistmaker.search.presentation.models.TrackUI
 
 class TrackViewHolder(private val binding: TrackItemBinding) :
@@ -23,7 +23,7 @@ class TrackViewHolder(private val binding: TrackItemBinding) :
             .load(item.artworkUrl100)
             .placeholder(R.drawable.placeholder_ic)
             .centerInside()
-            .transform(RoundedCorners(dpToPx(getRadiusCutImage(), itemView.context)))
+            .transform(RoundedCorners(dpToPx(getRadiusCutImageAdapter(), itemView.context)))
             .into(binding.ivArtworkUrl100)
     }
 }

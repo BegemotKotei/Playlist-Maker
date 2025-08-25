@@ -148,7 +148,7 @@ class SearchFragment : Fragment() {
                     progressBar.isVisible = false
                     showHolder(true)
                     ivSunOrWiFi.setImageResource(R.drawable.nointernet_ic)
-                    tvTextHolder.setText(R.string.Wrong)
+                    tvTextHolder.setText(R.string.wrong)
                     btResearch.isVisible = true
                 }
             }
