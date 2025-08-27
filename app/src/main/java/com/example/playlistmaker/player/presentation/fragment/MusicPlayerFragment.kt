@@ -4,15 +4,22 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.playlistmaker.R
 import com.example.playlistmaker.core.parcelable
+import com.example.playlistmaker.core.resourceManager.IResourceManager
+import com.example.playlistmaker.core.showCustomToast
 import com.example.playlistmaker.databinding.FragmentMusicPlayerBinding
 import com.example.playlistmaker.player.presentation.MusicPlayerViewModel
 import com.example.playlistmaker.search.presentation.models.TrackUI
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -20,6 +27,8 @@ class MusicPlayerFragment : Fragment() {
     private var _binding: FragmentMusicPlayerBinding? = null
     private val binding get() = _binding!!
     private var url: String? = null
+    private val resourceManager: IResourceManager by inject()
+    private lateinit var adapter: BottomSheetPlayListAdapter
     private val viewModel: MusicPlayerViewModel by viewModel<MusicPlayerViewModel> {
         parametersOf(getTrackFromArgs())
     }
@@ -30,17 +39,27 @@ class MusicPlayerFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMusicPlayerBinding.inflate(inflater, container, false)
-        val view = binding.root
-        return view
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        adapter = BottomSheetPlayListAdapter(resourceManager)
         val trackUI = getTrackFromArgs()
         initViews()
         loadTrackData(trackUI)
         observeSetupPlayer()
         observeIsLiked()
+        setupPlaylistLogic()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.update()
+        BottomSheetBehavior.from(binding.standardBottomSheet).apply {
+            state = BottomSheetBehavior.STATE_HIDDEN
+        }
     }
 
     override fun onPause() {
@@ -54,6 +73,53 @@ class MusicPlayerFragment : Fragment() {
         _binding = null
     }
 
+    private fun setupPlaylistLogic() {
+        val bottomSheetBehavior = BottomSheetBehavior.from(binding.standardBottomSheet).apply {
+            state = BottomSheetBehavior.STATE_HIDDEN
+        }
+
+        binding.recyclerViewBS.adapter = adapter
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.trackAddedFlow.collect { toastState ->
+                if (toastState.answer) {
+                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                }
+                makeToast(toastState.answer, toastState.name)
+            }
+        }
+
+        viewModel.playLists.observe(viewLifecycleOwner) {
+
+            adapter.data = it
+        }
+
+        binding.bsbtNewPlaylist.setOnClickListener {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            findNavController().navigate(
+                R.id.action_musicPlayerFragment_to_createPlayList
+            )
+        }
+
+        bottomSheetBehavior.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                stateBottomSheet(newState)
+            }
+
+            override fun onSlide(p0: View, p1: Float) {}
+        })
+
+        adapter.onClick = { playList ->
+            viewModel.insertInPlayList(playList.id, playList.namePlayList)
+            viewModel.update()
+        }
+
+        binding.mbPlaylistAdd.setOnClickListener {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
+    }
+
     private fun getTrackFromArgs(): TrackUI {
         return requireArguments().parcelable<TrackUI>(TRACK_KEY)
             ?: throw IllegalStateException("TrackUI is required")
@@ -64,6 +130,9 @@ class MusicPlayerFragment : Fragment() {
             findNavController().popBackStack()
         }
         binding.mbPlayMusic.setOnClickListener { viewModel.playbackControl() }
+        binding.mbLikeMusic.setOnClickListener {
+            viewModel.changeLikeStatus()
+        }
     }
 
     private fun loadTrackData(trackUI: TrackUI) {
@@ -110,8 +179,31 @@ class MusicPlayerFragment : Fragment() {
                 binding.mbLikeMusic.setIconTintResource(R.color.white)
             }
         }
-        binding.mbLikeMusic.setOnClickListener {
-            viewModel.changeLikeStatus()
+    }
+
+    private fun stateBottomSheet(newState: Int) {
+        when (newState) {
+            BottomSheetBehavior.STATE_HIDDEN -> {
+                binding.overlay.visibility = View.GONE
+            }
+
+            else -> {
+                binding.overlay.visibility = View.VISIBLE
+            }
+        }
+    }
+
+    private fun makeToast(answer: Boolean, name: String) {
+        if (answer) {
+            Toast(requireContext()).showCustomToast(
+                getString(R.string.add_playlist_yes, name),
+                requireActivity()
+            )
+        } else {
+            Toast(requireContext()).showCustomToast(
+                getString(R.string.add_playlist_no, name),
+                requireActivity()
+            )
         }
     }
 

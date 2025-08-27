@@ -1,9 +1,13 @@
 package com.example.playlistmaker.di
 
 import com.example.playlistmaker.db.domain.LikeTrackInteractor
+import com.example.playlistmaker.db.domain.PlayListInteractor
 import com.example.playlistmaker.db.domain.imlp.LikeTrackInteractorImpl
+import com.example.playlistmaker.db.domain.imlp.PlayListInteractorImpl
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
 import com.example.playlistmaker.player.domain.impl.PlayerInteractorImpl
+import com.example.playlistmaker.playlist_create.domain.SaveImageToMemoryInteractor
+import com.example.playlistmaker.playlist_create.domain.impls.SaveImageToMemoryInteractorImpl
 import com.example.playlistmaker.search.domain.api.TracksInteractor
 import com.example.playlistmaker.search.domain.impl.SharedPrefsInteractorImpl
 import com.example.playlistmaker.search.domain.impl.TracksInteractorImpl
@@ -32,5 +36,11 @@ val interactorModule = module {
     }
     factory<LikeTrackInteractor> {
         LikeTrackInteractorImpl(repository = get())
+    }
+    factory<PlayListInteractor> {
+        PlayListInteractorImpl(repository = get())
+    }
+    factory<SaveImageToMemoryInteractor> {
+        SaveImageToMemoryInteractorImpl(repository = get())
     }
 }

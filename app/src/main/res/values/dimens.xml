@@ -5,8 +5,10 @@
     <dimen name="o_14sp">14sp</dimen>
     <dimen name="o_16sp">16sp</dimen>
     <dimen name="o_18sp">18sp</dimen>
+    <dimen name="o_20sp">20sp</dimen>
     <dimen name="o_24sp">24sp</dimen>
     <dimen name="o_0dp">0dp</dimen>
+    <dimen name="o_2dp">2dp</dimen>
     <dimen name="o_4dp">4dp</dimen>
     <dimen name="o_6dp">6dp</dimen>
     <dimen name="o_8dp">8dp</dimen>
@@ -17,9 +19,16 @@
     <dimen name="o_28dp">28dp</dimen>
     <dimen name="o_32dp">32dp</dimen>
     <dimen name="o_40dp">40dp</dimen>
+    <dimen name="o_42dp">42dp</dimen>
     <dimen name="o_44dp">44dp</dimen>
     <dimen name="o_48dp">48dp</dimen>
     <dimen name="o_52dp">52dp</dimen>
+    <dimen name="o_72dp">72dp</dimen>
     <dimen name="o_84dp">84dp</dimen>
+    <dimen name="o_100dp">100dp</dimen>
     <dimen name="o_106dp">106dp</dimen>
+    <dimen name="o_172dp">172dp</dimen>
+    <dimen name="o_200dp">200dp</dimen>
+    <dimen name="o_240dp">240dp</dimen>
+    <dimen name="text_margin">16dp</dimen>
 </resources>
