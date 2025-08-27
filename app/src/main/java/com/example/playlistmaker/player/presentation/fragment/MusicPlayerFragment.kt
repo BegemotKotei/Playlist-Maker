@@ -12,12 +12,14 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.playlistmaker.R
 import com.example.playlistmaker.core.parcelable
+import com.example.playlistmaker.core.resourceManager.IResourceManager
 import com.example.playlistmaker.core.showCustomToast
 import com.example.playlistmaker.databinding.FragmentMusicPlayerBinding
 import com.example.playlistmaker.player.presentation.MusicPlayerViewModel
 import com.example.playlistmaker.search.presentation.models.TrackUI
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -25,7 +27,8 @@ class MusicPlayerFragment : Fragment() {
     private var _binding: FragmentMusicPlayerBinding? = null
     private val binding get() = _binding!!
     private var url: String? = null
-    private val adapter by lazy { BottomSheetPlayListAdapter() }
+    private val resourceManager: IResourceManager by inject()
+    private lateinit var adapter: BottomSheetPlayListAdapter
     private val viewModel: MusicPlayerViewModel by viewModel<MusicPlayerViewModel> {
         parametersOf(getTrackFromArgs())
     }
@@ -42,6 +45,7 @@ class MusicPlayerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        adapter = BottomSheetPlayListAdapter(resourceManager)
         val trackUI = getTrackFromArgs()
         initViews()
         loadTrackData(trackUI)
