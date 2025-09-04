@@ -36,7 +36,8 @@ class PlayListDbMapper {
                 primaryGenreName = playListTrack.primaryGenreName,
                 country = playListTrack.country,
                 previewUrl = playListTrack.previewUrl,
-                isLiked = false
+                isLiked = false,
+                id = playListTrack.id
             )
         }
     }

@@ -25,6 +25,7 @@ class MainActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.musicPlayerFragment -> hideBottomNavigation()
+                R.id.aboutPlayListFragment -> hideBottomNavigation()
                 else -> showBottomNavigation()
             }
         }

@@ -44,7 +44,7 @@ val repositoryModule = module {
         SaveImageToMemoryRepositoryImpl(saveImageToMemory = get())
     }
     single<PlayListRepository> {
-        PlayListRepositoryImpl(playListDao = get(), playListDbMapper = get())
+        PlayListRepositoryImpl(playListDao = get(), playListDbMapper = get(), context = get())
     }
     factory { PlayListDbMapper() }
 

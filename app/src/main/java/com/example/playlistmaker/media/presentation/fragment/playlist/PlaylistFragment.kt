@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -54,7 +55,13 @@ class PlaylistFragment : Fragment() {
             }
         }
 
-
+        adapter.onClick = { playlist ->
+            (activity as MainActivity).animateBottomNavigationViewFalse()
+            findNavController().navigate(
+                R.id.action_mediaLibraryFragment_to_aboutPlayListFragment,
+                bundleOf(PLAYLIST_ITEM to playlist)
+            )
+        }
 
         binding.btNewPlaylist.setOnClickListener {
             (activity as MainActivity).animateBottomNavigationViewFalse()
@@ -80,6 +87,7 @@ class PlaylistFragment : Fragment() {
 
     companion object {
         private const val PLAYLIST_NUMBER = "playlist_number"
+        private const val PLAYLIST_ITEM = "Playlist"
 
         fun newInstance() = PlaylistFragment().apply {
             arguments = Bundle().apply {

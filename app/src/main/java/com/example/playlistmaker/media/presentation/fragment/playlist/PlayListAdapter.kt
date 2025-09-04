@@ -16,6 +16,7 @@ class PlayListAdapter(
             notifyDataSetChanged()
         }
     var onClick: (PlayListUI) -> Unit = {}
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlayListViewHolder {
         val view = LayoutInflater.from(parent.context)
         return PlayListViewHolder(
@@ -31,6 +32,9 @@ class PlayListAdapter(
 
     override fun onBindViewHolder(holder: PlayListViewHolder, position: Int) {
         holder.bind(data[position])
-        holder.itemView.setOnClickListener { onClick(data[position]) }
+        holder.itemView.setOnClickListener {
+            val item = data.getOrNull(position) ?: return@setOnClickListener
+            onClick(item)
+        }
     }
 }

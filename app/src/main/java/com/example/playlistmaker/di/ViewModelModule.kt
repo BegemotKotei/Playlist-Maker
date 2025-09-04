@@ -1,5 +1,6 @@
 package com.example.playlistmaker.di
 
+import com.example.playlistmaker.about_playlist.presentation.view_model.AboutPlayListFragmentViewModel
 import com.example.playlistmaker.core.resourceManager.IResourceManager
 import com.example.playlistmaker.core.resourceManager.ResourceManager
 import com.example.playlistmaker.media.presentation.viewModel.LikeMusicViewModel
@@ -45,6 +46,9 @@ val viewModelModule = module {
     }
     viewModel<CreatePlayListFragmentViewModel> {
         CreatePlayListFragmentViewModel(saveImageInteractor = get(), playListInteractor = get())
+    }
+    viewModel<AboutPlayListFragmentViewModel> {
+        AboutPlayListFragmentViewModel(playListInteractor = get(), resourceManager = get())
     }
     factory<IResourceManager> {
         ResourceManager(context = get())

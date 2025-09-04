@@ -31,6 +31,29 @@ class CreatePlayListFragmentViewModel(
         }
     }
 
+    fun editNewPlayList(oldRoad: Uri?, id: Long, name: String, about: String, road: Uri?) {
+        viewModelScope.launch {
+            playListInteractor.editPlayList(
+                PlayListMapper.mapToPlayList(
+                    PlayListUI(
+                        id = id,
+                        namePlayList = name,
+                        aboutPlayList = about,
+                        roadToFileImage = oldOrNewUri(oldRoad, road)
+                    )
+                )
+            )
+        }
+    }
+
+    private fun oldOrNewUri(oldRoad: Uri?, road: Uri?): String {
+        return if (oldRoad == road) {
+            oldRoad.toString()
+        } else {
+            saveImageToFile(road)
+        }
+    }
+
     private val _nameImage = MutableLiveData<String>()
     val nameImage: LiveData<String>
         get() = _nameImage

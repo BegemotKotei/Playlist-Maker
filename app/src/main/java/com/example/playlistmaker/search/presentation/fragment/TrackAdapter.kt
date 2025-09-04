@@ -15,6 +15,8 @@ class TrackAdapter : RecyclerView.Adapter<TrackViewHolder>() {
             notifyDataSetChanged()
         }
     var onClick: (TrackUI) -> Unit = {}
+    var onLongClick: (TrackUI) -> Unit = {}
+
     override fun getItemCount(): Int {
         return data.size
     }
@@ -24,6 +26,11 @@ class TrackAdapter : RecyclerView.Adapter<TrackViewHolder>() {
         holder.itemView.setOnClickListener {
             val item = data.getOrNull(position) ?: return@setOnClickListener
             onClick(item)
+        }
+        holder.itemView.setOnLongClickListener {
+            val item = data.getOrNull(position) ?: return@setOnLongClickListener false
+            onLongClick(item)
+            true
         }
     }
 

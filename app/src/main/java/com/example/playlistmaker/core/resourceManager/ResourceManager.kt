@@ -18,4 +18,12 @@ class ResourceManager(private val context: Context) : IResourceManager {
             else -> "$count треков"
         }
     }
+
+    override fun formatMinutes(numberMinutes: Int): String {
+        return when {
+            numberMinutes % 10 == 1 && numberMinutes % 100 != 11 -> "$numberMinutes минута"
+            numberMinutes % 10 in 2..4 && numberMinutes % 100 !in 12..14 -> "$numberMinutes минуты"
+            else -> "$numberMinutes минут"
+        }
+    }
 }
