@@ -10,6 +10,7 @@ import androidx.core.net.toUri
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.R
 import com.example.playlistmaker.about_playlist.presentation.view_model.AboutPlayListFragmentViewModel
@@ -22,19 +23,19 @@ import com.example.playlistmaker.search.presentation.fragment.TrackAdapter
 import com.example.playlistmaker.search.presentation.models.TrackUI
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class AboutPlayListFragment : Fragment() {
-
     private val resourceManager: IResourceManager by inject()
-
     private var _binding: FragmentAboutPlaylistBinding? = null
     private val binding get() = _binding!!
     private val viewModel: AboutPlayListFragmentViewModel by viewModel()
     private var imageUri: Uri? = null
     private val adapter by lazy { TrackAdapter() }
     private var debounceClick = true
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
     lateinit var confirmDialog: MaterialAlertDialogBuilder
 
     override fun onCreateView(
@@ -54,6 +55,8 @@ class AboutPlayListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.recyclerViewBS.adapter = adapter
+        bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheetMore)
+        hideBottomSheet()
 
         binding.editPlayList.setOnClickListener {
             findNavController().navigate(
@@ -78,10 +81,6 @@ class AboutPlayListFragment : Fragment() {
                 requireArguments().parcelable<PlayListUI>(PLAYLIST_ITEM)!!.id,
                 requireArguments().parcelable<PlayListUI>(PLAYLIST_ITEM)!!.namePlayList
             )
-        }
-
-        val bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheetMore).apply {
-            state = BottomSheetBehavior.STATE_HIDDEN
         }
 
         binding.bMore.setOnClickListener {
@@ -149,12 +148,23 @@ class AboutPlayListFragment : Fragment() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        debounceClick = true
+        hideBottomSheet()
+        viewModel.updatePlayList(requireArguments().parcelable<PlayListUI>(PLAYLIST_ITEM)!!.id)
+    }
+
+    private fun hideBottomSheet() {
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+    }
+
     private fun shareTracks() {
         if (adapter.data.isNotEmpty()) {
             viewModel.shareTracks(requireArguments().parcelable<PlayListUI>(PLAYLIST_ITEM)!!.id)
         } else {
             Toast(requireContext()).showCustomToast(
-                getString(R.string.not_tracks_share),
+                resourceManager.getStringById(R.string.not_tracks_share),
                 requireActivity()
             )
         }
@@ -186,12 +196,15 @@ class AboutPlayListFragment : Fragment() {
             .setMessage(resourceManager.getStringById(R.string.delete_track_confirmation))
             .setNegativeButton(resourceManager.getStringById(R.string.no)) { dialog, which -> }
             .setPositiveButton(resourceManager.getStringById(R.string.yes)) { dialog, which ->
-                track.id?.let {
-                    viewModel.deleteTrack(
-                        it,
-                        requireArguments().parcelable<PlayListUI>(PLAYLIST_ITEM)?.id ?: 0
-                    )
+                viewLifecycleOwner.lifecycleScope.launch {
+                    track.trackId.let {
+                        viewModel.deleteTrack(
+                            it,
+                            requireArguments().parcelable<PlayListUI>(PLAYLIST_ITEM)?.id ?: 0
+                        )
+                    }
                 }
+
             }
         confirmDialog.show()
     }
@@ -201,19 +214,12 @@ class AboutPlayListFragment : Fragment() {
             .setMessage(resourceManager.getStringById(R.string.delete_playlist_confirmation, name))
             .setNegativeButton(resourceManager.getStringById(R.string.no)) { dialog, which -> }
             .setPositiveButton(resourceManager.getStringById(R.string.yes)) { dialog, which ->
-                viewModel.deletePlaylist(id)
-                findNavController().popBackStack()
+                viewLifecycleOwner.lifecycleScope.launch {
+                    viewModel.deletePlaylist(id)
+                    findNavController().popBackStack()
+                }
             }
         confirmDialog.show()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        debounceClick = true
-        BottomSheetBehavior.from(binding.bottomSheetMore).apply {
-            state = BottomSheetBehavior.STATE_HIDDEN
-        }
-        viewModel.updatePlayList(requireArguments().parcelable<PlayListUI>(PLAYLIST_ITEM)!!.id)
     }
 
     companion object {

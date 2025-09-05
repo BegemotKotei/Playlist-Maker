@@ -47,6 +47,10 @@ class PlayListRepositoryImpl(
         playListDao.deleteTrack(id)
     }
 
+    override suspend fun deleteTrackFromPlaylist(trackId: String, playlistId: Long) {
+        playListDao.deleteTrackFromPlaylist(trackId, playlistId)
+    }
+
     override suspend fun deletePlaylist(id: Long) {
         playListDao.deletePlaylistTracks(id)
         playListDao.deletePlayList(id)
@@ -104,7 +108,7 @@ class PlayListRepositoryImpl(
             putExtra(Intent.EXTRA_TEXT, textMessage)
             type = "text/plain"
         }
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         context.startActivity(intent)
     }
 

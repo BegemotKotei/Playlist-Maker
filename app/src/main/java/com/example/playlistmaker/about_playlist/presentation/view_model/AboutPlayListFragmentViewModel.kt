@@ -11,7 +11,6 @@ import com.example.playlistmaker.playlist_create.presentation.models.PlayListUI
 import com.example.playlistmaker.search.presentation.mapper.TrackMapper
 import com.example.playlistmaker.search.presentation.models.TrackUI
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 class AboutPlayListFragmentViewModel(
     private val playListInteractor: PlayListInteractor,
@@ -21,6 +20,9 @@ class AboutPlayListFragmentViewModel(
     private val _aboutPlayListState = MutableLiveData<AboutPlaylistState>()
     val aboutPlayListState: LiveData<AboutPlaylistState>
         get() = _aboutPlayListState
+    private val _playlist = MutableLiveData<PlayListUI>()
+    val playList: LiveData<PlayListUI>
+        get() = _playlist
 
     fun update(id: Long) {
         viewModelScope.launch {
@@ -33,11 +35,6 @@ class AboutPlayListFragmentViewModel(
             _aboutPlayListState.postValue(AboutPlaylistState(tracks, time, count))
         }
     }
-
-    private val _playlist = MutableLiveData<PlayListUI>()
-    val playList: LiveData<PlayListUI>
-        get() = _playlist
-
     fun updatePlayList(id: Long) {
         viewModelScope.launch {
             _playlist.postValue(
@@ -46,9 +43,9 @@ class AboutPlayListFragmentViewModel(
         }
     }
 
-    fun deleteTrack(trackId: Long, playListId: Long) {
+    fun deleteTrack(trackId: String, playListId: Long) {
         viewModelScope.launch {
-            playListInteractor.deleteTrack(trackId)
+            playListInteractor.deleteTrackFromPlaylist(trackId, playListId)
             update(playListId)
         }
     }
@@ -59,9 +56,7 @@ class AboutPlayListFragmentViewModel(
         }
     }
 
-    fun deletePlaylist(id: Long) {
-        runBlocking {
+     suspend fun deletePlaylist(id: Long) {
             playListInteractor.deletePlayList(id)
-        }
     }
 }
