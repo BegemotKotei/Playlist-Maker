@@ -18,7 +18,7 @@ import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.search.domain.models.ResponseStatus
 import com.example.playlistmaker.search.presentation.mapper.TrackMapper
 import com.example.playlistmaker.search.presentation.models.TrackUI
-import com.example.playlistmaker.search.presentation.stateHolders.SearchFragmentViewModel
+import com.example.playlistmaker.search.presentation.view_model.SearchFragmentViewModel
 import com.example.playlistmaker.ui.MainActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 

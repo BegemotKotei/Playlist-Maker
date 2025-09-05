@@ -9,7 +9,7 @@ import com.example.playlistmaker.media.presentation.viewModel.PlayListViewModel
 import com.example.playlistmaker.player.presentation.MusicPlayerViewModel
 import com.example.playlistmaker.playlist_create.presentation.CreatePlayListFragmentViewModel
 import com.example.playlistmaker.search.presentation.models.TrackUI
-import com.example.playlistmaker.search.presentation.stateHolders.SearchFragmentViewModel
+import com.example.playlistmaker.search.presentation.view_model.SearchFragmentViewModel
 import com.example.playlistmaker.settings.presentation.SettingsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
