@@ -42,7 +42,6 @@ class PlaybackButtonView @JvmOverloads constructor(
         val bottom = top + size
 
         iconRect.set(left, top, right, bottom)
-
         playIcon?.bounds = Rect(
             iconRect.left.toInt(),
             iconRect.top.toInt(),
@@ -64,11 +63,16 @@ class PlaybackButtonView @JvmOverloads constructor(
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        if (event?.action == MotionEvent.ACTION_UP) {
-            toggle()
-            performClick()
+        if (event == null) return super.onTouchEvent(event)
+
+        return when (event.action) {
+            MotionEvent.ACTION_UP -> {
+                performClick()
+                true
+            }
+
+            else -> super.onTouchEvent(event)
         }
-        return true
     }
 
     override fun performClick(): Boolean {
@@ -76,13 +80,10 @@ class PlaybackButtonView @JvmOverloads constructor(
         return true
     }
 
-    fun toggle() {
-        isPlaying = !isPlaying
-        invalidate()
-    }
-
     fun setPlaying(isPlaying: Boolean) {
-        this.isPlaying = isPlaying
-        invalidate()
+        if (this.isPlaying != isPlaying) {
+            this.isPlaying = isPlaying
+            invalidate()
+        }
     }
 }
