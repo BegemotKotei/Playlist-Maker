@@ -16,6 +16,7 @@ import com.example.playlistmaker.core.resourceManager.IResourceManager
 import com.example.playlistmaker.core.showCustomToast
 import com.example.playlistmaker.databinding.FragmentMusicPlayerBinding
 import com.example.playlistmaker.player.presentation.MusicPlayerViewModel
+import com.example.playlistmaker.player.presentation.PlayerState
 import com.example.playlistmaker.search.presentation.models.TrackUI
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.coroutines.launch
@@ -90,7 +91,6 @@ class MusicPlayerFragment : Fragment() {
         }
 
         viewModel.playLists.observe(viewLifecycleOwner) {
-
             adapter.data = it
         }
 
@@ -129,7 +129,7 @@ class MusicPlayerFragment : Fragment() {
         binding.ivBack.setOnClickListener {
             findNavController().popBackStack()
         }
-        binding.mbPlayMusic.setOnClickListener { viewModel.playbackControl() }
+        binding.playButton.setOnClickListener { viewModel.playbackControl() }
         binding.mbLikeMusic.setOnClickListener {
             viewModel.changeLikeStatus()
         }
@@ -162,8 +162,7 @@ class MusicPlayerFragment : Fragment() {
             viewModel.playerState.observe(viewLifecycleOwner) { state ->
                 state?.let {
                     binding.tvTimeMusic30.text = state.progress
-                    binding.mbPlayMusic.setIconResource(state.buttonIconRes)
-                    binding.mbPlayMusic.isEnabled = state.isPlayButtonEnabled
+                    updatePlayBackButtonState(state)
                 }
             }
         }
@@ -177,6 +176,30 @@ class MusicPlayerFragment : Fragment() {
             } else {
                 binding.mbLikeMusic.setIconResource(R.drawable.like_ic)
                 binding.mbLikeMusic.setIconTintResource(R.color.white)
+            }
+        }
+    }
+
+    private fun updatePlayBackButtonState(state: PlayerState) {
+        when (state) {
+            is PlayerState.Default -> {
+                binding.playButton.isEnabled = false
+                binding.playButton.setPlaying(false)
+            }
+
+            is PlayerState.Prepared -> {
+                binding.playButton.isEnabled = true
+                binding.playButton.setPlaying(false)
+            }
+
+            is PlayerState.Playing -> {
+                binding.playButton.isEnabled = true
+                binding.playButton.setPlaying(true)
+            }
+
+            is PlayerState.Paused -> {
+                binding.playButton.isEnabled = true
+                binding.playButton.setPlaying(false)
             }
         }
     }
