@@ -1,5 +1,6 @@
 package com.example.playlistmaker.di
 
+import com.example.playlistmaker.about_playlist.presentation.view_model.AboutPlayListFragmentViewModel
 import com.example.playlistmaker.core.resourceManager.IResourceManager
 import com.example.playlistmaker.core.resourceManager.ResourceManager
 import com.example.playlistmaker.media.presentation.viewModel.LikeMusicViewModel
@@ -8,7 +9,7 @@ import com.example.playlistmaker.media.presentation.viewModel.PlayListViewModel
 import com.example.playlistmaker.player.presentation.MusicPlayerViewModel
 import com.example.playlistmaker.playlist_create.presentation.CreatePlayListFragmentViewModel
 import com.example.playlistmaker.search.presentation.models.TrackUI
-import com.example.playlistmaker.search.presentation.stateHolders.SearchFragmentViewModel
+import com.example.playlistmaker.search.presentation.view_model.SearchFragmentViewModel
 import com.example.playlistmaker.settings.presentation.SettingsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -45,6 +46,9 @@ val viewModelModule = module {
     }
     viewModel<CreatePlayListFragmentViewModel> {
         CreatePlayListFragmentViewModel(saveImageInteractor = get(), playListInteractor = get())
+    }
+    viewModel<AboutPlayListFragmentViewModel> {
+        AboutPlayListFragmentViewModel(playListInteractor = get(), resourceManager = get())
     }
     factory<IResourceManager> {
         ResourceManager(context = get())

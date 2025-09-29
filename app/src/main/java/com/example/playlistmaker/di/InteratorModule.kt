@@ -38,7 +38,7 @@ val interactorModule = module {
         LikeTrackInteractorImpl(repository = get())
     }
     factory<PlayListInteractor> {
-        PlayListInteractorImpl(repository = get())
+        PlayListInteractorImpl(repository = get(), resourceManager = get())
     }
     factory<SaveImageToMemoryInteractor> {
         SaveImageToMemoryInteractorImpl(repository = get())

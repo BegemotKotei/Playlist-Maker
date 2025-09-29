@@ -1,4 +1,4 @@
-package com.example.playlistmaker.search.presentation.stateHolders
+package com.example.playlistmaker.search.presentation.view_model
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
