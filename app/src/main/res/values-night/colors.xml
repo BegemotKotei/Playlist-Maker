@@ -12,4 +12,8 @@
     <color name="greyOrBlue1">#9FBBF3</color>
     <color name="greyOrBlack">#1A1B22</color>
     <color name="player_button">#535459</color>
+    <color name="circle_color">#FFFFFF</color>
+    <color name="icon_color">#1A1B22</color>
+    <color name="circle_color_play">#FFFFFF</color>
+    <color name="icon_color_play">#1A1B22</color>
 </resources>
