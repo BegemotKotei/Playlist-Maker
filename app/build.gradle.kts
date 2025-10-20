@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.playlistmaker"
-        minSdk = 29
+        minSdk = 31
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -42,6 +42,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.easypermissions)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

@@ -17,7 +17,6 @@ import org.koin.dsl.module
 val viewModelModule = module {
     viewModel<MusicPlayerViewModel> { (trackUI: TrackUI) ->
         MusicPlayerViewModel(
-            playerInteractor = get(),
             likeTrackInteractor = get(),
             playListInteractor = get(),
             trackUI = trackUI
