@@ -123,11 +123,12 @@ class MusicPlayerFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        if (isBound && serviceConnection != null) {
-            requireContext().unbindService(serviceConnection!!)
+        serviceConnection?.takeIf { isBound }?.let { connection ->
+            requireContext().unbindService(connection)
             isBound = false
         }
         _binding = null
+        serviceConnection = null
     }
 
     override fun onDestroy() {

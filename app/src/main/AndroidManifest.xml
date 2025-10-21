@@ -7,7 +7,6 @@
 
     <!-- Разрешения для медиа -->
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <!-- Разрешения для foreground service -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />

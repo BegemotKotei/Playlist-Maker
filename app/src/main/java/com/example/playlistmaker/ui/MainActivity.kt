@@ -94,14 +94,6 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
             ) {
                 permsNeeded.add(android.Manifest.permission.POST_NOTIFICATIONS)
             }
-        } else {
-            if (!EasyPermissions.hasPermissions(
-                    this,
-                    android.Manifest.permission.READ_EXTERNAL_STORAGE
-                )
-            ) {
-                permsNeeded.add(android.Manifest.permission.READ_EXTERNAL_STORAGE)
-            }
         }
 
         if (permsNeeded.isNotEmpty()) {
@@ -146,6 +138,7 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
             insets
         }
     }
+
     companion object {
         private const val REQUEST_CODE_PERMISSIONS = 1001
     }
