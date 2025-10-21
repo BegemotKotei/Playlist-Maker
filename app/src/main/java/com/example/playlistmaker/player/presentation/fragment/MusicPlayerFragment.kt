@@ -21,11 +21,12 @@ import com.example.playlistmaker.core.resourceManager.IResourceManager
 import com.example.playlistmaker.core.showCustomToast
 import com.example.playlistmaker.databinding.FragmentMusicPlayerBinding
 import com.example.playlistmaker.player.presentation.MusicPlayerViewModel
-import com.example.playlistmaker.player.presentation.PlayerState
 import com.example.playlistmaker.player.presentation.service.AudioPlayerService
 import com.example.playlistmaker.player.presentation.service.AudioPlayerServiceImpl
 import com.example.playlistmaker.search.presentation.models.TrackUI
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -60,7 +61,6 @@ class MusicPlayerFragment : Fragment() {
 
         initViews()
         loadTrackData(trackUI)
-        observePlayerState()
         observeIsLiked()
         setupPlaylistLogic()
         bindServiceToAudioPlayer(trackUI)
@@ -73,8 +73,7 @@ class MusicPlayerFragment : Fragment() {
                     audioService = service.getService()
                     isBound = true
 
-                    val track = getTrackFromArgs()
-                    audioService?.preparePlayer(track)
+                    viewModel.preparePlayer(audioService)
 
                     observeService()
                 }
@@ -91,7 +90,6 @@ class MusicPlayerFragment : Fragment() {
         val intent = Intent(requireContext(), AudioPlayerServiceImpl::class.java).apply {
             putExtra(TRACK_KEY, track)
         }
-
         requireContext().bindService(intent, createServiceConnection(), Context.BIND_AUTO_CREATE)
     }
 
@@ -101,35 +99,30 @@ class MusicPlayerFragment : Fragment() {
         if (isObservingService) return
         isObservingService = true
 
-        lifecycleScope.launch {
-            audioService?.getIsPlaying()?.collect { isPlaying ->
-                viewModel.updatePlaybackState(isPlaying)
-            }
-        }
+        binding.playButton.isEnabled = true
 
-        lifecycleScope.launch {
-            audioService?.getCurrentTime()?.collect { time ->
-                binding.tvTimeMusic30.text = time
-            }
-        }
+        audioService?.getIsPlaying()?.onEach { isPlaying ->
+            binding.playButton.setPlaying(isPlaying)
+        }?.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        audioService?.getCurrentTime()?.onEach { time ->
+            binding.tvTimeMusic30.text = time
+        }?.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     override fun onResume() {
         super.onResume()
-        audioService?.hideNotification()
+        viewModel.hideNotification(audioService)
         viewModel.update()
     }
 
     override fun onPause() {
         super.onPause()
-        if (audioService?.getIsPlaying()?.value == true) {
-            audioService?.showNotificationIfPlaying()
-        }
+        viewModel.showNotification(audioService)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        audioService?.stop()
         if (isBound && serviceConnection != null) {
             requireContext().unbindService(serviceConnection!!)
             isBound = false
@@ -140,7 +133,6 @@ class MusicPlayerFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         audioService?.stop()
-        _binding = null
     }
 
     private fun initViews() {
@@ -148,7 +140,7 @@ class MusicPlayerFragment : Fragment() {
             findNavController().popBackStack()
         }
         binding.playButton.setOnClickListener {
-            audioService?.togglePlayback()
+            viewModel.playbackControl(audioService)
         }
         binding.mbLikeMusic.setOnClickListener {
             viewModel.changeLikeStatus()
@@ -226,14 +218,6 @@ class MusicPlayerFragment : Fragment() {
         }
     }
 
-    private fun observePlayerState() {
-        viewModel.playerState.observe(viewLifecycleOwner) { state ->
-            state?.let {
-                updatePlayBackButtonState(state)
-            }
-        }
-    }
-
     private fun observeIsLiked() {
         viewModel.isLiked.observe(viewLifecycleOwner) { isLiked ->
             if (isLiked) {
@@ -242,30 +226,6 @@ class MusicPlayerFragment : Fragment() {
             } else {
                 binding.mbLikeMusic.setIconResource(R.drawable.like_ic)
                 binding.mbLikeMusic.setIconTintResource(R.color.white)
-            }
-        }
-    }
-
-    private fun updatePlayBackButtonState(state: PlayerState) {
-        when (state) {
-            is PlayerState.Default -> {
-                binding.playButton.isEnabled = false
-                binding.playButton.setPlaying(false)
-            }
-
-            is PlayerState.Prepared -> {
-                binding.playButton.isEnabled = true
-                binding.playButton.setPlaying(false)
-            }
-
-            is PlayerState.Playing -> {
-                binding.playButton.isEnabled = true
-                binding.playButton.setPlaying(true)
-            }
-
-            is PlayerState.Paused -> {
-                binding.playButton.isEnabled = true
-                binding.playButton.setPlaying(false)
             }
         }
     }

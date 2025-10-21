@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.db.domain.LikeTrackInteractor
 import com.example.playlistmaker.db.domain.PlayListInteractor
+import com.example.playlistmaker.player.presentation.service.AudioPlayerService
 import com.example.playlistmaker.playlist_create.presentation.mapper.PlayListMapper
 import com.example.playlistmaker.playlist_create.presentation.models.PlayListUI
 import com.example.playlistmaker.search.presentation.mapper.TrackMapper
@@ -19,9 +20,6 @@ class MusicPlayerViewModel(
     private val playListInteractor: PlayListInteractor,
     private val trackUI: TrackUI
 ) : ViewModel() {
-    private val _playerState = MutableLiveData<PlayerState>(PlayerState.Default())
-    val playerState: LiveData<PlayerState> = _playerState
-
     private var _isLiked = MutableLiveData<Boolean>()
     val isLiked: LiveData<Boolean> = _isLiked
 
@@ -31,12 +29,20 @@ class MusicPlayerViewModel(
     private var _trackAddedFlow = MutableSharedFlow<ToastState>()
     val trackAddedFlow = _trackAddedFlow.asSharedFlow()
 
-    fun updatePlaybackState(isPlaying: Boolean) {
-        val currentState = _playerState.value
-        _playerState.postValue(
-            if (isPlaying) PlayerState.Playing(currentState?.progress ?: "00:00")
-            else PlayerState.Paused(currentState?.progress ?: "00:00")
-        )
+    fun playbackControl(audioPlayerService: AudioPlayerService?) {
+        audioPlayerService?.togglePlayback()
+    }
+
+    fun preparePlayer(audioPlayerService: AudioPlayerService?) {
+        audioPlayerService?.preparePlayer(trackUI)
+    }
+
+    fun showNotification(audioPlayerService: AudioPlayerService?) {
+        audioPlayerService?.showNotificationIfPlaying()
+    }
+
+    fun hideNotification(audioPlayerService: AudioPlayerService?) {
+        audioPlayerService?.hideNotification()
     }
 
     fun update() {
