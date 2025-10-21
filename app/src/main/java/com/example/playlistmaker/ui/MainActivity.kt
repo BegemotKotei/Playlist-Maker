@@ -1,6 +1,8 @@
 package com.example.playlistmaker.ui
 
+import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -9,8 +11,9 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityMainBinding
+import pub.devrel.easypermissions.EasyPermissions
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,6 +34,7 @@ class MainActivity : AppCompatActivity() {
         }
         binding.bottomNavigationView.setupWithNavController(navController)
         setupInsets()
+        requestPermissions()
     }
 
     fun animateBottomNavigationViewTrue() {
@@ -39,6 +43,69 @@ class MainActivity : AppCompatActivity() {
 
     fun animateBottomNavigationViewFalse() {
         binding.bottomNavigationView.isVisible = false
+    }
+
+    override fun onPermissionsGranted(requestCode: Int, perms: List<String?>) {
+        if (requestCode == REQUEST_CODE_PERMISSIONS) {
+            Toast.makeText(
+                this,
+                "Все разрешения получены",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    override fun onPermissionsDenied(requestCode: Int, perms: List<String?>) {
+        if (requestCode == REQUEST_CODE_PERMISSIONS) {
+            if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
+                Toast.makeText(
+                    this,
+                    "Разрешения заблокированы, включите их в настройках",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
+    }
+
+    private fun requestPermissions() {
+        val permsNeeded = mutableListOf<String>()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (!EasyPermissions.hasPermissions(
+                    this,
+                    android.Manifest.permission.READ_MEDIA_AUDIO
+                )
+            ) {
+                permsNeeded.add(android.Manifest.permission.READ_MEDIA_AUDIO)
+            }
+            if (!EasyPermissions.hasPermissions(
+                    this,
+                    android.Manifest.permission.POST_NOTIFICATIONS
+                )
+            ) {
+                permsNeeded.add(android.Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+
+        if (permsNeeded.isNotEmpty()) {
+            EasyPermissions.requestPermissions(
+                this,
+                "Для работы музыки и уведомлений нужны разрешения",
+                REQUEST_CODE_PERMISSIONS,
+                *permsNeeded.toTypedArray()
+            )
+        } else {
+            Toast.makeText(this, "Все разрешения предоставлены", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun hideBottomNavigation() {
@@ -70,5 +137,9 @@ class MainActivity : AppCompatActivity() {
             )
             insets
         }
+    }
+
+    companion object {
+        private const val REQUEST_CODE_PERMISSIONS = 1001
     }
 }
