@@ -21,6 +21,12 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            binding.rootFragmentContainerView.setPadding(systemBars.left, systemBars.top, systemBars.right, 0)
+            insets
+        }
+
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.rootFragmentContainerView) as NavHostFragment
         val navController = navHostFragment.navController
@@ -33,7 +39,6 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
             }
         }
         binding.bottomNavigationView.setupWithNavController(navController)
-        //setupInsets()
         requestPermissions()
     }
 
@@ -122,19 +127,6 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
             .translationY(0f)
             .setDuration(300)
             .start()
-    }
-
-    private fun setupInsets() {
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
-            val systemBar = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(
-                systemBar.left,
-                systemBar.top,
-                systemBar.right,
-                systemBar.bottom
-            )
-            insets
-        }
     }
 
     companion object {

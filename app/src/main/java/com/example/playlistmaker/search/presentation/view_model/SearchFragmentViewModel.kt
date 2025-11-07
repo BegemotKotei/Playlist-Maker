@@ -1,7 +1,5 @@
 package com.example.playlistmaker.search.presentation.view_model
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.search.domain.api.TracksInteractor
@@ -11,138 +9,134 @@ import com.example.playlistmaker.search.domain.sharedpref.SharedPrefsInteractor
 import com.example.playlistmaker.search.presentation.mapper.TrackMapper
 import com.example.playlistmaker.search.presentation.models.TrackUI
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+
+data class SearchScreenState(
+    val searchText: String = "",
+    val tracks: List<TrackUI> = emptyList(),
+    val historyTracks: List<TrackUI> = emptyList(),
+    val searchStatus: ResponseStatus = ResponseStatus.DEFAULT,
+    val showHistory: Boolean = false,
+)
 
 class SearchFragmentViewModel(
     private val sharedPrefsInteractor: SharedPrefsInteractor,
-    private val tracksInteractor: TracksInteractor
+    private val tracksInteractor: TracksInteractor,
 ) : ViewModel() {
-    private var searchJob: Job? = null
-    private var latestSearchText: String? = null
-    private val _isClickAllowed = MutableLiveData<Boolean>()
-    val isClickAllowed: LiveData<Boolean>
-        get() = _isClickAllowed
 
-    private var searchText = ""
-    private val historyTracks: List<Track>
-        get() = getHistory()
+    private val _uiState = MutableStateFlow(SearchScreenState())
+    val uiState: StateFlow<SearchScreenState> = _uiState.asStateFlow()
 
-    private val _showHistory = MutableLiveData(false)
-    val showHistory: LiveData<Boolean>
-        get() = _showHistory
+    private var isClickAllowed = true
 
-    private val _tracks = MutableLiveData<List<Track>>()
-    val tracks: LiveData<List<Track>>
-        get() = _tracks
-
-    private val _searchStatus = MutableLiveData<ResponseStatus>()
-    val searchStatus: LiveData<ResponseStatus>
-        get() = _searchStatus
-
-    fun showHistoryBoolean(answer: Boolean, rewrite: Boolean = true) {
-        if (answer) {
-            if (historyTracks.isNotEmpty()) {
-                _tracks.postValue(historyTracks)
-                _showHistory.postValue(answer)
-            } else {
-                _showHistory.postValue(false)
-            }
-        } else if (rewrite) {
-            _showHistory.postValue(false)
-            _tracks.postValue(emptyList())
-        }
+    init {
+        loadHistory()
     }
 
-    fun setSearchText(text: String) {
-        searchText = text
-    }
-
-    fun clickDebounce() {
-        _isClickAllowed.value?.let { isAllowed ->
-            if (isAllowed) {
-                _isClickAllowed.postValue(false)
-                viewModelScope.launch {
-                    delay(CLICK_DEBOUNCE_DELAY)
-                    _isClickAllowed.postValue(true)
-                }
+    private fun loadHistory() {
+        viewModelScope.launch {
+            val history = getHistory().map { TrackMapper.mapToTrackUI(it) }
+            _uiState.update { currentState ->
+                currentState.copy(
+                    historyTracks = history,
+                    showHistory = currentState.searchText.isEmpty() && history.isNotEmpty()
+                )
             }
         }
     }
 
-    fun searchDebounce() {
-        if (latestSearchText == searchText) {
-            return
+    private suspend fun getHistory(): List<Track> {
+        return withContext(Dispatchers.IO) {
+            sharedPrefsInteractor.readWriteClearWithoutConsumer(USE_READ, null)
         }
-        latestSearchText = searchText
-        searchJob?.cancel()
-        searchJob = viewModelScope.launch {
-            delay(SEARCH_DEBOUNCE_DELAY)
-            searchTracks(searchText)
+    }
+
+    fun onQueryChange(text: String) {
+        _uiState.update { it.copy(searchText = text) }
+
+        if (text.isEmpty()) {
+            _uiState.update { currentState ->
+                currentState.copy(
+                    tracks = emptyList(),
+                    searchStatus = ResponseStatus.DEFAULT,
+                    showHistory = currentState.historyTracks.isNotEmpty()
+                )
+            }
+        } else {
+            _uiState.update { it.copy(showHistory = false) }
         }
     }
 
     fun searchTracks(searchQuery: String) {
-        searchJob?.cancel()
-        if (searchQuery.isNotEmpty()) {
-            _searchStatus.postValue(ResponseStatus.LOADING)
-            viewModelScope.launch {
-                tracksInteractor
-                    .searchTracks(searchQuery)
-                    .collect { pair ->
-                        _searchStatus.postValue(pair.second)
-                        _tracks.postValue(pair.first)
-                        if (pair.second == ResponseStatus.SUCCESS) {
-                            _showHistory.postValue(false)
-                        }
-                    }
+        if (searchQuery.isEmpty()) return
+
+        _uiState.update { it.copy(searchStatus = ResponseStatus.LOADING) }
+
+        viewModelScope.launch {
+            tracksInteractor.searchTracks(searchQuery).collect { pair ->
+                val tracks = pair.first.map { TrackMapper.mapToTrackUI(it) }
+                _uiState.update {
+                    it.copy(
+                        tracks = tracks,
+                        searchStatus = pair.second
+                    )
+                }
             }
         }
     }
 
-    private fun getHistory() = runBlocking {
-        async(Dispatchers.IO) {
-            sharedPrefsInteractor.readWriteClearWithoutConsumer(USE_READ, null)
-        }.await()
-    }
-
-    fun writeHistory(trackUI: TrackUI?) {
-        val track = trackUI?.let { TrackMapper.mapToTrack(it) }
-        sharedPrefsWork(USE_WRITE, track)
+    fun addTrackToHistory(track: TrackUI) {
+        viewModelScope.launch(Dispatchers.IO) {
+            sharedPrefsInteractor.readWriteClear(
+                use = USE_WRITE,
+                track = TrackMapper.mapToTrack(track),
+                consumer = object : SharedPrefsInteractor.SharedPrefsConsumer {
+                    override fun consume(foundSharedPrefs: ArrayList<Track>) {
+                        val history = foundSharedPrefs.map { TrackMapper.mapToTrackUI(it) }
+                        _uiState.update { it.copy(historyTracks = history) }
+                    }
+                }
+            )
+        }
     }
 
     fun clearHistory() {
-        sharedPrefsWork(USE_CLEAR)
-        _tracks.postValue(historyTracks)
-    }
-
-    fun resume() {
-        if (_showHistory.value == true) {
-            _tracks.postValue(historyTracks)
-        }
-
-        _isClickAllowed.postValue(true)
-    }
-
-    private fun sharedPrefsWork(uses: String, track: Track? = null) = viewModelScope.launch(
-        Dispatchers.IO
-    ) {
-        sharedPrefsInteractor.readWriteClear(
-            use = uses,
-            track = track,
-            consumer = object : SharedPrefsInteractor.SharedPrefsConsumer {
-                override fun consume(foundSharedPrefs: ArrayList<Track>) {
+        viewModelScope.launch(Dispatchers.IO) {
+            sharedPrefsInteractor.readWriteClear(
+                use = USE_CLEAR,
+                track = null,
+                consumer = object : SharedPrefsInteractor.SharedPrefsConsumer {
+                    override fun consume(foundSharedPrefs: ArrayList<Track>) {
+                        _uiState.update {
+                            it.copy(
+                                historyTracks = emptyList(),
+                                showHistory = false
+                            )
+                        }
+                    }
                 }
-            }
-        )
+            )
+        }
+    }
+
+    fun onTrackClick(): Boolean {
+        if (!isClickAllowed) return false
+        isClickAllowed = false
+        viewModelScope.launch {
+            delay(CLICK_DEBOUNCE_DELAY)
+            isClickAllowed = true
+        }
+        return true
     }
 
     private companion object {
         const val CLICK_DEBOUNCE_DELAY = 1000L
-        const val SEARCH_DEBOUNCE_DELAY = 2000L
         const val USE_CLEAR = "clear"
         const val USE_READ = "read"
         const val USE_WRITE = "write"
