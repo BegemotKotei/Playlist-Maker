@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
             }
         }
         binding.bottomNavigationView.setupWithNavController(navController)
-        setupInsets()
+        //setupInsets()
         requestPermissions()
     }
 
@@ -103,8 +103,6 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
                 REQUEST_CODE_PERMISSIONS,
                 *permsNeeded.toTypedArray()
             )
-        } else {
-            Toast.makeText(this, "Все разрешения предоставлены", Toast.LENGTH_SHORT).show()
         }
     }
 

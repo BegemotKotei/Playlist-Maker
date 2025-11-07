@@ -10,25 +10,23 @@ class SettingsViewModel(
     private val sharingInteractor: SharingInteractor,
     private val settingsInteractor: SettingsInteractor,
 ) : ViewModel() {
-    private val _theme = MutableLiveData<Int>()
-    val theme: LiveData<Int>
+    private val _theme = MutableLiveData<Boolean>()
+    val theme: LiveData<Boolean>
         get() = _theme
-    private val _link = MutableLiveData<String>()
-    val link: LiveData<String>
-        get() = _link
-
 
     init {
         getTheme()
     }
 
-    fun updateTheme(theme: Int) {
-        settingsInteractor.updateThemeSetting(theme)
+    fun updateTheme(isDark: Boolean) {
+        val themeValue = if (isDark) 1 else 0
+        settingsInteractor.updateThemeSetting(themeValue)
         getTheme()
     }
 
     private fun getTheme() {
-        _theme.postValue(settingsInteractor.getThemeSettings())
+        val isDarkTheme = settingsInteractor.getThemeSettings() == 1
+        _theme.postValue(isDarkTheme)
     }
 
     fun shareApp() {
@@ -42,9 +40,4 @@ class SettingsViewModel(
     fun userPolicy() {
         sharingInteractor.openTerms()
     }
-
-    fun getTermsLink() = _link.postValue(
-        sharingInteractor.getTermsLink()
-    )
-
 }
