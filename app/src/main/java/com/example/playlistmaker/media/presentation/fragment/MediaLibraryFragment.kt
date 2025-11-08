@@ -4,47 +4,82 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.*
+import androidx.compose.ui.platform.ComposeView
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.R
-import com.example.playlistmaker.databinding.FragmentMediaLibraryBinding
-import com.google.android.material.tabs.TabLayoutMediator
+import com.example.playlistmaker.about_playlist.presentation.fragment.AboutPlayListFragment
+import com.example.playlistmaker.media.presentation.viewModel.MediaLibraryViewModel
+import com.example.playlistmaker.playlist_create.presentation.models.PlayListUI
+import com.example.playlistmaker.search.presentation.models.TrackUI
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class MediaLibraryFragment : Fragment() {
-
-    private var _binding: FragmentMediaLibraryBinding? = null
-    private val binding get() = _binding!!
-    private lateinit var tabMediator: TabLayoutMediator
+class MediaLibraryFragment: Fragment() {
+    private val viewModel: MediaLibraryViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentMediaLibraryBinding.inflate(inflater, container, false)
-        val view = binding.root
-        return view
-    }
+        val navController = findNavController()
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        setupViewPager()
-    }
+        return ComposeView(requireContext()).apply {
+            setContent {
+                var pendingTrackToPlay by remember { mutableStateOf<TrackUI?>(null) }
+                var pendingCreatePlaylist by remember { mutableStateOf(false) }
+                var pendingPlaylistToOpen by remember { mutableStateOf<PlayListUI?>(null) }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        tabMediator.detach()
-        _binding = null
-    }
+                LaunchedEffect(pendingTrackToPlay) {
+                    pendingTrackToPlay?.let { track ->
+                        val bundle = Bundle().apply {
+                            putParcelable("TRACK", track)
+                            putBoolean("IS_FAVORITE", track.isLiked)
+                        }
+                        navController.navigate(
+                            R.id.action_mediaLibraryFragment_to_musicPlayerFragment,
+                            bundle
+                        )
+                        pendingTrackToPlay = null
+                    }
+                }
 
-    private fun setupViewPager() {
-        binding.viewPager.adapter = ViewPagerAdapter(childFragmentManager, lifecycle)
+                LaunchedEffect(pendingCreatePlaylist) {
+                    if (pendingCreatePlaylist) {
+                        navController.navigate(R.id.action_mediaLibraryFragment_to_createPlayList)
+                        pendingCreatePlaylist = false
+                    }
+                }
 
-        tabMediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
-            tab.text = when (position) {
-                0 -> getString(R.string.like_music)
-                else -> getString(R.string.play_list_music)
+                LaunchedEffect(pendingPlaylistToOpen) {
+                    pendingPlaylistToOpen?.let { playlist ->
+                        val bundle = bundleOf(AboutPlayListFragment.PLAYLIST_ITEM to playlist)
+                        navController.navigate(
+                            R.id.action_mediaLibraryFragment_to_aboutPlayListFragment,
+                            bundle
+                        )
+                        pendingPlaylistToOpen = null
+                    }
+                }
+
+                MediaLibraryTheme(darkTheme = isSystemInDarkTheme()) {
+                    LibraryScreen(
+                        viewModel = viewModel,
+                        onTrackClick = { track -> pendingTrackToPlay = track },
+                        onCreatePlaylistClicked = { pendingCreatePlaylist = true },
+                        onPlaylistClicked = { playlist -> pendingPlaylistToOpen = playlist }
+                    )
+                }
             }
         }
-        tabMediator.attach()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.getFavoriteTracks()
+        viewModel.getPlaylists()
     }
 }
