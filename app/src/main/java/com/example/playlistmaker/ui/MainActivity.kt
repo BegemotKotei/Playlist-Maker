@@ -35,19 +35,12 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
             when (destination.id) {
                 R.id.musicPlayerFragment -> hideBottomNavigation()
                 R.id.aboutPlayListFragment -> hideBottomNavigation()
+                R.id.createPlayList -> hideBottomNavigation()
                 else -> showBottomNavigation()
             }
         }
         binding.bottomNavigationView.setupWithNavController(navController)
         requestPermissions()
-    }
-
-    fun animateBottomNavigationViewTrue() {
-        binding.bottomNavigationView.isVisible = true
-    }
-
-    fun animateBottomNavigationViewFalse() {
-        binding.bottomNavigationView.isVisible = false
     }
 
     override fun onPermissionsGranted(requestCode: Int, perms: List<String?>) {
