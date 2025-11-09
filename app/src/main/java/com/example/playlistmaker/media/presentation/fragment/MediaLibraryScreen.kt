@@ -41,7 +41,7 @@ fun LibraryScreen(
         Text(
             text = stringResource(R.string.media_library),
             style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.onSurface,
+            color = MaterialTheme.colorScheme.surface,
             modifier = Modifier.padding(16.dp)
         )
 
@@ -52,7 +52,7 @@ fun LibraryScreen(
             indicator = { tabPositions ->
                 TabRowDefaults.PrimaryIndicator(
                     modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.surface
                 )
             }
         ) {
