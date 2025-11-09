@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -28,7 +29,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -128,32 +128,19 @@ fun SearchScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     ErrorPlaceholder(
-                        imageRes = R.drawable.nointernet_ic,
+                        imageRes = R.drawable.no_internet,
                         title = stringResource(R.string.wrong_title),
                         subtitle = stringResource(R.string.wrong),
                         onRetry = { onSearch(query) }
                     )
 
                     Spacer(modifier = Modifier.height(24.dp))
-
-                    Button(
-                        onClick = { onSearch(query) },
-                        modifier = Modifier.size(width = 91.dp, height = 36.dp),
-                        contentPadding = PaddingValues(0.dp)
-                    ) {
-                        Text(
-                            text = stringResource(R.string.restore),
-                            fontSize = 14.sp,
-                            style = MaterialTheme.typography.bodyMedium,
-                            maxLines = 1
-                        )
-                    }
                 }
             }
 
             showNothingFound -> {
                 ErrorPlaceholder(
-                    imageRes = R.drawable.nointernet_ic,
+                    imageRes = R.drawable.no_music,
                     title = stringResource(R.string.nothing),
                     subtitle = "",
                     onRetry = null
@@ -246,7 +233,7 @@ fun ErrorPlaceholder(
             text = title,
             style = MaterialTheme.typography.bodyMedium.copy(
                 fontSize = 19.sp,
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.onSurface
             ),
             modifier = Modifier
                 .padding(bottom = 8.dp)
@@ -259,9 +246,9 @@ fun ErrorPlaceholder(
                 text = subtitle,
                 style = MaterialTheme.typography.bodyMedium.copy(
                     fontSize = 19.sp,
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.onSurface
                 ),
-                color = Color.Gray,
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center
             )
@@ -270,7 +257,12 @@ fun ErrorPlaceholder(
         onRetry?.let {
             Button(
                 onClick = it,
-                modifier = Modifier.padding(top = 24.dp)
+                modifier = Modifier
+                    .padding(top = 24.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.onSurface,
+                    contentColor = MaterialTheme.colorScheme.background
+                )
             ) {
                 Text(stringResource(R.string.restore))
             }
@@ -280,7 +272,7 @@ fun ErrorPlaceholder(
 
 @Preview(showBackground = true)
 @Composable
-fun SearchScreenPreview() {
+private fun SearchScreenPreview() {
     val sampleTracks = listOf(
         TrackUI(
             trackName = "Sample Track",
