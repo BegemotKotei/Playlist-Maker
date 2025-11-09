@@ -37,14 +37,16 @@ fun PlaylistTabContent(
         fontWeight = FontWeight.Medium,
         fontSize = 19.sp
     )
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = Modifier
+        .fillMaxSize()
+    ) {
         Button(
             onClick = onCreateClick,
             modifier = Modifier
-                .padding(start = 0.dp, top = 24.dp, end = 0.dp, bottom = 16.dp)
+                .padding(start = 0.dp, top = 24.dp, end = 0.dp, bottom = 0.dp)
                 .align(Alignment.CenterHorizontally),
             colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.onSurface,
+                containerColor = MaterialTheme.colorScheme.surface,
                 contentColor = MaterialTheme.colorScheme.background
             )
         ) {
@@ -55,17 +57,15 @@ fun PlaylistTabContent(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background)
                     .padding(top = 46.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Box(
                     modifier = Modifier
                         .size(120.dp)
-                        .background(MaterialTheme.colorScheme.background)
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.add_image_ic),
+                        painter = painterResource(id = R.drawable.no_music),
                         contentDescription = null,
                         modifier = Modifier.fillMaxSize()
                     )
@@ -74,10 +74,10 @@ fun PlaylistTabContent(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = stringResource(R.string.no_mediateka),
+                    text = stringResource(R.string.no_playlist),
                     textAlign = TextAlign.Center,
                     style = ysDisplayMediumStyle,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = MaterialTheme.colorScheme.surface,
                     modifier = Modifier.fillMaxWidth()
                 )
 

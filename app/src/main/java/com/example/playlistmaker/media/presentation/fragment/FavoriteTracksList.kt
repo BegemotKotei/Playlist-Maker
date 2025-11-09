@@ -40,7 +40,7 @@ fun FavoriteTracksList(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(
-                painter = painterResource(id = R.drawable.placeholder_ic),
+                painter = painterResource(id = R.drawable.no_music),
                 contentDescription = null
             )
             Text(
