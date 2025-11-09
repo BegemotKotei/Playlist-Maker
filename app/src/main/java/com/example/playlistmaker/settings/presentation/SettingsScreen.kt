@@ -8,10 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
@@ -22,7 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -95,19 +91,19 @@ fun SettingsContent(
                 checked = isDarkTheme,
                 onCheckedChange = onThemeSwitchChanged,
                 colors = SwitchDefaults.colors(
-                    checkedThumbColor = MaterialTheme.colorScheme.primary,
-                    checkedTrackColor = MaterialTheme.colorScheme.primaryContainer,
-                    uncheckedThumbColor = MaterialTheme.colorScheme.secondary,
-                    uncheckedTrackColor = MaterialTheme.colorScheme.secondaryContainer,
+                    checkedThumbColor = MaterialTheme.colorScheme.onSecondary,
+                    checkedTrackColor = MaterialTheme.colorScheme.secondary,
+                    uncheckedThumbColor = MaterialTheme.colorScheme.primary,
+                    uncheckedTrackColor = MaterialTheme.colorScheme.onPrimary,
                 ),
                 modifier = Modifier.align(Alignment.CenterVertically)
             )
         }
-        SettingsItem(stringResource(R.string.share_app), Icons.Default.Share, onShareClick)
-        SettingsItem(stringResource(R.string.write_support), Icons.Default.Email, onSupportClick)
+        SettingsItem(stringResource(R.string.share_app), R.drawable.share, onShareClick)
+        SettingsItem(stringResource(R.string.write_support), R.drawable.support, onSupportClick)
         SettingsItem(
             stringResource(R.string.user_agreement),
-            Icons.Default.ChevronRight,
+            R.drawable.arrow_forward,
             onTermsClick
         )
     }
@@ -117,7 +113,7 @@ fun SettingsContent(
 @Composable
 fun SettingsItem(
     text: String,
-    icon: ImageVector,
+    icon: Int,
     onClick: () -> Unit
 ) {
     val customFont = FontFamily(Font(R.font.ys_display_regular))
@@ -125,7 +121,7 @@ fun SettingsItem(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
-            .padding(vertical = 12.dp),
+            .padding(vertical = 20.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -138,7 +134,7 @@ fun SettingsItem(
             modifier = Modifier.weight(1f)
         )
         Icon(
-            imageVector = icon,
+            painter = painterResource(id = icon),
             contentDescription = null,
             tint = MaterialTheme.colorScheme.tertiary
 
@@ -148,7 +144,7 @@ fun SettingsItem(
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun SettingsContentPreview() {
+private fun SettingsContentPreview() {
     SettingsContent(
         isDarkTheme = false,
         onThemeSwitchChanged = {},
