@@ -41,7 +41,10 @@ class SearchFragmentViewModel(
 
     private fun loadHistory() {
         viewModelScope.launch {
-            val history = getHistory().map { TrackMapper.mapToTrackUI(it) }
+            val history = getHistory()
+                .map { TrackMapper.mapToTrackUI(it) }
+                .takeLast(MAX_HISTORY_SIZE)
+
             _uiState.update { currentState ->
                 currentState.copy(
                     historyTracks = history,
@@ -98,7 +101,10 @@ class SearchFragmentViewModel(
                 track = TrackMapper.mapToTrack(track),
                 consumer = object : SharedPrefsInteractor.SharedPrefsConsumer {
                     override fun consume(foundSharedPrefs: ArrayList<Track>) {
-                        val history = foundSharedPrefs.map { TrackMapper.mapToTrackUI(it) }
+                        val history = foundSharedPrefs
+                            .map { TrackMapper.mapToTrackUI(it) }
+                            .takeLast(MAX_HISTORY_SIZE)
+
                         _uiState.update { it.copy(historyTracks = history) }
                     }
                 }
@@ -140,5 +146,6 @@ class SearchFragmentViewModel(
         const val USE_CLEAR = "clear"
         const val USE_READ = "read"
         const val USE_WRITE = "write"
+        const val MAX_HISTORY_SIZE = 10
     }
 }

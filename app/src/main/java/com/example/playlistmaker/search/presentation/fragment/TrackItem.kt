@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -34,7 +35,7 @@ fun TrackItem(track: TrackUI, onClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onClick() }
-            .padding(1.dp, 4.dp, 8.dp, 4.dp),
+            .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
@@ -48,64 +49,43 @@ fun TrackItem(track: TrackUI, onClick: () -> Unit) {
 
         Spacer(modifier = Modifier.width(8.dp))
 
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                                .padding(0.dp, 0.dp, 0.dp, 8.dp)
-        ) {
+        Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = track.trackName,
-                style = MaterialTheme.typography.bodyMedium.copy(
-                    color = MaterialTheme.colorScheme.onSurface
-                ),
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.bodyMedium,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
-
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
+            Spacer(modifier = Modifier.height(1.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     text = track.artistName,
-                    style = MaterialTheme.typography.bodySmall.copy(
-                        fontSize = 11.sp,
-                        color = MaterialTheme.colorScheme.surface
-                    ),
+                    color = MaterialTheme.colorScheme.surface,
+                    style = MaterialTheme.typography.bodySmall.copy(fontSize = 11.sp),
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f, fill = false)
                 )
 
-                Spacer(modifier = Modifier.width(4.dp))
-
                 Text(
-                    text = "•",
-                    style = MaterialTheme.typography.bodySmall.copy(
-                        fontSize = 11.sp,
-                        color = MaterialTheme.colorScheme.surface
-                    )
-                )
-
-                Spacer(modifier = Modifier.width(4.dp))
-
-                Text(
-                    text = track.trackTimeMillis.toFormattedTime(),
-                    style = MaterialTheme.typography.bodySmall.copy(
-                        fontSize = 11.sp,
-                        color = MaterialTheme.colorScheme.surface
-                    )
+                    text = " • ${track.trackTimeMillis.toFormattedTime()}",
+                    color = MaterialTheme.colorScheme.surface,
+                    style = MaterialTheme.typography.bodySmall.copy(fontSize = 11.sp),
+                    maxLines = 1,
                 )
             }
         }
 
         Icon(
             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-            contentDescription = "Go to details, fk yeah it's work",
-            tint = MaterialTheme.colorScheme.surface
+            contentDescription = "Go to details",
+            tint = MaterialTheme.colorScheme.surface,
+            modifier = Modifier.padding(start = 8.dp)
         )
     }
 }
+
 
 fun String.toFormattedTime(): String {
     val millis = this.toLongOrNull() ?: 0L
@@ -116,10 +96,10 @@ fun String.toFormattedTime(): String {
 
 @Preview(showBackground = true)
 @Composable
-fun TrackItemPreview() {
+private fun TrackItemPreview() {
     val sampleTrack = TrackUI(
-        trackName = "Sample Track",
-        artistName = "Sample Artist",
+        trackName = "Длинное название трека, которое должно обрезаться",
+        artistName = "Очень-очень длинное имя исполнителя, которое не помещается на экране",
         artworkUrl100 = "https://example.com/artwork.jpg",
         trackTimeMillis = "180000",
         previewUrl = "https://example.com/preview.mp3",

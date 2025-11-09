@@ -144,18 +144,8 @@ fun SearchScreen(
                     onRetry = null
                 )
             }
-
-            showInitialState -> {
-
-            }
-
+            showInitialState -> {}
             else -> {
-                val displayedTracks = if (isHistory) {
-                    if (tracks.size > 10) tracks.takeLast(10) else tracks
-                } else {
-                    if (tracks.size > 15) tracks.take(15) else tracks
-                }
-
                 Column(
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -164,7 +154,7 @@ fun SearchScreen(
                             .fillMaxWidth()
                             .wrapContentHeight()
                     ) {
-                        itemsIndexed(displayedTracks) { _, track ->
+                        itemsIndexed(tracks) { _, track ->
                             TrackItem(track = track) {
                                 onTrackClick(track)
                                 pendingTrackToPlay = track
