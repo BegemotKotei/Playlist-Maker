@@ -10,5 +10,6 @@ enum class ResponseStatus {
     SUCCESS,
     LOADING,
     EMPTY,
-    ERROR
+    ERROR,
+    DEFAULT
 }

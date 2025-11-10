@@ -21,6 +21,12 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            binding.rootFragmentContainerView.setPadding(systemBars.left, systemBars.top, systemBars.right, 0)
+            insets
+        }
+
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.rootFragmentContainerView) as NavHostFragment
         val navController = navHostFragment.navController
@@ -29,20 +35,12 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
             when (destination.id) {
                 R.id.musicPlayerFragment -> hideBottomNavigation()
                 R.id.aboutPlayListFragment -> hideBottomNavigation()
+                R.id.createPlayList -> hideBottomNavigation()
                 else -> showBottomNavigation()
             }
         }
         binding.bottomNavigationView.setupWithNavController(navController)
-        setupInsets()
         requestPermissions()
-    }
-
-    fun animateBottomNavigationViewTrue() {
-        binding.bottomNavigationView.isVisible = true
-    }
-
-    fun animateBottomNavigationViewFalse() {
-        binding.bottomNavigationView.isVisible = false
     }
 
     override fun onPermissionsGranted(requestCode: Int, perms: List<String?>) {
@@ -103,8 +101,6 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
                 REQUEST_CODE_PERMISSIONS,
                 *permsNeeded.toTypedArray()
             )
-        } else {
-            Toast.makeText(this, "Все разрешения предоставлены", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -124,19 +120,6 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
             .translationY(0f)
             .setDuration(300)
             .start()
-    }
-
-    private fun setupInsets() {
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
-            val systemBar = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(
-                systemBar.left,
-                systemBar.top,
-                systemBar.right,
-                systemBar.bottom
-            )
-            insets
-        }
     }
 
     companion object {

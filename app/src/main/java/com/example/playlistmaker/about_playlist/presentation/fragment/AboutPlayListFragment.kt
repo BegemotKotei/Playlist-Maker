@@ -32,6 +32,7 @@ class AboutPlayListFragment : Fragment() {
     private var _binding: FragmentAboutPlaylistBinding? = null
     private val binding get() = _binding!!
     private val viewModel: AboutPlayListFragmentViewModel by viewModel()
+    private var playlistId: Long? = null
     private var imageUri: Uri? = null
     private val adapter by lazy { TrackAdapter() }
     private var debounceClick = true
@@ -42,11 +43,13 @@ class AboutPlayListFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentAboutPlaylistBinding.inflate(inflater, container, false)
+        playlistId = arguments?.parcelable<PlayListUI>(PLAYLIST_ITEM)?.id
 
-        if (arguments != null) {
-            playlistItemUse()
+        if (playlistId == null) {
+            Toast.makeText(requireContext(), "Ошибка: не удалось загрузить плейлист", Toast.LENGTH_LONG).show()
+            findNavController().popBackStack()
         }
 
         return binding.root
@@ -58,76 +61,55 @@ class AboutPlayListFragment : Fragment() {
         bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheetMore)
         hideBottomSheet()
 
+        playlistId?.let {
+            viewModel.update(it)
+        }
+        setupClickListeners()
+        setupObservers()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        debounceClick = true
+        playlistId?.let { viewModel.updatePlayList(it) }
+    }
+
+    private fun setupClickListeners() {
         binding.editPlayList.setOnClickListener {
-            findNavController().navigate(
-                R.id.action_aboutPlayListFragment_to_createPlayList,
-                bundleOf(
-                    PLAYLIST_ITEM to PlayListUI(
-                        requireArguments().parcelable<PlayListUI>(PLAYLIST_ITEM)!!.id,
-                        binding.tvNamePlaylist.text.toString(),
-                        binding.tvAboutPlaylist.text.toString(),
-                        imageUri.toString()
+            playlistId?.let { id ->
+                findNavController().navigate(
+                    R.id.action_aboutPlayListFragment_to_createPlayList,
+                    bundleOf(
+                        PLAYLIST_ITEM to PlayListUI(
+                            id = id,
+                            namePlayList = binding.tvNamePlaylist.text.toString(),
+                            aboutPlayList = binding.tvAboutPlaylist.text.toString(),
+                            roadToFileImage = imageUri.toString()
+                        )
                     )
                 )
-            )
+            }
         }
 
         binding.bShare.setOnClickListener { shareTracks() }
-
         binding.shareButton.setOnClickListener { shareTracks() }
 
         binding.bDeletePlayList.setOnClickListener {
-            deletePlaylist(
-                requireArguments().parcelable<PlayListUI>(PLAYLIST_ITEM)!!.id,
-                requireArguments().parcelable<PlayListUI>(PLAYLIST_ITEM)!!.namePlayList
-            )
+            playlistId?.let { id ->
+                deletePlaylist(id, binding.tvNamePlaylist.text.toString())
+            }
         }
 
         binding.bMore.setOnClickListener {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
         }
 
-        bottomSheetBehavior.addBottomSheetCallback(object :
-            BottomSheetBehavior.BottomSheetCallback() {
+        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 stateBottomSheet(newState)
             }
-
             override fun onSlide(p0: View, p1: Float) {}
         })
-
-        viewModel.playList.observe(viewLifecycleOwner) { playlist ->
-            arguments
-            with(binding) {
-                tvNamePlaylistBS.text = playlist.namePlayList
-                tvNamePlaylist.text = playlist.namePlayList
-                tvAboutPlaylist.text = playlist.aboutPlayList
-                imageUri = playlist.roadToFileImage.toUri()
-                if (playlist.roadToFileImage.isNotEmpty()) {
-                    ivImageBS.setImageURI(playlist.roadToFileImage.toUri())
-                    ivImage.setImageURI(playlist.roadToFileImage.toUri())
-                } else {
-                    ivImageBS.setImageResource(R.drawable.placeholder_ic)
-                    ivImage.setImageResource(R.drawable.placeholder_ic)
-                }
-            }
-        }
-
-        viewModel.aboutPlayListState.observe(viewLifecycleOwner) {
-            binding.tvCountTrack.text = it.count
-            binding.tvTimeTracks.text = it.time
-            if (it.tracks.isNotEmpty()) {
-                binding.recyclerViewBS.isVisible = true
-                binding.tvPlaceHolder.isVisible = false
-                binding.flPlaceHolder.isVisible = false
-                adapter.data = it.tracks
-            } else {
-                binding.recyclerViewBS.isVisible = false
-                binding.tvPlaceHolder.isVisible = true
-                binding.flPlaceHolder.isVisible = true
-            }
-            binding.tvCountTrackBS.text = it.count
-        }
 
         adapter.onClick = { track ->
             if (debounceClick) {
@@ -138,30 +120,46 @@ class AboutPlayListFragment : Fragment() {
                 )
             }
         }
-
-        adapter.onLongClick = {
-            openDialog(it)
-        }
-
-        binding.backIv.setOnClickListener {
-            findNavController().popBackStack()
-        }
+        adapter.onLongClick = { openDialog(it) }
+        binding.backIv.setOnClickListener { findNavController().popBackStack() }
     }
 
-    override fun onResume() {
-        super.onResume()
-        debounceClick = true
-        hideBottomSheet()
-        viewModel.updatePlayList(requireArguments().parcelable<PlayListUI>(PLAYLIST_ITEM)!!.id)
+    private fun setupObservers() {
+        viewModel.playList.observe(viewLifecycleOwner) { playlist ->
+            with(binding) {
+                tvNamePlaylistBS.text = playlist.namePlayList
+                tvNamePlaylist.text = playlist.namePlayList
+                tvAboutPlaylist.text = playlist.aboutPlayList
+                imageUri = playlist.roadToFileImage.toUri()
+                if (playlist.roadToFileImage.isNotEmpty()) {
+                    ivImageBS.setImageURI(imageUri)
+                    ivImage.setImageURI(imageUri)
+                } else {
+                    ivImageBS.setImageResource(R.drawable.placeholder_ic)
+                    ivImage.setImageResource(R.drawable.placeholder_ic)
+                }
+            }
+        }
+
+        viewModel.aboutPlayListState.observe(viewLifecycleOwner) {
+            binding.tvCountTrack.text = it.count
+            binding.tvTimeTracks.text = it.time
+            binding.recyclerViewBS.isVisible = it.tracks.isNotEmpty()
+            binding.flPlaceHolder.isVisible = it.tracks.isEmpty()
+            adapter.data = it.tracks
+            binding.tvCountTrackBS.text = it.count
+        }
     }
 
     private fun hideBottomSheet() {
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        if (::bottomSheetBehavior.isInitialized) {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        }
     }
 
     private fun shareTracks() {
         if (adapter.data.isNotEmpty()) {
-            viewModel.shareTracks(requireArguments().parcelable<PlayListUI>(PLAYLIST_ITEM)!!.id)
+            playlistId?.let { viewModel.shareTracks(it) }
         } else {
             Toast(requireContext()).showCustomToast(
                 resourceManager.getStringById(R.string.not_tracks_share),
@@ -171,40 +169,17 @@ class AboutPlayListFragment : Fragment() {
     }
 
     private fun stateBottomSheet(newState: Int) {
-        when (newState) {
-            BottomSheetBehavior.STATE_HIDDEN -> {
-                binding.overlay.visibility = View.GONE
-            }
-
-            else -> {
-                binding.overlay.visibility = View.VISIBLE
-            }
-        }
-    }
-
-    private fun playlistItemUse() {
-        binding.run {
-            requireArguments().parcelable<PlayListUI>(PLAYLIST_ITEM)?.let { playlist ->
-                imageUri = playlist.roadToFileImage.toUri()
-                viewModel.update(playlist.id)
-            }
-        }
+        binding.overlay.visibility = if (newState == BottomSheetBehavior.STATE_HIDDEN) View.GONE else View.VISIBLE
     }
 
     private fun openDialog(track: TrackUI) {
         confirmDialog = MaterialAlertDialogBuilder(requireContext())
             .setMessage(resourceManager.getStringById(R.string.delete_track_confirmation))
-            .setNegativeButton(resourceManager.getStringById(R.string.no)) { dialog, which -> }
-            .setPositiveButton(resourceManager.getStringById(R.string.yes)) { dialog, which ->
+            .setNegativeButton(resourceManager.getStringById(R.string.no)) { _, _ -> }
+            .setPositiveButton(resourceManager.getStringById(R.string.yes)) { _, _ ->
                 viewLifecycleOwner.lifecycleScope.launch {
-                    track.trackId.let {
-                        viewModel.deleteTrack(
-                            it,
-                            requireArguments().parcelable<PlayListUI>(PLAYLIST_ITEM)?.id ?: 0
-                        )
-                    }
+                    viewModel.deleteTrack(track.trackId, playlistId ?: 0)
                 }
-
             }
         confirmDialog.show()
     }
@@ -212,14 +187,19 @@ class AboutPlayListFragment : Fragment() {
     private fun deletePlaylist(id: Long, name: String) {
         confirmDialog = MaterialAlertDialogBuilder(requireContext())
             .setMessage(resourceManager.getStringById(R.string.delete_playlist_confirmation, name))
-            .setNegativeButton(resourceManager.getStringById(R.string.no)) { dialog, which -> }
-            .setPositiveButton(resourceManager.getStringById(R.string.yes)) { dialog, which ->
+            .setNegativeButton(resourceManager.getStringById(R.string.no)) { _, _ -> }
+            .setPositiveButton(resourceManager.getStringById(R.string.yes)) { _, _ ->
                 viewLifecycleOwner.lifecycleScope.launch {
                     viewModel.deletePlaylist(id)
                     findNavController().popBackStack()
                 }
             }
         confirmDialog.show()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     companion object {

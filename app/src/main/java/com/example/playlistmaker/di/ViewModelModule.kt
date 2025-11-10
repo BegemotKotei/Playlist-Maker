@@ -3,9 +3,7 @@ package com.example.playlistmaker.di
 import com.example.playlistmaker.about_playlist.presentation.view_model.AboutPlayListFragmentViewModel
 import com.example.playlistmaker.core.resourceManager.IResourceManager
 import com.example.playlistmaker.core.resourceManager.ResourceManager
-import com.example.playlistmaker.media.presentation.viewModel.LikeMusicViewModel
 import com.example.playlistmaker.media.presentation.viewModel.MediaLibraryViewModel
-import com.example.playlistmaker.media.presentation.viewModel.PlayListViewModel
 import com.example.playlistmaker.player.presentation.MusicPlayerViewModel
 import com.example.playlistmaker.playlist_create.presentation.CreatePlayListFragmentViewModel
 import com.example.playlistmaker.search.presentation.models.TrackUI
@@ -35,13 +33,10 @@ val viewModelModule = module {
         )
     }
     viewModel<MediaLibraryViewModel> {
-        MediaLibraryViewModel(settingsInteractor = get())
-    }
-    viewModel<LikeMusicViewModel> {
-        LikeMusicViewModel(likeTrackInteractor = get())
-    }
-    viewModel<PlayListViewModel> {
-        PlayListViewModel(playlistInteractor = get())
+        MediaLibraryViewModel(
+            likeTrackInteractor = get(),
+            playlistInteractor = get()
+        )
     }
     viewModel<CreatePlayListFragmentViewModel> {
         CreatePlayListFragmentViewModel(saveImageInteractor = get(), playListInteractor = get())
