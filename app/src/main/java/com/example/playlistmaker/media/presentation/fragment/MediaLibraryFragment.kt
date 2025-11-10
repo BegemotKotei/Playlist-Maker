@@ -5,7 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -17,7 +21,7 @@ import com.example.playlistmaker.playlist_create.presentation.models.PlayListUI
 import com.example.playlistmaker.search.presentation.models.TrackUI
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class MediaLibraryFragment: Fragment() {
+class MediaLibraryFragment : Fragment() {
     private val viewModel: MediaLibraryViewModel by viewModel()
 
     override fun onCreateView(
@@ -66,12 +70,17 @@ class MediaLibraryFragment: Fragment() {
                 }
 
                 MediaLibraryTheme(darkTheme = isSystemInDarkTheme()) {
-                    LibraryScreen(
-                        viewModel = viewModel,
-                        onTrackClick = { track -> pendingTrackToPlay = track },
-                        onCreatePlaylistClicked = { pendingCreatePlaylist = true },
-                        onPlaylistClicked = { playlist -> pendingPlaylistToOpen = playlist }
-                    )
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        color = MaterialTheme.colorScheme.background
+                    ) {
+                        LibraryScreen(
+                            viewModel = viewModel,
+                            onTrackClick = { track -> pendingTrackToPlay = track },
+                            onCreatePlaylistClicked = { pendingCreatePlaylist = true },
+                            onPlaylistClicked = { playlist -> pendingPlaylistToOpen = playlist }
+                        )
+                    }
                 }
             }
         }
